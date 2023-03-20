@@ -1,0 +1,142 @@
+/* BCSans-regular - latin-ext_latin */
+@font-face {
+  font-family: "BC Sans";
+  font-style: normal;
+  font-weight: 400;
+  src: local("BC Sans"), local("BCSans-Regular"), url("./assets/fonts/BCSans/BCSans-Regular.woff") format("woff");
+  /* Chrome 6+, Firefox 3.6+, IE 9+, Safari 5.1+ */
+}
+
+/* BCSans-700 - latin-ext_latin */
+@font-face {
+  font-family: "BC Sans";
+  font-style: normal;
+  font-weight: 700;
+  src: local("BC Sans Bold"), local("BCSans-Bold"), url("./assets/fonts/BCSans/BCSans-Bold.woff") format("woff");
+  /* Chrome 6+, Firefox 3.6+, IE 9+, Safari 5.1+ */
+}
+
+:root {
+  font-family: BC Sans, Helvetica Neue Light, Helvetica Neue, Helvetica, Arial, Lucida Grande, sans-serif;
+  --font-family-bold: BC Sans Bold, Helvetica Neue Light, Helvetica Neue, Helvetica, Arial, Lucida Grande, sans-serif;
+
+  /*font-family: Inter, Avenir, Helvetica, Arial, sans-serif;*/
+  font-size: 16px;
+  line-height: 24px;
+  font-weight: 400;
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-text-size-adjust: 100%;
+
+  color: #ffffff;
+  background-color: #20262e !important;
+}
+
+a {
+  font-weight: 500;
+  color: #646cff;
+  text-decoration: inherit;
+}
+a:hover {
+  color: #535bf2;
+}
+
+body {}
+
+h1 {
+  font-size: 3.2em;
+  line-height: 1.1;
+}
+
+button {
+  border-radius: 8px;
+  border: 1px solid transparent;
+  padding: 0.6em 1.2em;
+  font-size: 1em;
+  font-weight: 500;
+  font-family: inherit;
+  background-color: #1a1a1a;
+  cursor: pointer;
+  transition: border-color 0.25s;
+}
+button:hover {
+  border-color: #646cff;
+}
+button:focus,
+button:focus-visible {
+  outline: 4px auto -webkit-focus-ring-color;
+}
+
+/* Progress spinner overlay */
+.progress-spinner {
+  position: fixed;
+  z-index: 999;
+  height: 2em;
+  width: 2em;
+  overflow: visible;
+  margin: auto;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+}
+
+/* Progress spinner: Transparent Overlay */
+.progress-spinner:before {
+  content: '';
+  display: block;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0,0,0,0.53);
+}
+
+.form-field-container {
+  flex-direction: column;
+  display: flex;
+  text-align: start;
+}
+
+.radio-toggle .p-button {
+  background: #FFFFFF !important;
+  border: 1px solid #4e555b !important;
+  color: #4e555b !important;
+}
+
+.radio-toggle .p-button.p-highlight {
+  background: #4e555b !important;
+  border-color: #4e555b !important;
+  color: #ffffff !important;
+}
+
+.p-splitbutton-menubutton {
+  border-radius: 0 4px 4px 0;
+}
+
+.error {
+  color: orangered;
+  padding: 1px;
+  margin: 1px;
+}
+
+.p-toast, .p-menubar-root-list {
+  z-index: 999 !important;
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    color: #213547;
+    background-color: #ffffff;
+  }
+  a:hover {
+    color: #747bff;
+  }
+  button {
+    background-color: #f9f9f9;
+  }
+}
