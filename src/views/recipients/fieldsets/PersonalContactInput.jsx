@@ -49,7 +49,6 @@ export default function PersonalContactInput() {
             header={
             <>Personal Contact Information {complete && <Tag severity={'success'} value={'Complete'} /> } </>
         }>
-        >
             <div className="container">
                 <div className="grid">
                     <div className={'col-12 form-field-container'}>
