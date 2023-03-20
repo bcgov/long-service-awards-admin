@@ -37,7 +37,6 @@ function UserLogin() {
     // submit login credentials / redirect to dashboard
     const onSubmit = async (data) => {
         const isLoggedIn = await auth.login(data);
-        console.log(isLoggedIn)
         reset();
         if (isLoggedIn) navigate('/')
     };

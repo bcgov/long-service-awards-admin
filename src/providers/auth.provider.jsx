@@ -41,8 +41,9 @@ function AuthProvider(props) {
 
     useEffect(() => {
         api.get('/auth/user')
-            .then(([error, {_, result}]) => {
-                if (error) status.setMessage(error)
+            .then(([error, res]) => {
+                const {result} = res || {};
+                if (error) status.setMessage('authenticate')
                 setData(result);
             }).finally(() => {})
     }, []);

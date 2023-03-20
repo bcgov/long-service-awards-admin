@@ -37,6 +37,8 @@ export default function UserRegister({callback}) {
     const onSubmit = async (data) => {
         await auth.register(data);
         reset();
+        // reload window
+        window.location.reload();
         callback();
     };
 

@@ -104,7 +104,6 @@ export default function RecipientList() {
                 const {total_filtered_records, recipients} = results || {};
                 setRecipients(recipients)
                 setTotalFilteredRecords(total_filtered_records);
-                console.log(results)
             }).finally(() => {
             setLoading(false)
         });

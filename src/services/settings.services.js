@@ -34,6 +34,16 @@ const schemaData = {
   ],
   messages: [
     {
+      value: "authenticate",
+      text: {
+        severity: "error",
+        summary: "Authentication Failed",
+        detail: "You could not be authenticated.",
+        sticky: true,
+        closable: true,
+      },
+    },
+    {
       value: "register",
       text: {
         severity: "success",
