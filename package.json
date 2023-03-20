@@ -10,6 +10,12 @@
     "start": "node app.js"
   },
   "dependencies": {
+    "connect-history-api-fallback": "^2.0.0",
+    "cookie-parser": "^1.4.6",
+    "cors": "^2.8.5",
+    "express": "^4.18.2",
+    "winston": "^3.8.2",
+    "dotenv": "^16.0.3",
     "primereact": "^8.7.3",
     "primeicons": "^6.0.1",
     "primeflex": "^3.3.0",
