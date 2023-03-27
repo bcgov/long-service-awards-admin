@@ -6,14 +6,14 @@
  */
 
 import { useEffect, useState} from "react";
-import {Controller, useFormContext} from "react-hook-form";
+import {Controller, useFormContext, useWatch} from "react-hook-form";
 import { InputText } from "primereact/inputtext";
-import validate, {matchers, validators} from "@/services/validation.services.js";
+import {matchers} from "@/services/validation.services.js";
 import {Dropdown} from "primereact/dropdown";
 import {Panel} from "primereact/panel";
 import {useAPI} from "@/providers/api.provider.jsx";
 import classNames from 'classnames';
-import {Tag} from "primereact/tag";
+import FieldsetHeader from "@/components/common/FieldsetHeader.jsx";
 
 /**
  * Recipient Profile Information
@@ -21,42 +21,29 @@ import {Tag} from "primereact/tag";
  * organization, branch, personal phone, personal email
  */
 
-export default function ProfileInput() {
+export default function ProfileInput({validate}) {
     const { control, getValues } = useFormContext();
     const api = useAPI();
     const [organizations, setOrganizations] = useState([]);
     const [complete, setComplete] = useState(false);
 
     // update local ministry selection state
-    // - previous service pins only available to select organizations
+    // - get organizations allowed for user
     useEffect(() => {
-        api.getOrganizations().then(setOrganizations).catch(console.error);
+        api.getOrganizationsUser().then(setOrganizations).catch(console.error);
     }, []);
 
-    // validate fieldset
-    const validation = () => {
-        setComplete(validate([
-            {key: "first_name", validators: [validators.required]},
-            {key: "last_name", validators: [validators.required]},
-            {key: "office_email", validators: [validators.required, validators.email]},
-            {key: "personal_email", validators: [validators.email]},
-            {key: "office_phone",  validators: [validators.phone]},
-        ], getValues('contact')) && validate([
-            {key: "employee_number", validators: [validators.required, validators.employeeNumber]},
-            {key: "organization", validators: [validators.required]},
-            {key: "division", validators: [validators.required]},
-            {key: "branch", validators: [validators.required]},
-        ], getValues()));
-    };
-    useEffect(() => validation, [getValues()]);
+    // auto-validate fieldset
+    useEffect(() => {
+        setComplete(validate(getValues()) || false);
+    }, [useWatch()]);
 
     // Note: To fix error handling to make sure naming convention works
     return <Panel
-        onClick={validation}
         collapsed
         toggleable
         className={'mb-3'}
-        header={<>Profile Details {complete && <Tag severity={'success'} value={'Complete'} /> } </>}
+        headerTemplate={FieldsetHeader('Profile', complete)}
     >
         <div className="container">
             <div className="grid">
@@ -235,6 +222,7 @@ export default function ProfileInput() {
                                     placeholder={`Recipient\'s division`}
                                 />
                                 { invalid && <p className="error">{error.message}</p> }
+                                <small>No acronyms, please spell the name in full.</small>
                             </>
                         )}
                     />
@@ -256,6 +244,7 @@ export default function ProfileInput() {
                                     placeholder={`Recipient\'s branch`}
                                 />
                                 { invalid && <p className="error">{error.message}</p> }
+                                <small>No acronyms, please spell the name in full.</small>
                             </>
                         )}
                     />

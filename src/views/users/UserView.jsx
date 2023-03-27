@@ -9,7 +9,7 @@ import {Panel} from "primereact/panel";
 import {Tag} from "primereact/tag";
 
 /**
- * Recipient Profile Details
+ * Model data display component
  */
 
 export default function UserView({data}) {

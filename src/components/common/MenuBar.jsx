@@ -70,11 +70,11 @@ function MenuBar() {
     ];
 
     // authorized menu items
-    let protectItems = [];
+    let protectedItems = [];
 
     // add protected authorized menu
     if (isAuthorized) {
-        protectItems.push.apply(protectItems,
+        protectedItems.push.apply(protectedItems,
             [
                 {
                     label:'Recipients',
@@ -91,7 +91,7 @@ function MenuBar() {
 
     // add protected admin menu
     if (isAdmin) {
-        protectItems.push.apply(protectItems,
+        protectedItems.push.apply(protectedItems,
             [
                 {
                     label:'Awards',
@@ -107,13 +107,18 @@ function MenuBar() {
                     icon:'pi pi-fw pi-users',
                     url: `${import.meta.env.LSA_APPS_ADMIN_URL}/users`
                 },
+                {
+                    label:'Organizations',
+                    icon:'pi pi-fw pi-building\n',
+                    url: `${import.meta.env.LSA_APPS_ADMIN_URL}/organizations`
+                },
             ]
         )
     }
 
     // add protected super-admin menu
     if (isSuperAdmin) {
-        protectItems.push.apply(protectItems,
+        protectedItems.push.apply(protectedItems,
             [
                 {
                     label:'Settings',
@@ -125,7 +130,8 @@ function MenuBar() {
                         },
                         {
                             label:'Global Settings',
-                            icon:'pi pi-fw pi-cog'
+                            icon:'pi pi-fw pi-cog',
+                            url: `${import.meta.env.LSA_APPS_ADMIN_URL}/settings`
                         },
 
                     ]
@@ -139,7 +145,7 @@ function MenuBar() {
         items.push.apply(items,
             [{
                 label:'Menu',
-                items: protectItems
+                items: protectedItems
             }]
         )
     }

@@ -5,12 +5,13 @@
  * MIT Licensed
  */
 
-import { Controller, useFormContext } from "react-hook-form";
+import {Controller, useFormContext, useWatch} from "react-hook-form";
 import classNames from "classnames";
 import {Checkbox} from "primereact/checkbox";
 import {Calendar} from "primereact/calendar";
 import {convertDate} from "@/services/validation.services.js";
 import {Panel} from "primereact/panel";
+import FieldsetHeader from "@/components/common/FieldsetHeader.jsx";
 
 /**
  * Retirement date input reusable component.
@@ -26,9 +27,15 @@ export default function RetirementInput() {
     const endYear = new Date(year, 11, 31);
 
     // set local states
-    const { control, setValue, getValues } = useFormContext();
+    const { control, setValue } = useFormContext();
+    const isRetiring = useWatch({ name: 'retirement' });
 
-    return <Panel className={'mb-3'} header={<>Retirement Date</>}>
+    return <Panel
+        toggleable
+        collapsed={true}
+        className={'mb-3'}
+        headerTemplate={FieldsetHeader('Retirement Date')}
+    >
         <div className="container">
             <p>Has the recipient retired or is to retire this year?</p>
             <div className="grid">
@@ -51,7 +58,7 @@ export default function RetirementInput() {
                                 />
                             )}
                         />
-                        <label className={'m-1'} htmlFor={`retirement`}>Yes, I am retiring this year</label>
+                        <label className={'m-1'} htmlFor={`retirement`}>Recipient is retiring this year</label>
                     </div>
                 </div>
                 <div className={'col-12 form-field-container'}>
@@ -64,7 +71,7 @@ export default function RetirementInput() {
                         render={({ field, fieldState: {invalid, error} }) => (
                             <>
                             <Calendar
-                                disabled={!getValues('retirement')}
+                                disabled={!isRetiring}
                                 id={field.name}
                                 aria-describedby={`retirement_date-help`}
                                 className={ classNames('m-1', {"p-invalid": error})}

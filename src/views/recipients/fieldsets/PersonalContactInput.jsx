@@ -5,14 +5,15 @@
  * MIT Licensed
  */
 
-import {Controller, useFormContext} from "react-hook-form";
+import {Controller, useFormContext, useWatch} from "react-hook-form";
 import classNames from "classnames";
-import validate, {matchers, validators} from "@/services/validation.services.js";
+import {matchers} from "@/services/validation.services.js";
 import {InputMask} from "primereact/inputmask";
 import {Panel} from "primereact/panel";
 import AddressInput from "@/views/recipients/fieldsets/AddressInput.jsx";
 import {Tag} from "primereact/tag";
 import {useEffect, useState} from "react";
+import FieldsetHeader from "@/components/common/FieldsetHeader.jsx";
 
 /**
  * Contact Details Reusable component.
@@ -20,35 +21,23 @@ import {useEffect, useState} from "react";
  * organization, branch, personal phone, personal email
  */
 
-export default function PersonalContactInput() {
+export default function PersonalContactInput({validate}) {
     const { control, getValues } = useFormContext();
     const [complete, setComplete] = useState(false);
 
     // validate fieldset
-    const validation = () => {
-        const { contact } = getValues() || {};
-        const {personal_address} = contact || {};
-        setComplete(validate([
-            {key: "personal_phone", validators: [validators.phone]},
-        ], contact) && validate([
-            { key: "street1", validators: [validators.required] },
-            { key: "community", validators: [validators.required] },
-            { key: "province", validators: [validators.required] },
-            { key: "postal_code", validators: [validators.required, validators.postal_code] },
-        ], personal_address));
-    };
-    useEffect(() => validation, [getValues('contact')]);
+    useEffect(() => {
+        setComplete(validate(getValues()) || false);
+    }, [useWatch({name: 'contact'})]);
 
     // Note: To fix error handling to make sure naming convention works
     return <>
         <Panel
-            onClick={validation}
             collapsed
             toggleable
             className={'mb-3'}
-            header={
-            <>Personal Contact Information {complete && <Tag severity={'success'} value={'Complete'} /> } </>
-        }>
+            headerTemplate={FieldsetHeader('Personal Contact Info', complete)}
+        >
             <div className="container">
                 <div className="grid">
                     <div className={'col-12 form-field-container'}>

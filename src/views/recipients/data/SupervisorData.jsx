@@ -9,7 +9,7 @@ import {Panel} from "primereact/panel";
 import {convertPhone} from "@/services/utils.services.js";
 
 /**
- * Recipient Profile Details
+ * Model data display component
  */
 
 export default function SupervisorData({data}) {

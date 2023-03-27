@@ -13,7 +13,7 @@ import {ConfirmDialog} from "primereact/confirmdialog";
 import {Dialog} from "primereact/dialog";
 import {SplitButton} from "primereact/splitbutton";
 
-const EditToolbar = ({loader=()=>{}, view=()=>{}, save=()=>{}, remove=()=>{}}, options=null) => {
+const EditToolbar = ({loader=()=>{}, view=()=>{}, save=()=>{}, remove=null, options=null}) => {
 
     const user = useUser();
     // const auth = useAuth();
@@ -78,17 +78,21 @@ const EditToolbar = ({loader=()=>{}, view=()=>{}, save=()=>{}, remove=()=>{}}, o
                 label:'Edit',
                 icon:'pi pi-fw pi-pencil',
                 command: _showEdit
-            },
-            {
-                label:'Delete',
-                icon:'pi pi-fw pi-trash',
-                command: _showDelete
             }
     ];
 
+    // include delete operation
+    if (remove) {
+        items.push({
+            label:'Delete',
+            icon:'pi pi-fw pi-trash',
+            command: _showDelete
+        })
+    }
+
     // include options tool
     if (options) {
-        items.push.apply({
+        items.push({
             label:'Options',
             icon:'pi pi-fw pi-cog',
             command: _showOptions

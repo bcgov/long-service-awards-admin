@@ -174,6 +174,17 @@ function APIProvider(props) {
     }
 
     /**
+     *  Get active awards
+     *
+     * */
+
+    const getActiveAwards = async () => {
+        const [_, res] = await api.get(`/awards/filter/active/true`)
+        const {result} = res || {};
+        return result;
+    }
+
+    /**
      *  Get award by ID
      *
      * */
@@ -182,6 +193,15 @@ function APIProvider(props) {
         const [_, res] = await api.get(`/awards/view/${id}`)
         const {result} = res || {};
         return result;
+    }
+
+    /**
+     *  Create new award
+     *
+     * */
+
+    const createAward = async (data) => {
+        return await api.post(`/awards/create`, data);
     }
 
     /**
@@ -199,9 +219,8 @@ function APIProvider(props) {
      *
      * */
 
-    const removeAward = async (data) => {
-        const {id} = data || {};
-        return await api.get(`/awards/delete/${id}`, data);
+    const removeAward = async (id) => {
+        return await api.get(`/awards/delete/${id}`);
     }
 
     /**
@@ -227,14 +246,77 @@ function APIProvider(props) {
     }
 
     /**
-     * Get list of participating ministries and agencies (filtered by user settings)
+     * Get list of participating ministries and agencies (includes inactive organizations)
+     * - not filtered
      *
      * */
 
     const getOrganizations = async () => {
+        const [_, res] = await api.get(`settings/organizations/list`);
+        const {result} = res || {};
+        return result;
+    }
+
+    /**
+     * Get list of participating ministries and agencies (includes inactive organizations)
+     * - list is filtered for ministry contacts
+     *
+     * */
+
+    const getOrganizationsUser = async () => {
         const [_, res] = await api.get(`settings/organizations/list/user`);
         const {result} = res || {};
         return result;
+    }
+
+    /**
+     * Get list of active participating ministries and agencies (filtered by active)
+     *
+     * */
+
+    const getActiveOrganizations = async () => {
+        const [_, res] = await api.get(`settings/organizations/filter/active/true`);
+        const {result} = res || {};
+        return result;
+    }
+
+    /**
+     *  Get org by ID
+     *
+     * */
+
+    const getOrganization = async (id) => {
+        const [_, res] = await api.get(`settings/organizations/view/${id}`)
+        const {result} = res || {};
+        return result;
+    }
+
+    /**
+     *  Create new org
+     *
+     * */
+
+    const createOrganization = async (data) => {
+        return await api.post(`/settings/organizations/create`, data);
+    }
+
+    /**
+     * Update org record
+     *
+     * */
+
+    const saveOrganization = async (data) => {
+        const {id} = data || {};
+        return await api.post(`/settings/organizations/update/${id}`, data);
+    }
+
+    /**
+     * Delete org record
+     *
+     * */
+
+    const removeOrganization = async (id) => {
+        return await api.get(`/settings/organizations/delete/${id}`);
     }
 
     /**
@@ -282,14 +364,13 @@ function APIProvider(props) {
     }
 
     /**
-     * Get model schema
-     *
+     * Send templated mail message
+     * @param {String} templateID
+     * @param {Object} data
      * */
 
-    const getSchema = async (model) => {
-        const [_, res] = await api.get(`settings/${model}/schema`);
-        const {result} = res || {};
-        return result;
+    const sendMail = async (templateID, data) => {
+        return await api.post(`mail/send/${templateID}`, data);
     }
 
     return (
@@ -309,15 +390,23 @@ function APIProvider(props) {
                 getMilestones,
                 getQualifyingYears,
                 getOrganizations,
+                getOrganizationsUser,
+                getActiveOrganizations,
+                getOrganization,
+                createOrganization,
+                saveOrganization,
+                removeOrganization,
                 getProvinces,
                 getCommunities,
                 getAwards,
+                getActiveAwards,
                 getAward,
+                createAward,
                 saveAward,
                 removeAward,
                 getPecsfCharities,
                 getPecsfRegions,
-                getSchema
+                sendMail
             }), [])} {...props} />
     )
 

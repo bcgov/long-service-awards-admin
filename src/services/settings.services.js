@@ -5,33 +5,7 @@
  * MIT Licensed
  */
 
-import validate, {validators} from "@/services/validation.services.js";
-
 const schemaData = {
-  milestones: [
-    { value: 5, text: "5 years" },
-    { value: 10, text: "10 years" },
-    { value: 15, text: "15 years" },
-    { value: 20, text: "20 years" },
-    { value: 25, text: "25 years" },
-    { value: 30, text: "30 years" },
-    { value: 35, text: "35 years" },
-    { value: 40, text: "40 years" },
-    { value: 45, text: "45 years" },
-    { value: 50, text: "50 years" },
-  ],
-  delegatedFormFields: [
-    { key: "employee", label: "Employee" },
-    { key: "first_name", label: "First Name", validators: [validators.required] },
-    { key: "last_name", label: "Last Name", validators: [validators.required] },
-    { key: "office_email", label: "Government Email", validators: [validators.required, validators.email] },
-    { key: "employee_number", label: "Employee Number", validators: [validators.required] },
-    { key: "organization", label: "Ministry / Organization", validators: [validators.required]},
-    { key: "service_years", label: "Current Years of Service", validators: [validators.required] },
-    { key: "milestone", label: "Current Milestone", validators: [validators.required] },
-    { key: "qualifying_year", label: "Milestone Qualifying Year", validators: [validators.required] },
-    { key: "prior_milestones", label: "Prior Unclaimed Milestones" },
-  ],
   messages: [
     {
       value: "authenticate",
@@ -146,7 +120,6 @@ const schemaData = {
         sticky: true,
       },
     },
-
     {
       value: "saveSuccess",
       text: {
@@ -163,6 +136,36 @@ const schemaData = {
         summary: "Award Selected!",
         detail: "Award options confirmed.",
         life: 3000
+      },
+    },
+    {
+      value: "mail",
+      text: {
+        severity: "success",
+        summary: "Sending Mail",
+        detail: "Sending email messages...",
+        sticky: true,
+        closable: false,
+        life: 5000
+      },
+    },
+    {
+      value: "mailSuccess",
+      text: {
+        severity: "success",
+        summary: "Mail Sent Successfully!",
+        detail: "Email message was sent successfully.",
+        life: 3000
+      },
+    },
+    {
+      value: "mailError",
+      text: {
+        severity: "warn",
+        summary: "Mail Send Failed",
+        detail: "Email message could not be sent.",
+        sticky: true,
+        closable: true
       },
     },
   ]

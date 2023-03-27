@@ -15,8 +15,6 @@ import "primeicons/primeicons.css";
 import "primeflex/primeflex.css";
 import "primereact/resources/themes/bootstrap4-dark-blue/theme.css";
 import "./index.css";
-
-// view components
 import NotFound from "@/components/common/NotFound.jsx";
 import ServerError from "@/components/common/ServerError.jsx";
 import UserLogin from "@/views/users/UserLogin.jsx";
@@ -27,6 +25,8 @@ import RecipientList from "@/views/recipients/RecipientList";
 import RecipientEdit from "@/views/recipients/RecipientEdit.jsx";
 import UserList from "@/views/users/UserList";
 import AwardList from "@/views/awards/AwardList";
+import SettingList from "@/views/settings/SettingList";
+import OrganizationList from "@/views/organizations/OrganizationList";
 
 // init main router
 const router = createBrowserRouter([
@@ -85,9 +85,15 @@ const router = createBrowserRouter([
                 </ProtectedRoute>,
             },
             {
+                path: "organizations",
+                element: <ProtectedRoute authorizedRoles={['administrator']}>
+                    <OrganizationList />
+                </ProtectedRoute>,
+            },
+            {
                 path: "settings",
                 element: <ProtectedRoute authorizedRoles={['super-administrator']}>
-                    <h1>Settings (In Development)</h1>
+                    <SettingList />
                 </ProtectedRoute>,
             },
             {

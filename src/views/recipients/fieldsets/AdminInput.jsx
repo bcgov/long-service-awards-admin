@@ -5,21 +5,11 @@
  * MIT Licensed
  */
 
-import {useEffect, useState} from "react";
-import {Controller, useFormContext, useWatch} from "react-hook-form";
-import {Dialog} from "primereact/dialog";
-import AwardOptionsInput from "@/views/recipients/fieldsets/AwardOptionsInput.jsx";
-import {DataView, DataViewLayoutOptions} from "primereact/dataview";
-import {Skeleton} from "primereact/skeleton";
-import fallbackImg from "@/assets/images/bclogo.jpg";
-import {Button} from "primereact/button";
+import {Controller, useFormContext} from "react-hook-form";
 import classNames from "classnames";
-import {useAPI} from "@/providers/api.provider.jsx";
-import {useStatus} from "@/providers/status.provider.jsx";
 import {Panel} from "primereact/panel";
-import {Message} from "primereact/message";
-import {InputTextarea} from "primereact/inputtextarea";
-import {InputText} from "primereact/inputtext";
+import FieldsetHeader from "@/components/common/FieldsetHeader.jsx";
+import {Editor} from "primereact/editor";
 
 
 /**
@@ -35,24 +25,29 @@ export default function AdminInput() {
     return <Panel
         toggleable
         collapsed={true}
-        header="Administration Notes"
+        headerTemplate={FieldsetHeader('Administrative Notes')}
         className={'mb-3'}
     >
         <div className="col-12 form-field-container">
-            <label htmlFor={'notes'}>Notes</label>
             <Controller
                 name={'notes'}
                 control={control}
                 render={({ field, fieldState: {invalid, error} }) => (
                     <>
-                        <InputTextarea
-                            autoResize
+                        <Editor
                             id={field.name}
                             value={field.value || ''}
+                            onTextChange={(e) => field.onChange(e.htmlValue)}
+                            headerTemplate={<span className="ql-formats">
+                                        <button className="ql-bold" aria-label="Bold"></button>
+                                        <button aria-label="Ordered List"
+                                                className="ql-list" value="ordered"></button>
+                                        <button aria-label="Unordered List"
+                                                className="ql-list" value="bullet"></button>
+                                    </span>}
                             className={classNames('w-full', {"p-invalid": error})}
+                            style={{ height: '320px' }}
                             aria-describedby={`award-description-help`}
-                            onChange={(e) => field.onChange(e.target.value)}
-                            placeholder={`Administrative notes for recipient record.`}
                         />
                         { invalid && <p className="error">{error.message}</p> }
                     </>

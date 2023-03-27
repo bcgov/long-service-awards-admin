@@ -5,7 +5,6 @@
  * MIT Licensed
  */
 
-import PageHeader from "@/components/common/PageHeader.jsx";
 import {useStatus} from "@/providers/status.provider.jsx";
 import FormContext from "@/components/common/FormContext";
 
@@ -21,12 +20,12 @@ export default function DataEdit({loader, save, remove, defaults, children}) {
     const _handleDelete = async (id) => {
         try {
             const [error, result] = await remove(id);
-            if (error) status.setMessage({message: "Error: Could Not Delete Record", severity: "danger"});
-            else status.setMessage({message: "Record Deleted!", severity: "success"});
+            if (error) status.setMessage('deleteError');
+            else status.setMessage('delete');
             if (!error && result) return result;
         } catch (error) {
             status.clear();
-            status.setMessage({message: "Error: Could Not Create New Record", severity: "danger"});
+            status.setMessage('deleteError');
         }
     }
 
@@ -54,7 +53,7 @@ export default function DataEdit({loader, save, remove, defaults, children}) {
             defaults={defaults}
             loader={_loader}
             save={_handleSave}
-            remove={_handleDelete}
+            remove={remove ? _handleDelete : null}
         >
             {children}
         </FormContext>

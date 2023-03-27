@@ -14,7 +14,7 @@ import {useUser} from "@/providers/user.provider.jsx";
 import {formatDate} from "@/services/utils.services.js";
 
 /**
- * Panel Header for common component management in registration flow
+ * Inherited model component
  */
 
 export default function UserList() {
@@ -43,7 +43,7 @@ export default function UserList() {
                     <div key={organization.name} className={'col-12'}>{organization.abbreviation}</div>
                 )
                 : <div className={'col-12'}>-</div>
-            }</div>
+        }</div>
     }
 
     // build edit form template
@@ -120,10 +120,12 @@ export default function UserList() {
     ];
 
     return <DataList
-            schema={schema}
-            loader={api.getUsers}
-            remove={api.removeUser}
-            edit={editTemplate}
-            view={viewTemplate}
-        />
+        idKey={'id'}
+        title={'Users'}
+        schema={schema}
+        loader={api.getUsers}
+        remove={api.removeUser}
+        edit={editTemplate}
+        view={viewTemplate}
+    />
 }

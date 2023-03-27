@@ -55,11 +55,13 @@ function UserLogin() {
     const blockedTemplate = () => {
         return isRegistrant
             ? <Button
+                className={'p-button-help'}
                 onClick={() => setShowDialog('confirmation')}
-                icon={'pi pi-lock'}
+                icon={'pi pi-lock p-button-help'}
                 label={'Account Waiting Approval'}
             />
             : <Button
+                className={'p-button-help'}
                 disabled={true}
                 icon={'pi pi-lock'}
                 label={'You Are Logged In'}
@@ -94,7 +96,7 @@ function UserLogin() {
                 <UserRegister callback={onCancel} />
             </Dialog>
 
-            <BlockUI blocked={authenticated} template={blockedTemplate}>
+            <BlockUI baseZIndex={1} blocked={authenticated} template={blockedTemplate}>
                 <div className="login-form">
                     <div className="surface-card border-round shadow-2 p-4 mb-3">
                         <p className="text-900 text-2xl font-medium mb-4 block">

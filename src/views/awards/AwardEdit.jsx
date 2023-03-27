@@ -11,35 +11,24 @@ import { InputText } from "primereact/inputtext";
 import {Panel} from "primereact/panel";
 import classNames from 'classnames';
 import {Dropdown} from "primereact/dropdown";
-import {InputTextarea} from "primereact/inputtextarea";
 import {useAPI} from "@/providers/api.provider.jsx";
 import fallbackImg from "@/assets/images/bclogo.jpg";
+import {Checkbox} from "primereact/checkbox";
+import {Editor} from "primereact/editor";
+import {InputNumber} from "primereact/inputnumber";
 
 /**
- * User Profile Information
+ * Model data edit component
  * @returns {JSX.Element}
  */
 
-export default function AwardEdit() {
+export default function AwardEdit({awardTypes}) {
 
     const api = useAPI();
     const { control, getValues } = useFormContext();
     const [milestones, setMilestones] = useState([]);
-    const awardTypes = [
-        {name: 'stationary', label: 'Stationary'},
-        {name: 'clock', label: 'Clock'},
-        {name: 'watch', label: 'Watch'},
-        {name: 'earrings', label: 'Earrings'},
-        {name: 'luggage', label: 'Luggage'},
-        {name: 'print', label: 'Print'},
-        {name: 'necklace', label: 'Necklace'},
-        {name: 'pecsf', label: 'PECSF'},
-        {name: 'other', label: 'Other'},
-        {name: 'bracelet', label: 'Bracelet'},
-        {name: 'pottery', label: 'Pottery'}
-    ];
 
-    // - previous service pins only available to select organizations
+    // load data list
     useEffect(() => {
         api.getMilestones().then(setMilestones).catch(console.error);
     }, []);
@@ -47,6 +36,28 @@ export default function AwardEdit() {
     return <Panel className={'mb-3'} header={<>Award</>}>
         <div className="container">
             <div className="grid">
+                <div className="col-12 flex align-items-center">
+                    <Controller
+                        name="active"
+                        control={control}
+                        render={({ field, fieldState: {invalid, error} }) => (
+                            <>
+                                <Checkbox
+                                    id={field.name}
+                                    inputId={field.name}
+                                    checked={field.value || false}
+                                    aria-describedby={`active-help`}
+                                    value={field.value || false}
+                                    onChange={(e) => {
+                                        field.onChange(e.checked);
+                                    }}
+                                />
+                                { invalid && <p className="error">{error.message}</p> }
+                                <label className={'m-1'} htmlFor={`active`}>Activate</label>
+                            </>
+                        )}
+                    />
+                </div>
                 <div className={'col-12 form-field-container'}>
                     <label htmlFor={'type'}>Award Type</label>
                     <Controller
@@ -70,6 +81,27 @@ export default function AwardEdit() {
                                     optionLabel="label"
                                     optionValue="name"
                                     placeholder={'Select the milestone for this award'}
+                                />
+                                { invalid && <p className="error">{error.message}</p> }
+                            </>
+                        )}
+                    />
+                </div>
+                <div className="col-12 form-field-container">
+                    <label htmlFor={'short_code'}>Short Code</label>
+                    <Controller
+                        name={'short_code'}
+                        control={control}
+                        render={({ field, fieldState: {invalid, error} }) => (
+                            <>
+                                <InputText
+                                    id={field.name}
+                                    value={field.value || ''}
+                                    maxLength={64}
+                                    className={classNames('w-full', {"p-invalid": error})}
+                                    aria-describedby={`award-short_code-help`}
+                                    onChange={(e) => field.onChange(e.target.value)}
+                                    placeholder={`Enter a short code for this award`}
                                 />
                                 { invalid && <p className="error">{error.message}</p> }
                             </>
@@ -136,36 +168,42 @@ export default function AwardEdit() {
                         }}
                         render={({ field, fieldState: {invalid, error} }) => (
                             <>
-                                <InputTextarea
-                                    autoResize
+                                <Editor
                                     id={field.name}
                                     value={field.value || ''}
+                                    onTextChange={(e) => field.onChange(e.htmlValue)}
+                                    headerTemplate={<span className="ql-formats">
+                                        <button className="ql-bold" aria-label="Bold"></button>
+                                        <button aria-label="Ordered List"
+                                                className="ql-list" value="ordered"></button>
+                                        <button aria-label="Unordered List"
+                                                className="ql-list" value="bullet"></button>
+                                    </span>}
                                     className={classNames('w-full', {"p-invalid": error})}
+                                    style={{ height: '320px' }}
                                     aria-describedby={`award-description-help`}
-                                    onChange={(e) => field.onChange(e.target.value)}
-                                    placeholder={`Enter a description for this award`}
                                 />
-                                <small>Separate paragraphs with the code <strong>\n\n</strong>.</small>
                                 { invalid && <p className="error">{error.message}</p> }
                             </>
                         )}
                     />
                 </div>
                 <div className="col-12 form-field-container">
-                    <label htmlFor={'vendor'}>Vendor Code</label>
+                    <label htmlFor={'quantity'}>Quantity</label>
                     <Controller
-                        name={'vendor'}
+                        name={'quantity'}
                         control={control}
                         render={({ field, fieldState: {invalid, error} }) => (
                             <>
-                                <InputText
+                                <InputNumber
                                     id={field.name}
-                                    value={field.value || ''}
-                                    maxLength={64}
+                                    value={field.value || -1}
+                                    min={-1}
+                                    max={9999}
                                     className={classNames('w-full', {"p-invalid": error})}
-                                    aria-describedby={`award-vendor-help`}
+                                    aria-describedby={`award-quantity-help`}
                                     onChange={(e) => field.onChange(e.target.value)}
-                                    placeholder={`Enter a vendor code for this award`}
+                                    placeholder={`Enter a quantity for this award (-1 indicated unlimited)`}
                                 />
                                 { invalid && <p className="error">{error.message}</p> }
                             </>
@@ -173,13 +211,10 @@ export default function AwardEdit() {
                     />
                 </div>
                 <div className="col-12 form-field-container">
-                    <label htmlFor={'image_url'}>Image PATH
+                    <label htmlFor={'image_url'}>Image URL
                         <div>
-                            <a
-                                target={'_blank'}
-                                href={`${import.meta.env.LSA_APPS_MAIN_SITE_URL}/${getValues('image_url')}`}
-                            >
-                                <small>{import.meta.env.LSA_APPS_MAIN_SITE_URL}/{getValues('image_url')}</small>
+                            <a target={'_blank'} href={getValues('image_url')}>
+                                <small>{getValues('image_url')}</small>
                             </a>
                         </div>
                     </label>
@@ -197,17 +232,12 @@ export default function AwardEdit() {
                                     placeholder={`Enter the image url for this award`}
                                 />
                                 { invalid && <p className="error">{error.message}</p> }
-                                <a
-                                target={'_blank'}
-                                href={`${import.meta.env.LSA_APPS_MAIN_SITE_URL}/${getValues('image_url')}`}
-                                >
                                     <img
-                                    className="w-9 sm:w-16rem xl:w-10rem shadow-2 block xl:block mx-auto border-round"
-                                    src={`${import.meta.env.LSA_APPS_MAIN_SITE_URL}/${getValues('image_url')}`}
+                                    className="m-2 w-8 mx-auto border-round"
+                                    src={getValues('image_url') || fallbackImg}
                                     onError={(e) => (e.target.src = fallbackImg)}
                                     alt={'Image Thumbnail'}
                                     />
-                                </a>
                             </>
                         )}
                     />

@@ -8,6 +8,7 @@
 import {useFormContext, useWatch} from "react-hook-form";
 import {Panel} from "primereact/panel";
 import {SelectButton} from "primereact/selectbutton";
+import FieldsetHeader from "@/components/common/FieldsetHeader.jsx";
 
 /**
  * Registration options component.
@@ -22,7 +23,12 @@ export default function RegistrationOptionsInput() {
     const previousRegistration = useWatch({control, name: "service.previous_registration"});
     const previousAward = useWatch({control, name: "service.previous_award"});
 
-    return <Panel className={'mb-3'} header={<>Registration Options</>}>
+    return <Panel
+        toggleable
+        collapsed={true}
+        className={'mb-3'}
+        headerTemplate={FieldsetHeader('Registration Options')}
+    >
         <div className="container">
             <div className="grid">
                 <div className="col-12 form-field-container">

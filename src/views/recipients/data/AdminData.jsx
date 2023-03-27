@@ -6,9 +6,10 @@
  */
 
 import {Panel} from "primereact/panel";
+import parse from 'html-react-parser';
 
 /**
- * Recipient Profile Details
+ * Model data display component
  */
 
 export default function AdminData({data}) {
@@ -21,13 +22,17 @@ export default function AdminData({data}) {
         <div className={'container'}>
             <div className={'grid'}>
                 <div className={'col-6'}>Registration Type</div>
-                <div className={'col-6'}>{status || '-'}</div>
-                <div className={'col-6'}>Delegated Registrant</div>
+                <div className={'col-6'}>{String(status).toUpperCase() || '-'}</div>
+                <div className={'col-6'}>Delegate IDIR</div>
                 <div className={'col-6'}>{user ? user.idir : '-'}</div>
                 <div className={'col-6'}>Recipient IDIR</div>
                 <div className={'col-6'}>{idir || '-'}</div>
-                <div className={'col-12'}>Notes</div>
-                <div className={'surface-hover col-12'}>{notes || ' '}</div>
+                {
+                    notes && <>
+                        <div className={'col-12'}>Notes</div>
+                        <div className={'surface-hover col-12'}>{parse(notes)}</div>
+                    </>
+                }
                 <div className={'col-6'}>Last Updated</div>
                 <div className={'col-6'}>
                     {updatedData ? updatedData.toLocaleString() : '-'}

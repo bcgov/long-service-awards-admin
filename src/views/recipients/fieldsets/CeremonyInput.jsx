@@ -8,6 +8,7 @@
 import {useFormContext, useWatch} from "react-hook-form";
 import {Panel} from "primereact/panel";
 import {SelectButton} from "primereact/selectbutton";
+import FieldsetHeader from "@/components/common/FieldsetHeader.jsx";
 
 /**
  * Ceremony Attendance component.
@@ -24,7 +25,12 @@ export default function CeremonyInput() {
         name: "service.ceremony_opt_out",
     });
 
-    return <Panel collapsed toggleable className={'mb-3'} header={<>Ceremony Attendance</>}>
+    return <Panel
+        collapsed
+        toggleable
+        className={'mb-3'}
+        headerTemplate={FieldsetHeader('Ceremony Attendance')}
+    >
         <div className="container">
             <div className="grid">
                 <div className="col-12 form-field-container">
