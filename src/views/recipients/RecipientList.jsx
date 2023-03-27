@@ -9,7 +9,6 @@
 import { useState, useEffect, Fragment } from 'react';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
-import { InputText } from 'primereact/inputtext';
 import { Button } from 'primereact/button';
 import { Calendar } from 'primereact/calendar';
 import { Tag } from 'primereact/tag';
@@ -22,6 +21,7 @@ import RecipientsSort from "@/views/recipients/RecipientsSort";
 import RecipientsFilter from "@/views/recipients/RecipientsFilter.jsx";
 import {useNavigate} from "react-router-dom";
 import RecipientView from "@/views/recipients/RecipientView";
+import {Card} from "primereact/card";
 
 export default function RecipientList() {
     // set default filter values:
@@ -58,8 +58,8 @@ export default function RecipientList() {
     const [totalFilteredRecords, setTotalFilteredRecords] = useState(0);
     const [selected, setSelected] = useState([]);
     const [selectAll, setSelectAll] = useState(false);
-    const [globalFilterValue, setGlobalFilterValue] = useState('');
     const [filters, setFilters] = useState(initFilters);
+    const [currentCycle, setCurrentCycle] = useState(null);
     const [pageState, setPageState] = useState({
         first: 0,
         rows: 10,
@@ -89,6 +89,14 @@ export default function RecipientList() {
             ...filters
         };
 
+        // get current cycle
+        api.getQualifyingYears()
+            .then((years) => {
+                const {name} = (years || []).find(y => y.current) || {};
+                setCurrentCycle(name)
+            })
+            .catch(console.error);
+
         // get records stats
         api.getRecipientStats().then((stats) => setStats(stats || {
             total_count: 0,
@@ -102,6 +110,7 @@ export default function RecipientList() {
         api.getRecipients(filter)
             .then((results) => {
                 const {total_filtered_records, recipients} = results || {};
+                // console.log(recipients)
                 setRecipients(recipients)
                 setTotalFilteredRecords(total_filtered_records);
             }).finally(() => {
@@ -159,21 +168,15 @@ export default function RecipientList() {
         setShowDialog(null);
     }
 
-    const onGlobalFilterChange = (e) => {
-        const value = e.target.value;
-        let _filters = { ...filters };
-        _filters['global'].value = value;
-        setFilters(_filters);
-        setGlobalFilterValue(value);
-    };
-
     /**
      * Column templates
      * */
 
-    const ceremonyTemplate = (rowData) => {
-        const {service} = rowData || {};
+    const statusTemplate = (rowData) => {
+        const {service, services} = rowData || {};
         const {confirmed} = service || {};
+        const previousConfirmation = (services || [])
+            .some(service => service.cycle !== currentCycle);
         const statuses = {
             assigned: {
                 label: 'Assigned',
@@ -195,6 +198,10 @@ export default function RecipientList() {
                 label: 'Registered',
                 severity: 'info'
             },
+            archived: {
+                label: 'Archived',
+                severity: 'info'
+            },
             attending: {
                 label: 'Attending',
                 severity: 'success'
@@ -208,25 +215,23 @@ export default function RecipientList() {
                 severity: 'warning'
             }
         }
+        // select the appropriate status
         const status = confirmed
-            ? statuses.registered
-            : statuses.hasOwnProperty(rowData.status)
-                ? statuses[rowData.status] : statuses.default;
+            ? statuses.registered : previousConfirmation
+                ? statuses.archived
+                : statuses.hasOwnProperty(rowData.status)
+                    ? statuses[rowData.status] : statuses.default;
 
         return <Tag value={status.label} severity={status.severity} />
     };
 
     const servicesTemplate = (rowData) => {
         const {services} = rowData || {};
-        return <>
-            {(services || []).map(({id, milestone, cycle, qualifying_year}) => {
-                return <div key={id} className={'grid w-full m-0 p-0'}>
-                    <div className={'col-4'}>{cycle}</div>
-                    <div className={'col-4'}>{milestone}</div>
-                    <div className={'col-4'}>{qualifying_year}</div>
-                </div>
-            })
-            }</>;
+        return <DataTable header={''} className={'w-full text-xs'} value={services}>
+            <Column className={'pt-0 pb-0'} field="cycle"></Column>
+            <Column className={'pt-0 pb-0'} field="milestone"></Column>
+            <Column className={'pt-0 pb-0'} field="qualifying_year"></Column>
+        </DataTable>
     };
 
     const userTemplate = (rowData) => {
@@ -270,17 +275,6 @@ export default function RecipientList() {
     const createdDateTemplate = (rowData) => {
         return formatDate(rowData.created_at);
     };
-
-    const dateFilterTemplate = (options) => {
-        return <Calendar
-            value={options.value}
-            onChange={(e) => options.filterCallback(e.value, options.index)}
-            dateFormat="mm/dd/yy"
-            placeholder="mm/dd/yyyy"
-            mask="99/99/9999"
-        />;
-    };
-
 
     /**
      * Lazy loading
@@ -333,6 +327,9 @@ export default function RecipientList() {
             <>
                 <Toolbar
                     left={<Fragment>
+                        <Card className={'m-0 p-0'} title={'Recipients'}></Card>
+                    </Fragment>}
+                    right={<Fragment>
                         <Button
                             className={'m-1'}
                             type="button"
@@ -361,17 +358,6 @@ export default function RecipientList() {
                             label="Refresh"
                             onClick={loadData}
                         />
-                    </Fragment>}
-                    right={<Fragment>
-                    <span className="p-input-icon-left">
-                    <i className="pi pi-search" />
-                    <InputText
-                        disabled={true}
-                        value={globalFilterValue}
-                        onChange={onGlobalFilterChange}
-                        placeholder="Keyword Search"
-                    />
-                </span>
                     </Fragment>}
                 />
             </>
@@ -440,7 +426,7 @@ export default function RecipientList() {
                 label="Register"
                 onClick={createRecipient}
             />}
-            rowClassName="m-0 p-0"
+            rowClassName="m-0 p-0 w-full"
             stripedRows
             rows={pageState.rows}
             rowsPerPageOptions={[10, 25, 50]}
@@ -454,7 +440,7 @@ export default function RecipientList() {
             onSelectionChange={onSelectionChange}
             selectAll={selectAll}
             onSelectAllChange={onSelectAllChange}
-            tableStyle={{ minWidth: '75rem', minHeight: '70vh' }}
+            tableStyle={{ minHeight: '70vh' }}
             header={header}
             scrollable
             scrollHeight="60vh"
@@ -525,7 +511,7 @@ export default function RecipientList() {
                 field="service.ceremony_opt_out"
                 headerStyle={{ minWidth: '8em' }}
                 bodyStyle={{ minWidth: '8em' }}
-                body={ceremonyTemplate}
+                body={statusTemplate}
             />
 
             <Column

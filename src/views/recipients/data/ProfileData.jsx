@@ -8,7 +8,7 @@
 import {Panel} from "primereact/panel";
 
 /**
- * Recipient Profile Details
+ * Model data display component
  */
 
 export default function ProfileData({data}) {

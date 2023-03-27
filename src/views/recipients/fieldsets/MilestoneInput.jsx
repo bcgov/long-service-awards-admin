@@ -14,8 +14,7 @@ import {Button} from "primereact/button";
 import {Panel} from "primereact/panel";
 import {useAPI} from "@/providers/api.provider.jsx";
 import classNames from "classnames";
-import {Tag} from "primereact/tag";
-import validate, {validators} from "@/services/validation.services.js";
+import FieldsetHeader from "@/components/common/FieldsetHeader.jsx";
 
 /**
  * Milestones reusable component.
@@ -23,7 +22,7 @@ import validate, {validators} from "@/services/validation.services.js";
  * @returns {JSX.Element} years of service, current milestone, qualifying year, prior milestones
  */
 
-export default function MilestoneInput({ threshold=5 }) {
+export default function MilestoneInput({ validate, threshold=5 }) {
 
     // load contexts / hooks
     const api = useAPI();
@@ -54,28 +53,17 @@ export default function MilestoneInput({ threshold=5 }) {
         api.getQualifyingYears().then(setQualifyingYears).catch(console.error);
     }, []);
 
-    // validate fieldset
-    const validation = () => {
-        const fields = [
-            {key: "service_years", validators: [validators.required]},
-            {key: "milestone", validators: [validators.required]},
-            {key: "qualifying_year", validators: [validators.required]}
-        ];
-        setComplete(validate(fields, getValues('service')));
-    };
-    useEffect(() => validation, [getValues('service')]);
+    // auto-validate fieldset
+    useEffect(() => {
+        setComplete(validate(getValues()) || false);
+    }, [useWatch()]);
 
     // Handle years of service change and update fields in state
     const onYearsOfServiceChange = () => {
         resetField(`service.milestone`, { defaultValue: "" });
         resetField(`service.prior_milestones`, { defaultValue: [] });
         resetField(`service.qualifying_year`, { defaultValue: "" });
-        onMilestoneChange();
     };
-
-    // Handle milestone change and update fields in state
-    // - Note that this resets the awards
-    const onMilestoneChange = () => {};
 
     // toggle service calculator
     const toggleCalculator = (e) => {
@@ -94,12 +82,11 @@ export default function MilestoneInput({ threshold=5 }) {
     };
 
     return <Panel
-        onClick={validation}
         collapsed
         toggleable
         className={'mb-3'}
-        header={<>Milestone Details {complete && <Tag severity={'success'} value={'Complete'} /> } </>}
-    >
+        headerTemplate={FieldsetHeader('Milestone', complete)}
+        >
         <div className="container">
             <div className="grid">
                 <div className={'col-12 form-field-container'}>
@@ -112,7 +99,7 @@ export default function MilestoneInput({ threshold=5 }) {
                         rules={{
                             required: "Enter the number of BCPS service years.",
                             min: { value: 5, message: "Must be at least 5 years."}
-                    }}
+                        }}
                         render={({ field, fieldState: { error} }) => (
                             <>
                                 <div className="p-inputgroup">
@@ -164,7 +151,6 @@ export default function MilestoneInput({ threshold=5 }) {
                                     value={field.value || ''}
                                     onChange={(e) => {
                                         field.onChange(e.value);
-                                        onMilestoneChange();
                                     }}
                                     aria-describedby={`milestone-help`}
                                     options={(milestones || []).filter(

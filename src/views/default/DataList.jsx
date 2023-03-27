@@ -7,22 +7,28 @@
  */
 
 import { useState, useEffect, Fragment } from 'react';
+import { FilterMatchMode } from 'primereact/api';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import { InputText } from 'primereact/inputtext';
 import { Button } from 'primereact/button';
-import { Calendar } from 'primereact/calendar';
 import {useStatus} from "@/providers/status.provider.jsx";
 import EditToolBar from "@/views/default/EditToolBar.jsx";
 import {Toolbar} from "primereact/toolbar";
+import {Card} from "primereact/card";
+import {Dialog} from "primereact/dialog";
 
-export default function DataList({schema=[], create=null, remove, edit, view, options, loader}) {
-    // set default filter values:
-    const initFilters = {
-        global: null,
-        updated_at: null,
-        created_at: null
-    };
+export default function DataList({
+                                     idKey='id',
+                                     title='Manage',
+                                     schema=[],
+                                     create=null,
+                                     remove,
+                                     edit,
+                                     view,
+                                     options,
+                                     loader
+                                 }) {
 
     const status = useStatus();
     const [loading, setLoading] = useState(false);
@@ -31,37 +37,36 @@ export default function DataList({schema=[], create=null, remove, edit, view, op
     const [selected, setSelected] = useState([]);
     const [selectAll, setSelectAll] = useState(false);
     const [globalFilterValue, setGlobalFilterValue] = useState('');
-    const [filters, setFilters] = useState(initFilters);
+    const [showDialog, setShowDialog] = useState(null);
+    const [filters, setFilters] = useState({
+        global: { value: null, matchMode: FilterMatchMode.CONTAINS },
+    });
+
+    /**
+     * Data loader
+     * */
 
     const loadData = () => {
         setLoading(true);
-
-        loader().then(console.log)
-
         // load records into view
-        loader().then(setItems)
-            .catch(console.error)
+        loader().then(data => {
+            setItems(data);
+            setTotalRecords(data.length);
+        }).catch(console.error)
             .finally(() => {
-            setLoading(false)
-        });
+                setLoading(false)
+            });
     };
-
-    /**
-     * Load data
-     * */
-
     useEffect(loadData, []);
 
-    const clearFilter = () => {
-        setFilters(initFilters);
-    };
+    /**
+     * Filters and hooks
+     * */
 
-    const showFilterDialog = () => {
-        console.log('filter')
+    const clear = () => {
+        setShowDialog(null);
+        setSelected(null);
     };
-    const applyFilter = (filterData) => {
-        console.log('filter')
-    }
 
     const onGlobalFilterChange = (e) => {
         const value = e.target.value;
@@ -71,16 +76,20 @@ export default function DataList({schema=[], create=null, remove, edit, view, op
         setGlobalFilterValue(value);
     };
 
+    /**
+     * Templates
+     * */
 
-    const dateFilterTemplate = (options) => {
-        return <Calendar
-            value={options.value}
-            onChange={(e) => options.filterCallback(e.value, options.index)}
-            dateFormat="mm/dd/yy"
-            placeholder="mm/dd/yyyy"
-            mask="99/99/9999"
-        />;
-    };
+    /**
+     * Show new record edit dialog
+     * */
+
+    const Create = () => {
+        return create(() => {
+            clear();
+            loadData();
+        });
+    }
 
     /**
      * View record data
@@ -101,22 +110,11 @@ export default function DataList({schema=[], create=null, remove, edit, view, op
     }
 
     /**
-     * Create new record
+     * Open create dialog
      * */
 
     const onCreate = async () => {
-        try {
-            status.setMessage('create');
-            // create recipient record stub and redirect
-            const [error, res] = await create();
-            const {message} = res || {};
-            if (error) status.setMessage('createError');
-            else status.setMessage(message);
-            // reload data
-            loadData()
-        } catch (error) {
-            status.setMessage('createError');
-        }
+        setShowDialog('create');
     }
 
     /**
@@ -135,22 +133,24 @@ export default function DataList({schema=[], create=null, remove, edit, view, op
 
     const onDelete = async (data) => {
         try {
-            const {id} = data || {};
-            const [error, res] = await remove(id);
-            const {message} = res || {};
+            setLoading(true);
+            const id = data.hasOwnProperty(idKey) ? data[idKey] : null;
+            const [error] = await remove(id);
             if (error) status.setMessage('deleteError');
             else {
-                status.setMessage(message);
-                // reload data
+                status.setMessage('delete');
                 loadData()
             }
         } catch (error) {
             status.setMessage('deleteError');
         }
+        finally {
+            setLoading(false);
+        }
     }
 
     /**
-     * Select recipient for action
+     * Select record for action
      * */
 
     const onSelectionChange = (event) => {
@@ -170,15 +170,16 @@ export default function DataList({schema=[], create=null, remove, edit, view, op
             <>
                 <Toolbar
                     left={<Fragment>
+                        <Card className={'m-0 p-0'} title={title}></Card>
                         { create && <Button
-                            className={'m-1'}
+                            className={'m-2'}
                             type="button"
                             icon="pi pi-plus"
                             label={`Add New`}
                             onClick={onCreate}
                         /> }
                         <Button
-                            className={'m-1'}
+                            className={'m-2'}
                             type="button"
                             icon="pi pi-sync"
                             label="Refresh"
@@ -189,34 +190,48 @@ export default function DataList({schema=[], create=null, remove, edit, view, op
                     <span className="p-input-icon-left">
                     <i className="pi pi-search" />
                     <InputText
-                        disabled={true}
                         value={globalFilterValue}
                         onChange={onGlobalFilterChange}
                         placeholder="Keyword Search"
                     />
                 </span>
                     </Fragment>
-                }
+                    }
                 />
             </>
         );
     };
 
     /**
-     * Render recipient data table
+     * Render data table
      * */
 
-    console.log(items)
-
     return <>
+        <Dialog
+            visible={showDialog === 'create'}
+            onHide={clear}
+            onClick={(e)=>{e.stopPropagation()}}
+            header={"Edit Record"}
+            position="center"
+            closable
+            maximizable
+            modal
+            breakpoints={{ '960px': '80vw' }}
+            style={{ width: '50vw' }}
+        >
+            <Create />
+        </Dialog>
         <DataTable
             value={items}
-            dataKey={"id"}
+            dataKey={idKey}
             rowClassName="m-0 p-0"
             stripedRows
             loading={loading}
             selection={selected}
             onSelectionChange={onSelectionChange}
+            filters={filters}
+            filterDisplay="row"
+            globalFilterFields={schema.map(({name}) => name)}
             selectAll={selectAll}
             onSelectAllChange={onSelectAllChange}
             tableStyle={{ minHeight: '70vh' }}
@@ -238,8 +253,8 @@ export default function DataList({schema=[], create=null, remove, edit, view, op
                         loader={loadData}
                         save={(callback) => onEdit(rowData, callback)}
                         view={() => onView(rowData)}
-                        remove={() => onDelete(rowData)}
-                        options={options ? () => onOptions(rowData) : null}
+                        remove={remove ? () => onDelete(rowData) : null}
+                        options={options ? (callback) => onOptions(rowData, callback) : null}
                     />}}
             />
             {

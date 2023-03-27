@@ -14,7 +14,7 @@ import {Message} from "primereact/message";
 import AdminData from "@/views/recipients/data/AdminData";
 
 /**
- * Panel Header for common component management in registration flow
+ * Inherited model component
  */
 
 export default function RecipientView({data}) {

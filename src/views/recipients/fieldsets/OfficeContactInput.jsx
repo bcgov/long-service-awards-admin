@@ -5,43 +5,36 @@
  * MIT Licensed
  */
 
-import { Controller, useFormContext } from "react-hook-form";
+import {Controller, useFormContext, useWatch} from "react-hook-form";
 import classNames from "classnames";
-import validate, {matchers, validators} from "@/services/validation.services.js";
+import {matchers} from "@/services/validation.services.js";
 import {InputMask} from "primereact/inputmask";
 import {Panel} from "primereact/panel";
 import AddressInput from "@/views/recipients/fieldsets/AddressInput.jsx";
 import {useEffect, useState} from "react";
 import {Tag} from "primereact/tag";
+import FieldsetHeader from "@/components/common/FieldsetHeader.jsx";
 
 /**
  * Office Contact Details Reusable component.
  * @returns office phone
  */
 
-export default function OfficeContactInput() {
+export default function OfficeContactInput({validate}) {
     const { control, getValues } = useFormContext();
     const [complete, setComplete] = useState(false);
 
-    // validate fieldset
-    const validation = () => {
-        const { contact } = getValues() || {};
-        const {office_address} = contact || {};
-        setComplete(validate([
-            { key: "street1", validators: [validators.required] },
-            { key: "community", validators: [validators.required] },
-            { key: "province", validators: [validators.required] },
-            { key: "postal_code", validators: [validators.required, validators.postal_code] },
-        ], office_address));
-    };
-    useEffect(() => validation, [getValues('contact')]);
+    // auto-validate fieldset
+    useEffect(() => {
+        setComplete(validate(getValues()) || false);
+    }, [useWatch({name: 'contact'})]);
 
     return <>
         <Panel
-            onClick={validation}
-            collapsed className={'mb-3'}
-            header={<>Office Contact Information {complete && <Tag severity={'success'} value={'Complete'} /> } </>}
+            collapsed
+            className={'mb-3'}
             toggleable
+            headerTemplate={FieldsetHeader('Office Contact Info', complete)}
         >
             <div className="container">
                 <div className="grid">

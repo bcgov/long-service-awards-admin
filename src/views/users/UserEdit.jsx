@@ -18,7 +18,7 @@ import {useUser} from "@/providers/user.provider.jsx";
 import {Dropdown} from "primereact/dropdown";
 
 /**
- * User Profile Information
+ * Model data edit component
  * @returns {JSX.Element}
  */
 

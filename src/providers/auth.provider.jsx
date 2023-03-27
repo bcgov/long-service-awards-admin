@@ -150,40 +150,56 @@ function AuthProvider(props) {
      */
 
     const updatePermissions = async (id, permissions) => {
-        return api.put(`permissions/update/${id}`, { permissions: permissions });
+        return api.post(`permissions/update/${id}`, { permissions: permissions });
     }
 
     /**
-     * Get global settings list data
+     * Get global settings as list
      *
      */
 
     const getSettings = async () => {
-        return await api.get(`options`);
+        const [_, res] = await api.get(`settings/global/list`);
+        const {result} = res || {};
+        return result;
     }
 
     /**
-     * Create new global setting for requested role
+     * Get global setting
+     *
+     */
+
+    const getSetting = async (id) => {
+        const [_, res] = await api.get(`settings/global/${id}`);
+        const {result} = res || {};
+        return result;
+    }
+
+    /**
+     * Create new global setting
      */
 
     const createSetting = async (data) => {
-        return await api.put(`options/create`, data);
+        return await api.post(`settings/global/create`, data);
     }
 
     /**
-     * Update global settings for requested role
+     * Update global setting
      */
 
-    const updateSetting = async (key, value) => {
-        return await api.put(`options/update/${key}`, value);
+    const updateSetting = async (data) => {
+        const {name} = data || {};
+        return await api.post(`settings/global/update/${name}`, data);
     }
 
     /**
-     * Update global settings for requested role
+     * Delete global setting
      */
 
     const deleteSetting = async (id) => {
-        return api.get(`options/delete/${id}`)
+        const [_, res] = api.get(`settings/delete/${id}`);
+        const {result} = res || {};
+        return result;
     }
 
 
@@ -200,6 +216,7 @@ function AuthProvider(props) {
             createSetting,
             updateSetting,
             getSettings,
+            getSetting,
             deleteSetting,
             updatePermissions
         }} {...props} />

@@ -1,6 +1,6 @@
 /*!
  * BCGEU Input fieldset
- * File: RetirementInput.js
+ * File: BCGEUInput.js
  * Copyright(c) 2023 BC Gov
  * MIT Licensed
  */
@@ -8,10 +8,11 @@
 import { Controller, useFormContext } from "react-hook-form";
 import {Checkbox} from "primereact/checkbox";
 import {Panel} from "primereact/panel";
+import FieldsetHeader from "@/components/common/FieldsetHeader.jsx";
 
 /**
  * BCGEU Member reusable component.
- * @returns years of service, current milestone, qualifying year, prior milestones,
+ * @returns {JSX.Element}
  */
 
 export default function BCGEUInput() {
@@ -19,7 +20,12 @@ export default function BCGEUInput() {
     // set local states
     const { control } = useFormContext();
 
-    return <Panel className={'mb-3'} header={<>BCGEU Membership</>}>
+    return <Panel
+        toggleable
+        collapsed={true}
+        className={'mb-3'}
+        headerTemplate={FieldsetHeader('BCGEU Membership')}
+    >
         <div className="container">
             <p>BCGEU Membership</p>
             <div className="grid">
@@ -44,7 +50,7 @@ export default function BCGEUInput() {
                                 </>
                             )}
                         />
-                        <label className={'m-1'} htmlFor={`bcgeu`}>Yes, I am a BCGEU Member</label>
+                        <label className={'m-1'} htmlFor={`bcgeu`}>Recipient is a BCGEU Member</label>
                     </div>
                 </div>
             </div>

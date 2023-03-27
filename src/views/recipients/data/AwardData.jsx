@@ -6,9 +6,10 @@
  */
 
 import {Panel} from "primereact/panel";
+import parse from "html-react-parser";
 
 /**
- * Recipient Profile Details
+ * Model data display component
  */
 
 export default function AwardData({data}) {
@@ -24,7 +25,7 @@ export default function AwardData({data}) {
                 <div className={'col-6'}>Name</div>
                 <div className={'col-6'}>{award && award.label || '-'}</div>
                 <div className={'col-6'}>Description</div>
-                <div className={'col-6'}>{award && award.description || '-'}</div>
+                <div className={'col-6'}>{award && parse(award.description) || '-'}</div>
                 {
                     (options || []).length > 0 && <div className={'col-12'}>
                         <div className={'font-bold mb-3'}>Options</div>

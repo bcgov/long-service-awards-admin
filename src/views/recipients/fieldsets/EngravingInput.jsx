@@ -24,7 +24,7 @@ export default function EngravingInput({award, control, setValue }) {
     const [engravingOption, setEngravingOption] = useState(null);
 
     // monitor item size
-    const currentItemSize = useWatch({control, name: "sizes"});
+    const currentItemSize = useWatch({control, name: "options"});
 
     /**
      * Initialize PECSF selections from form data

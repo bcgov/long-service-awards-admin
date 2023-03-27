@@ -10,12 +10,12 @@ import { useFormContext, Controller } from "react-hook-form";
 import { InputText } from "primereact/inputtext";
 import classNames from "classnames";
 import {matchers} from "@/services/validation.services.js";
-import {Panel} from "primereact/panel";
 import {Dropdown} from "primereact/dropdown";
 import {InputMask} from "primereact/inputmask";
 import {BlockUI} from "primereact/blockui";
 import {AutoComplete} from "primereact/autocomplete";
 import {useAPI} from "@/providers/api.provider.jsx";
+import {Fieldset} from "primereact/fieldset";
 
 
 /**
@@ -54,7 +54,7 @@ export default function AddressInput({id, label, pobox}) {
     }, []);
 
     return (
-        <Panel toggleable className={'mb-3'} header={<>{label} Address</>}>
+        <Fieldset toggleable className={'mb-3'} legend={<>{label} Address</>}>
             <div className="container">
                 <div className="grid">
                     <div className={'col-12 form-field-container'}>
@@ -246,6 +246,6 @@ export default function AddressInput({id, label, pobox}) {
                     </div>
                 </div>
             </div>
-        </Panel>
+        </Fieldset>
     );
 }

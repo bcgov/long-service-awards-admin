@@ -5,20 +5,23 @@
  * MIT Licensed
  */
 
-import {useEffect, useState} from "react";
+import {Fragment, useEffect, useState} from "react";
 import {useFormContext, useWatch} from "react-hook-form";
 import {Dialog} from "primereact/dialog";
 import AwardOptionsInput from "@/views/recipients/fieldsets/AwardOptionsInput.jsx";
-import {DataView, DataViewLayoutOptions} from "primereact/dataview";
-import {Skeleton} from "primereact/skeleton";
 import fallbackImg from "@/assets/images/bclogo.jpg";
 import {Button} from "primereact/button";
-import classNames from "classnames";
 import {useAPI} from "@/providers/api.provider.jsx";
-import {useStatus} from "@/providers/status.provider.jsx";
 import {Panel} from "primereact/panel";
 import {Message} from "primereact/message";
-import {Tag} from "primereact/tag";
+import {FilterMatchMode} from "primereact/api";
+import {InputText} from "primereact/inputtext";
+import {DataTable} from "primereact/datatable";
+import {Column} from "primereact/column";
+import {Dropdown} from "primereact/dropdown";
+import {Toolbar} from "primereact/toolbar";
+import AwardData from "@/views/recipients/data/AwardData";
+import FieldsetHeader from "@/components/common/FieldsetHeader.jsx";
 
 
 /**
@@ -26,13 +29,11 @@ import {Tag} from "primereact/tag";
  * @returns years of service, current milestone, qualifying year, prior milestones,
  */
 
-export default function AwardInput({save=()=>{}}) {
+export default function AwardInput() {
 
     // get context / hooks
     const { setValue, getValues, control, formState: {isLoading} } = useFormContext();
-    const status = useStatus();
     const api = useAPI();
-    const [complete, setComplete] = useState(false);
 
     // get form control / current selection data
     const currentMilestone = useWatch({control, name: "service.milestone",});
@@ -40,39 +41,44 @@ export default function AwardInput({save=()=>{}}) {
     const currentAward = useWatch({control, name: "service.awards.award",}) || {};
 
     // define local states
+    const [milestones, setMilestones] = useState([]);
     const [confirmedAward, setConfirmedAward] = useState({});
     const [showAwards, setShowAwards] = useState(false);
     const [selectedAward, setSelectedAward] = useState(null);
-    const [layout, setLayout] = useState("list");
-    const [galleryItems, setGalleryItems] = useState([]);
+    const [items, setItems] = useState([]);
+    const [globalFilterValue, setGlobalFilterValue] = useState('');
+    const [filters, setFilters] = useState({
+        global: { value: null, matchMode: FilterMatchMode.CONTAINS },
+        milestone: { value: null, matchMode: FilterMatchMode.EQUALS }
+    });
 
-    // validate fieldset
-    const validation = () => {
-        const { awards } = getValues('service') || {};
-        const { selections, award } = awards || {};
-        const { id, options } = award || {};
-        // validate award exists (no options) or award options match schema
-        // - filter selections by selected award
-        // - check that each option has a corresponding selection
-        setComplete((award || {}).hasOwnProperty('id') && award.id
-            && (options.length === 0
-                || (selections || [])
-                    .filter(({award_option}) => award_option.award === id)
-                    .every(({award_option}) => {
-                        return !!(options || []).find(({award, type}) =>
-                            (award_option || {}).hasOwnProperty('type')
-                            && award_option.type === type)
-                    })));
+    // define award filterable fields
+    const globalFields = ['type', 'milestone', 'label', 'description', 'name']
+
+    // set global filter change
+    const onGlobalFilterChange = (e) => {
+        const value = e.target.value;
+        let _filters = { ...filters };
+        _filters['global'].value = value;
+        setFilters(_filters);
+        setGlobalFilterValue(value);
     };
-    useEffect(() => validation, [getValues('service')]);
 
+    // set milestone filter change
+    const onMilestoneFilterChange = (e) => {
+        const value = e.target.value;
+        let _filters = { ...filters };
+        _filters['milestone'].value = value;
+        setFilters(_filters);
+    };
 
     /**
-     * Load awards
+     * Load active awards only for registrations
      * */
 
     useEffect(() => {
-        api.getAwards().then(setGalleryItems).catch(console.error);
+        api.getActiveAwards().then(setItems).catch(console.error);
+        api.getMilestones().then(setMilestones).catch(console.error)
     }, []);
 
     /**
@@ -116,8 +122,8 @@ export default function AwardInput({save=()=>{}}) {
         setValue('service.awards.award', selectedAward);
         setValue('service.awards.selections', selectedOptions);
         deselectAward();
-        await save(getValues());
-        status.setMessage('confirmAward')
+        // await save(getValues());
+        // status.setMessage('confirmAward')
     };
 
     /**
@@ -126,159 +132,38 @@ export default function AwardInput({save=()=>{}}) {
 
     const header = () => {
         return (
-            <div className={'grid'}>
-                <div className={'col-6'}>List of Available Awards</div>
-                <div className={'col-6'} style={{textAlign: "right"}}>
-                    <DataViewLayoutOptions layout={layout} onChange={(e) => setLayout(e.value)}/>
-                </div>
-            </div>
-        );
-    };
-
-    /**
-     * List loading placeholder
-     * */
-
-    const SkeletonList = () => {
-        return (
-            <div className="col-12">
-                <div className="flex flex-column xl:flex-row xl:align-items-start p-4 gap-4">
-                    <Skeleton className="w-9 sm:w-16rem xl:w-10rem shadow-2 h-6rem block xl:block mx-auto border-round" />
-                    <div className="flex flex-column sm:flex-row justify-content-between align-items-center xl:align-items-start flex-1 gap-4">
-                        <div className="flex flex-column align-items-center sm:align-items-start gap-3">
-                            <Skeleton className="w-8rem border-round h-2rem" />
-                            <Skeleton className="w-6rem border-round h-1rem" />
-                            <div className="flex align-items-center gap-3">
-                                <Skeleton className="w-6rem border-round h-1rem" />
-                                <Skeleton className="w-3rem border-round h-1rem" />
-                            </div>
-                        </div>
-                        <div className="flex sm:flex-column align-items-center sm:align-items-end gap-3 sm:gap-2">
-                            <Skeleton className="w-4rem border-round h-2rem" />
-                            <Skeleton shape="circle" className="w-3rem h-3rem" />
-                        </div>
-                    </div>
-                </div>
-            </div>
-        );
-    };
-
-    /**
-     * Grid loading placeholder
-     * */
-
-    const SkeletonGrid = () => {
-        return (
-            <div className="col-12 sm:col-6 lg:col-12 xl:col-4 p-2">
-                <div className="p-4 border-1 surface-border surface-card border-round">
-                    <div className="flex flex-wrap align-items-center justify-content-between gap-2">
-                        <Skeleton className="w-6rem border-round h-1rem" />
-                        <Skeleton className="w-3rem border-round h-1rem" />
-                    </div>
-                    <div className="flex flex-column align-items-center gap-3 py-5">
-                        <Skeleton className="w-9 shadow-2 border-round h-10rem" />
-                        <Skeleton className="w-8rem border-round h-2rem" />
-                        <Skeleton className="w-6rem border-round h-1rem" />
-                    </div>
-                    <div className="flex align-items-center justify-content-between">
-                        <Skeleton className="w-4rem border-round h-2rem" />
-                        <Skeleton shape="circle" className="w-3rem h-3rem" />
-                    </div>
-                </div>
-            </div>
-        );
-    };
-
-    /**
-     * Select item from list display
-     * */
-
-    const listItem = (item) => {
-        return <div className="col-12">
-            <div className="flex flex-column xl:flex-row xl:align-items-start p-4 gap-4">
-                <img
-                    className="w-9 sm:w-16rem xl:w-10rem shadow-2 block xl:block mx-auto border-round"
-                    src={`${import.meta.env.LSA_APPS_MAIN_SITE_URL}/${item.image_url}`}
-                    onError={(e) => (e.target.src = fallbackImg)}
-                    alt={item.label}
-                />
-                <div className="flex flex-column sm:flex-row justify-content-between align-items-center xl:align-items-start flex-1 gap-4">
-                    <div className="flex flex-column align-items-center sm:align-items-start gap-3">
-                        <div className="text-2xl font-bold text-900">{item.label}</div>
-                        <div style={{textAlign: 'left'}}>{item.description}</div>
-                        <div className="flex align-items-center gap-3">
-                            <span className="flex align-items-center gap-2">
-                                <i className="pi pi-tag"></i>
-                                <span className="font-semibold">{item.type}</span>
-                                <i className="pi pi-calendar"></i>
-                                <span className="font-semibold">Milestone {item.milestone}</span>
-                            </span>
-                        </div>
-                    </div>
-                    <div className="flex sm:flex-column align-content-start sm:align-items-end gap-3 sm:gap-2">
-                        <Button
-                            className={
-                                currentAward && item.id === currentAward.id
-                                || confirmedAward && item.id === confirmedAward.id
-                                    ? 'p-button-success' : ''}
-                            onClick={(e) => {selectAward(e, item)}}
-                        >
-                            {
-                                currentAward && item.id === currentAward.id
-                                || item.id === confirmedAward.id ? "Selected" : "Select"}
-                        </Button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    };
-
-    /**
-     * Select item from grid display
-     * */
-
-    const gridItem = (item) => {
-        return <div className="col-4 sm:col-6 md:col-4 lg:col-4 xl:col-4 p-2">
-            <div className="p-4 border-1 surface-border surface-card border-round">
-                <div className="flex flex-wrap align-items-center justify-content-between gap-2">
-                    <div className="flex align-items-center gap-2">
-                        <i className="pi pi-tag"></i>
-                        <span className="font-semibold">{item.type.toUpperCase()}</span>
-                    </div>
-                    <Button
-                        className={`w-95 ${
-                            currentAward && item.id === currentAward.id
-                            || confirmedAward && item.id === confirmedAward.id
-                                ? 'p-button-success' : ''}`}
-                        onClick={(e) => {selectAward(e, item)}}
-                    >
-                        {
-                            currentAward && item.id === currentAward.id
-                            || item.id === confirmedAward.id ? "Selected" : "Select Award"}
-                    </Button>
-                </div>
-                <div className="flex flex-column align-items-center gap-3 py-5">
-                    <img
-                        className="w-9 shadow-2 border-round"
-                        src={`${import.meta.env.LSA_APPS_MAIN_SITE_URL}/${item.image_url}`}
-                        onError={(e) => (e.target.src = fallbackImg)}
-                        alt={item.label}
+            <Toolbar
+                left={
+                    <Fragment><Dropdown
+                        value={filters.milestone.value}
+                        options={(milestones || []).filter(({name}) => name >= 25)}
+                        optionLabel={'label'}
+                        optionValue={'name'}
+                        onChange={onMilestoneFilterChange}
+                        placeholder={'Filter by Milestone'}
                     />
-                    <div className="text-2xl font-bold">{item.label}</div>
-                </div>
-                <div>
-                    <div style={{textAlign: 'left'}}>{item.description}</div>
-                </div>
-            </div>
-        </div>
+                    </Fragment>
+                }
+                right={
+                    <Fragment><span className="p-input-icon-left">
+                    <i className="pi pi-search" />
+                    <InputText
+                        value={globalFilterValue}
+                        onChange={onGlobalFilterChange}
+                        placeholder="Keyword Search"
+                    />
+                </span>
+                    </Fragment>}
+
+            />
+        );
     };
 
     return <Panel
-        onClick={validation}
         collapsed={!currentAward || isLoading}
         toggleable
         className={'mb-3'}
-        header={<>Award Selection {complete && <Tag severity={'success'} value={'Complete'} /> } </>}
+        headerTemplate={FieldsetHeader('Award')}
     >
         {
             currentMilestone < 25 && <Message
@@ -287,20 +172,37 @@ export default function AwardInput({save=()=>{}}) {
                 text="Recipient has a milestone that is less than 25 years."
             />
         }
-        <Button
-            className={'m-1'}
-            onClick={(e)=> {
-                e.preventDefault();
-                setShowAwards(true)}}
-        >Select Award</Button>
-        <Button
-            className={'m-1 p-button-danger'}
-            onClick={(e)=> {
-                e.preventDefault();
-                clearAward()}}
-        >Clear Award</Button>
         {
-            currentAward && currentAward.hasOwnProperty('id') && listItem(currentAward)
+            !currentMilestone && <Message
+                className={'w-full mb-3 mt-3'}
+                severity="warn"
+                text="Please select a milestone before selecting an award"
+            />
+        }
+        <Toolbar
+            left={
+                <Fragment><Button
+                    disabled={!currentMilestone}
+                    className={'m-1'}
+                    onClick={(e)=> {
+                        e.preventDefault();
+                        setShowAwards(true)}}
+                >Select Award</Button>
+                </Fragment>
+            }
+            right={
+                <Fragment><Button
+                    icon={'pi pi-trash'}
+                    className={'m-1 p-button-danger'}
+                    onClick={(e)=> {
+                        e.preventDefault();
+                        clearAward()}}
+                />
+                </Fragment>}
+
+        />
+        {
+            currentAward && currentAward.hasOwnProperty('id') && <AwardData data={getValues()} />
         }
         <Dialog
             header={"Select an Award"}
@@ -308,34 +210,79 @@ export default function AwardInput({save=()=>{}}) {
             onHide={()=>setShowAwards(false)}
             maximizable
             modal
-            style={{ minWidth: "fit-content", width: "50vw" }}
+            style={{ minWidth: "fit-content", width: "70vw" }}
         >
             <div className={`award-selection-form`}>
-                <div
-                    className={classNames(
-                        "gallery-display-items",
-                        { "grid-view-dataview": layout === "grid" },
-                        { "list-view-dataview": layout === "list" }
-                    )}
-                >
-                    <div className="card">
-                        {
-                            galleryItems.length > 0 ?
-                                <DataView
-                                    value={galleryItems}
-                                    layout={layout}
-                                    header={header()}
-                                    itemTemplate={layout === "list" ? listItem : gridItem}
-                                    rows={9}
-                                />
-                                : <DataView
-                                    value={[...Array(6).keys()]}
-                                    header={header()}
-                                    itemTemplate={layout === "list" ? SkeletonList : SkeletonGrid}
-                                    layout={layout}
-                                />
-                        }
-                    </div>
+                <div className="card">
+                    {
+                        (items || []).length > 0 &&
+                        <DataTable
+                            value={items}
+                            dataKey={'id'}
+                            rowClassName="m-0 p-0"
+                            stripedRows
+                            filters={filters}
+                            filterDisplay="row"
+                            globalFilterFields={globalFields}
+                            tableStyle={{ minHeight: '70vh' }}
+                            header={header}
+                            scrollable
+                            scrollHeight="60vh"
+                        >
+                            <Column
+                                className={'p-1'}
+                                body={(item) => {
+                                    return <Button
+                                        className={
+                                            currentAward && item.id === currentAward.id
+                                            || confirmedAward && item.id === confirmedAward.id
+                                                ? 'p-button-success' : ''}
+                                        onClick={(e) => {selectAward(e, item)}}
+                                    >
+                                        {
+                                            currentAward && item.id === currentAward.id
+                                            || item.id === confirmedAward.id ? "Selected" : "Select"}
+                                    </Button>
+                                }}
+                            />
+                            <Column
+                                className={'p-1'}
+                                body={(item) => {
+                                    return <><img
+                                        className="w-9 shadow-2 border-round"
+                                        src={item.image_url}
+                                        onError={(e) => (e.target.src = fallbackImg)}
+                                        alt={item.label}
+                                    />
+                                    </>
+                                }}
+                            />
+                            <Column
+                                className={'p-1'}
+                                header={"Label"}
+                                body={(item) => {
+                                    return <div>{item.label}</div>
+                                }}
+                            />
+                            <Column
+                                className={'p-1'}
+                                header={"Type"}
+                                body={(item) => {
+                                    return <div className="flex align-items-center gap-2">
+                                        <i className="pi pi-tag"></i>
+                                        <span className="font-semibold">{item.type.toUpperCase()}</span>
+                                    </div>
+                                }}
+                            />
+                            <Column
+                                className={'p-1'}
+                                header={"Milestone"}
+                                body={(item) => {
+                                    return <div>{item.milestone}</div>
+                                }}
+                            />
+                        </DataTable>
+                    }
                 </div>
             </div>
         </Dialog>

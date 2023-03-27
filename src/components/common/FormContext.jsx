@@ -6,8 +6,7 @@
  */
 
 import {useEffect, useMemo, useState} from "react";
-import {FormProvider, useForm, useFormState} from "react-hook-form";
-import {removeNull} from "@/services/validation.services.js";
+import {FormProvider, useForm, useFormState, useWatch} from "react-hook-form";
 import {BlockUI} from "primereact/blockui";
 import {Button} from "primereact/button";
 import {ConfirmDialog} from "primereact/confirmdialog";
@@ -24,6 +23,7 @@ import {Message} from "primereact/message";
  * @param cancel
  * @param {Object} defaults
  * @param {boolean} blocked
+ * @param validate
  * @param children
  * @returns {JSX.Element}
  */
@@ -35,17 +35,18 @@ export default function FormContext({
                                         cancel=()=>{},
                                         defaults={},
                                         blocked,
+                                        validate,
                                         children
-}) {
+                                    }) {
 
     // get context / hooks
     const status = useStatus();
     const [loading, setLoading] = useState(false);
     const [showConfirm, setShowConfirm] = useState(false);
+    const [complete, setComplete] = useState(false);
     const [formData, setFormData] = useState();
 
-    // destructure form methods (react-hook-form)
-    // - set default form values
+    // initialize form (react hook form)
     const methods = useForm({
         mode: "all",
         defaultValues: useMemo(() => { return {...defaults, ...formData} }, [formData])
@@ -58,9 +59,14 @@ export default function FormContext({
         reset,
     } = methods;
 
-    const { isDirty, errors } = useFormState({
+    const { errors } = useFormState({
         control
     });
+
+    // auto-validate form (ignore if no validation method provided)
+    useEffect(() => {
+        setComplete(!validate || validate(getValues()));
+    }, [useWatch({control})]);
 
     // load form data
     useEffect(() => {
@@ -82,10 +88,8 @@ export default function FormContext({
     // save current form data
     const _submitForm = async () => {
         setLoading(true);
-        const submissionData = Object.assign({}, getValues());
-        console.log('Saved:\n', removeNull(submissionData))
-
-        await save(removeNull(submissionData));
+        console.log('Save:', getValues())
+        await save(getValues());
         setLoading(false)
     };
 
@@ -133,7 +137,7 @@ export default function FormContext({
                         <div className={'grid'}>
                             <div className={'col-5'}>
                                 <Button
-                                    disabled={false}
+                                    disabled={!complete}
                                     className={'p-button-success w-full flex justify-content-center'}
                                     icon={'pi pi-fw pi-check'}
                                     type="submit"
@@ -152,6 +156,7 @@ export default function FormContext({
                             </div>
                             <div className={'col-2'}>
                                 <Button
+                                    disabled={!remove}
                                     type={'button'}
                                     className={'p-button-danger w-full flex justify-content-center'}
                                     icon={'pi pi-fw pi-trash'}
