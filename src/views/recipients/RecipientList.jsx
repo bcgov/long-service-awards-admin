@@ -300,6 +300,7 @@ export default function RecipientList() {
         const {id} = data || {};
         api.removeRecipient(id).then(() => {
             status.setMessage('delete');
+            loadData();
         }).catch((e) => {
             console.error(e);
             status.setMessage('deleteError');

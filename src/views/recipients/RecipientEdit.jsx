@@ -260,7 +260,7 @@ export default function RecipientEdit() {
             {
                 isAdmin && <AdminInput/>
             }
-            <MilestoneInput validate={fieldsetValidators.milestone} />
+            <MilestoneInput validate={fieldsetValidators.milestone} threshold={25} />
             <ProfileInput validate={fieldsetValidators.profile} />
             <RegistrationOptionsInput />
             <BCGEUInput />
