@@ -58,7 +58,7 @@ export default function RetirementInput() {
                                 />
                             )}
                         />
-                        <label className={'m-1'} htmlFor={`retirement`}>Recipient is retiring this year</label>
+                        <label className={'m-1'} htmlFor={`retirement`}>Recipient is retiring this year or have retired</label>
                     </div>
                 </div>
                 <div className={'col-12 form-field-container'}>

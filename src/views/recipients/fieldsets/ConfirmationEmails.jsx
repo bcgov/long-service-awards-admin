@@ -52,7 +52,7 @@ export default function ConfirmationEmails({visible=false}) {
 
     return <>
         {
-            isConfirmed && <Panel className={'mb-3'} collapsed={false} toggleable={false} header={'Send Confirmation Emails'}>
+            isConfirmed && visible && <Panel className={'mb-3'} collapsed={false} toggleable={false} header={'Send Confirmation Emails'}>
                 <Button
                     className={'w-full'}
                     onClick={_sendMail}
