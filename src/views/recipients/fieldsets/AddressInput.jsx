@@ -54,7 +54,7 @@ export default function AddressInput({id, label, pobox}) {
     }, []);
 
     return (
-        <Fieldset toggleable className={'mb-3'} legend={<>{label} Address</>}>
+        <Fieldset toggleable={false} className={'mb-3'} legend={<>{label} Address</>}>
             <div className="container">
                 <div className="grid">
                     <div className={'col-12 form-field-container'}>
