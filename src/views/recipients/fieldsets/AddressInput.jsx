@@ -239,7 +239,7 @@ export default function AddressInput({id, label, pobox}) {
                         {
                             poboxRequired && <small className="error">
                                 Note that P.O. Box is required for Victoria addresses. Please use the BC
-                                Government <a target="_blank" href="@/views/recipients/fieldsets/recipients/AddressInput.jsx">
+                                Government <a target="_blank" href="https://govposearch.pss.gov.bc.ca/">
                                 P.O. Box Lookup tool</a> for assistance.
                             </small>
                         }
