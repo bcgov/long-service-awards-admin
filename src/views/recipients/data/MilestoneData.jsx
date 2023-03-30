@@ -20,7 +20,7 @@ export default function MilestoneData({data}) {
     const {
         milestone='-',
         qualifying_year,
-        service_years, 
+        service_years,
         ceremony_opt_out,
         previous_registration,
         previous_award,
