@@ -421,7 +421,7 @@ export default function RecipientList() {
                 </DataTable>
             }
             paginatorRight={<Button
-                className={'m-1'}
+                className={'m-1 p-button-success'}
                 type="button"
                 icon="pi pi-user-plus"
                 label="Register"

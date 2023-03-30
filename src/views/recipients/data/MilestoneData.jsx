@@ -16,8 +16,16 @@ import {Column} from "primereact/column";
 
 export default function MilestoneData({data}) {
 
-    const {service, services, retirement, retirement_date, previous_award} = data || {};
-    const {milestone='-', qualifying_year, service_years, ceremony_opt_out, previous_registration, cycle} = service || {};
+    const {service, services, retirement, retirement_date} = data || {};
+    const {
+        milestone='-',
+        qualifying_year,
+        service_years, 
+        ceremony_opt_out,
+        previous_registration,
+        previous_award,
+        cycle
+    } = service || {};
     const retirementDate = retirement_date ? new Date(retirement_date) : null;
 
     return <>
