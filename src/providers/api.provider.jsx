@@ -353,6 +353,17 @@ function APIProvider(props) {
     }
 
     /**
+     * Get PECSF charity by ID
+     *
+     * */
+
+    const getPecsfCharity = async (id) => {
+        const [_, res] = await api.get(`settings/pecsf-charities/view/${id}`);
+        const {result} = res || {};
+        return result;
+    }
+
+    /**
      * Get list of PECSF regions
      *
      * */
@@ -405,6 +416,7 @@ function APIProvider(props) {
                 saveAward,
                 removeAward,
                 getPecsfCharities,
+                getPecsfCharity,
                 getPecsfRegions,
                 sendMail
             }), [])} {...props} />
