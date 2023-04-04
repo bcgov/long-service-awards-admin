@@ -78,7 +78,7 @@ export default function AwardInput() {
 
     useEffect(() => {
         api.getActiveAwards().then(setItems).catch(console.error);
-        api.getMilestones().then(setMilestones).catch(console.error)
+        api.getMilestones().then(setMilestones).catch(console.error);
     }, []);
 
     /**
