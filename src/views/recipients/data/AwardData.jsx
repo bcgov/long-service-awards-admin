@@ -19,6 +19,8 @@ export default function AwardData({data}) {
     const { award, selections } = awards || {};
     const { options } = award || {};
 
+    console.log(options, selections)
+
     return <Panel className={'mb-2 mt-2'} header={'Recipient Awards'} toggleable>
         <div className={'container'}>
             <div className={'grid'}>
@@ -31,7 +33,7 @@ export default function AwardData({data}) {
                         <div className={'font-bold mb-3'}>Options</div>
                         <div className={'container'}>
                             {
-                                (options || []).map(({id, customizable}) => {
+                                (options || []).map(({id, type, customizable}) => {
                                     const {pecsf_charity, custom_value, award_option} = selections
                                         .find(selection => {
                                             // match award option ID to selection ID
@@ -50,7 +52,14 @@ export default function AwardData({data}) {
                                             </div>
                                         }
                                         {
-                                            !pecsf_charity && !customizable && label && description &&
+                                            !pecsf_charity && type === 'pecsf-charity' &&
+                                            <div className={'grid'}>
+                                                <div className={'col-6'}>{label}</div>
+                                                <div className={'col-6'}>Donation Pool</div>
+                                            </div>
+                                        }
+                                        {
+                                            !pecsf_charity && type !== 'pecsf-charity' && !customizable && label && description &&
                                             <div className={'grid'}>
                                                 <div className={'col-6'}>{label || '-'}</div>
                                                 <div className={'col-6'}>{description || '-'}</div>
@@ -58,7 +67,7 @@ export default function AwardData({data}) {
                                             </div>
                                         }
                                         {
-                                            !pecsf_charity && customizable && description && custom_value &&
+                                            !pecsf_charity && type !== 'pecsf-charity' && customizable && description && custom_value &&
                                             <div className={'grid'}>
                                                 <div className={'col-6'}>{description || '-'}</div>
                                                 <div className={'col-6'}>{custom_value || '-'}</div>
