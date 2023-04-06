@@ -247,7 +247,7 @@ export default function RecipientEdit() {
     };
 
     return <>
-        <PageHeader heading="Edit Recipient Record" />
+        <PageHeader heading="Register Recipient" />
         <FormContext
             defaults={defaults}
             loader={_loader}

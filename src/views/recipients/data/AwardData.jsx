@@ -7,6 +7,8 @@
 
 import {Panel} from "primereact/panel";
 import parse from "html-react-parser";
+import {useEffect, useState} from "react";
+import {useAPI} from "@/providers/api.provider.jsx";
 
 /**
  * Model data display component
@@ -19,7 +21,22 @@ export default function AwardData({data}) {
     const { award, selections } = awards || {};
     const { options } = award || {};
 
-    console.log(options, selections)
+    const api = useAPI();
+
+    const [pecsfCharities, setPecsfCharities] = useState(null);
+
+    const lookupPecsfCharity = (id) => {
+        const charity = (pecsfCharities || []).find(charity => charity.id === id);
+        return typeof charity ? `${charity.label} (${charity.region})` : 'Not Found';
+    }
+
+    /**
+     * Get requested PECSF charity
+     * */
+
+    useEffect(() => {
+        api.getPecsfCharities().then(setPecsfCharities).catch(console.error);
+    }, []);
 
     return <Panel className={'mb-2 mt-2'} header={'Recipient Awards'} toggleable>
         <div className={'container'}>
@@ -43,11 +60,14 @@ export default function AwardData({data}) {
                                     const { label, description} = award_option || {};
                                     return <div key={`award-option-${id}`}>
                                         {
-                                            pecsf_charity && label &&
+                                            pecsfCharities && pecsf_charity && label &&
                                             <div className={'grid'}>
                                                 <div className={'col-6'}>{label}</div>
                                                 <div className={'col-6'}>
-                                                    {pecsf_charity.label} ({pecsf_charity.region})
+                                                    {
+                                                        pecsf_charity.hasOwnProperty('label') && pecsf_charity.hasOwnProperty('region') ?
+                                                            `${pecsf_charity.label} (${pecsf_charity.region})`
+                                                            : lookupPecsfCharity(pecsf_charity)}
                                                 </div>
                                             </div>
                                         }
