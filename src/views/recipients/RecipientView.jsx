@@ -40,7 +40,7 @@ export default function RecipientView({data, currentCycle}) {
         <ProfileData data={data} />
         <MilestoneData data={data} currentCycle={currentCycle} />
         <ContactData data={data} />
-        <AwardData data={data} />
+        <AwardData data={data} currentCycle={currentCycle} />
         <SupervisorData data={data} />
     </div>
 }
