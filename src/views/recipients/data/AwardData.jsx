@@ -67,7 +67,7 @@ export default function AwardData({data, currentCycle}) {
                                             </div>
                                         }
                                         {
-                                            type === 'pecsf-charity' && !label &&
+                                            type === 'pecsf-charity' && !pecsf_charity &&
                                             <div className={'grid'}>
                                                 <div className={'col-6'}>{label}</div>
                                                 <div className={'col-6'}>Donation Pool</div>
