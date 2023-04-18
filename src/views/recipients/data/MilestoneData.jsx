@@ -10,13 +10,14 @@ import {DataTable} from "primereact/datatable";
 import {Column} from "primereact/column";
 
 /**
- * Milestone Selection.
- * Allows user to use built in calculator to determine years of service and potential milestones.
+ * Recipient Milestone Data view
  */
 
-export default function MilestoneData({data}) {
+export default function MilestoneData({data, currentCycle}) {
 
-    const {service, services, retirement, retirement_date} = data || {};
+    const {services, retirement, retirement_date} = data || {};
+    // get current milestone service selection
+    const currentService = (services || []).find(srv => srv.cycle === currentCycle);
     const {
         milestone='-',
         qualifying_year,
@@ -25,7 +26,7 @@ export default function MilestoneData({data}) {
         previous_registration,
         previous_award,
         cycle
-    } = service || {};
+    } = currentService || {};
     const retirementDate = retirement_date ? new Date(retirement_date) : null;
 
     return <>
@@ -73,7 +74,7 @@ export default function MilestoneData({data}) {
                 </div>
             </div>
         </Panel>
-        <Panel className={'mb-2 mt-2'} header={'All Milestones'} toggleable>
+        <Panel className={'mb-2 mt-2'} header={'Milestones'} toggleable>
             <DataTable className={'w-full'} value={services}>
                 <Column field="service_years" header="YoS"></Column>
                 <Column field="milestone" header="Milestone"></Column>

@@ -83,7 +83,8 @@ function MenuBar() {
                 },
                 {
                     label:'Reports',
-                    icon:'pi pi-fw pi-list'
+                    icon:'pi pi-fw pi-list',
+                    url: `${import.meta.env.LSA_APPS_ADMIN_URL}/reports`
                 }
             ]
         )

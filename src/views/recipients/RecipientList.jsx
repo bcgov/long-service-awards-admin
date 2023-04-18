@@ -10,7 +10,6 @@ import { useState, useEffect, Fragment } from 'react';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import { Button } from 'primereact/button';
-import { Calendar } from 'primereact/calendar';
 import { Tag } from 'primereact/tag';
 import {useStatus} from "@/providers/status.provider.jsx";
 import {useAPI} from "@/providers/api.provider.jsx";
@@ -38,6 +37,7 @@ export default function RecipientList() {
         milestones: [25, 30, 35, 40, 45, 50],
         qualifying_year: null,
         ceremony: null,
+        ceremony_opt_out: null,
         confirmed: null,
         updated_at: null,
         created_at: null
@@ -172,11 +172,10 @@ export default function RecipientList() {
      * Column templates
      * */
 
-    const statusTemplate = (rowData) => {
-        const {service, services} = rowData || {};
-        const {confirmed} = service || {};
-        const previousConfirmation = (services || [])
-            .some(service => service.cycle !== currentCycle);
+    const ceremonyTemplate = (rowData) => {
+        const {services} = rowData || {};
+        const ceremonyOptOut = (services || [])
+            .some(service => service.cycle === currentCycle && service.ceremony_opt_out);
         const statuses = {
             assigned: {
                 label: 'Assigned',
@@ -194,10 +193,6 @@ export default function RecipientList() {
                 label: 'Invited',
                 severity: 'primary'
             },
-            registered: {
-                label: 'Registered',
-                severity: 'info'
-            },
             archived: {
                 label: 'Archived',
                 severity: 'info'
@@ -211,37 +206,41 @@ export default function RecipientList() {
                 severity: 'warning'
             },
             default: {
-                label: 'Draft',
-                severity: 'warning'
+                label: 'Not Assigned',
+                severity: 'secondary'
             }
         }
-        // select the appropriate status
-        const status = confirmed
-            ? statuses.registered : previousConfirmation
-                ? statuses.archived
-                : statuses.hasOwnProperty(rowData.status)
-                    ? statuses[rowData.status] : statuses.default;
+        // select the recipient status
+        // Todo: Include ceremony attendee status
+        const statusIndicator = ceremonyOptOut
+            ? statuses.declined
+            : statuses.default;
 
-        return <Tag value={status.label} severity={status.severity} />
+        return <>
+            {
+                statusIndicator &&
+                <div><Tag value={statusIndicator.label} severity={statusIndicator.severity} /></div>
+            }
+        </>
     };
 
-    const servicesTemplate = (rowData) => {
-        const {services} = rowData || {};
-        return <DataTable header={''} className={'w-full text-xs'} value={services}>
-            <Column className={'pt-0 pb-0'} field="cycle"></Column>
-            <Column className={'pt-0 pb-0'} field="milestone"></Column>
-            <Column className={'pt-0 pb-0'} field="qualifying_year"></Column>
-        </DataTable>
-    };
+    /**
+     * Column templates
+     * */
 
-    const userTemplate = (rowData) => {
-        const {user} = rowData || {};
+    const statusTemplate = (rowData) => {
+        const {services, status} = rowData || {};
+        const confirmed = (services || [])
+            .some(service => service.cycle === currentCycle && service.confirmed);
+        // const inCurrentCycle = (services || [])
+        //     .some(service => service.cycle === currentCycle);
+        const { user } = rowData || {};
         const { idir, first_name, last_name} = user || {};
         const statuses = {
-            archive: {
+            archived: {
                 label: 'Archived',
                 severity: 'info',
-                description: 'Recipient was archived from a previous cycle.'
+                description: 'Recipient is archived from a previous cycle.'
             },
             self: {
                 label: 'Self',
@@ -253,19 +252,41 @@ export default function RecipientList() {
                 severity: 'warning',
                 description: `Recipient was registered by ${idir} (${first_name + ' ' + last_name}).`
             },
+            registered: {
+                label: 'Registered',
+                severity: 'info',
+                description: 'Registration has been confirmed.'
+            },
+            validated: {
+                label: 'Validated',
+                severity: 'success',
+                description: 'Registration data has been validated.'
+            },
             default: {
-                label: 'Other',
-                severity: 'secondary',
+                label: 'In-Progress',
+                severity: 'warning',
                 description: 'Registration is in progress or incomplete.'
             }
         }
-        const status = user ? statuses.delegated :
-            statuses.hasOwnProperty(rowData.status) ? statuses[rowData.status] : statuses.default;
+        const statusIndicator = confirmed && status === 'validated'
+            ? statuses.validated
+            : confirmed
+                ? statuses.registered
+                : statuses.default;
         return <Tag
-            tooltip={status.description}
-            value={status.label}
-            severity={status.severity || 'info'}
+            tooltip={statusIndicator.description}
+            value={statusIndicator.label}
+            severity={statusIndicator.severity}
         />;
+    };
+
+    const servicesTemplate = (rowData) => {
+        const {services} = rowData || {};
+        return <DataTable header={''} className={'w-full text-xs'} value={services}>
+            <Column className={'pt-0 pb-0'} field="cycle"></Column>
+            <Column className={'pt-0 pb-0'} field="milestone"></Column>
+            <Column className={'pt-0 pb-0'} field="qualifying_year"></Column>
+        </DataTable>
     };
 
     const updatedDateTemplate = (rowData) => {
@@ -289,7 +310,7 @@ export default function RecipientList() {
      * */
 
     const onView = (data) => {
-        return <RecipientView data={data} />
+        return <RecipientView data={data} currentCycle={currentCycle} />
     }
 
     /**
@@ -463,6 +484,14 @@ export default function RecipientList() {
             />
             <Column
                 className={'p-1'}
+                header="Status"
+                field="status"
+                headerStyle={{ minWidth: '8em' }}
+                bodyStyle={{ minWidth: '8em' }}
+                body={statusTemplate}
+            />
+            <Column
+                className={'p-1'}
                 header="First Name"
                 field="contact.first_name"
                 headerStyle={{ minWidth: '10em' }}
@@ -491,7 +520,6 @@ export default function RecipientList() {
                 field="organization.abbreviation"
                 headerStyle={{ minWidth: '8em' }}
                 bodyStyle={{ minWidth: '8em' }}
-
             />
             <Column
                 className={'p-1'}
@@ -508,20 +536,10 @@ export default function RecipientList() {
             />
             <Column
                 className={'p-1'}
-                header="Status"
-                field="service.ceremony_opt_out"
+                header="Ceremony"
                 headerStyle={{ minWidth: '8em' }}
                 bodyStyle={{ minWidth: '8em' }}
-                body={statusTemplate}
-            />
-
-            <Column
-                className={'p-1'}
-                header="Reg"
-                field="user"
-                headerStyle={{ minWidth: '5em' }}
-                bodyStyle={{ minWidth: '5em' }}
-                body={userTemplate}
+                body={ceremonyTemplate}
             />
             <Column
                 className={'p-1'}
