@@ -384,6 +384,17 @@ function APIProvider(props) {
         return await api.post(`mail/send/${templateID}`, data);
     }
 
+    /**
+     * Get report data as file download
+     *
+     * */
+
+    const getReport = async (id, filename) => {
+        const [_, res] = await api.download(`reports/${id}`, filename);
+        const {result} = res || {};
+        return result;
+    }
+
     return (
         <APIContext.Provider value={
             useMemo(() => ({
@@ -418,7 +429,8 @@ function APIProvider(props) {
                 getPecsfCharities,
                 getPecsfCharity,
                 getPecsfRegions,
-                sendMail
+                sendMail,
+                getReport
             }), [])} {...props} />
     )
 

@@ -21,7 +21,7 @@ export default function AdminData({data}) {
     return <Panel className={'mb-2 mt-2'} header={'Recipient Administration'} toggleable>
         <div className={'container'}>
             <div className={'grid'}>
-                <div className={'col-6'}>Registration Type</div>
+                <div className={'col-6'}>Registration Status</div>
                 <div className={'col-6'}>{String(status).toUpperCase() || '-'}</div>
                 <div className={'col-6'}>Delegate IDIR</div>
                 <div className={'col-6'}>{user ? user.idir : '-'}</div>

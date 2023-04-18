@@ -7,6 +7,7 @@
  */
 
 import axios from "axios";
+import { saveAs } from 'file-saver';
 
 /**
  * Services to allow consuming components to subscribe to
@@ -148,21 +149,20 @@ const upload = async (route, data, callback=()=>{}) => {
  *
  * @param route
  * @param filename
- * @param callback
  * @return {Promise} [error, response]
  */
 
-const download = async (route, filename, callback) => {
-    axios.get(route, {
+const download = async (route, filename) => {
+    const [error, response] = await asyncWrapper(axios.get(route, {
         responseType: 'blob',
         baseURL: import.meta.env.LSA_APPS_API_URL,
         withCredentials: true
     })
         .then(res => {
-            // saveAs(res.data, filename);
-            return callback(null, res);
-        })
-        .catch (callback);
+            saveAs(res.data, filename);
+            return res;
+        }));
+    return handleResponse(error, response);
 }
 
 export default {

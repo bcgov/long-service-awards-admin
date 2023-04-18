@@ -27,9 +27,6 @@ function RecipientsFilter({data, confirm, cancel}) {
         global: {
             label: 'Global'
         },
-        status: {
-            label: 'Status'
-        },
         first_name: {
             label: 'First Name',
             input: 'text'
@@ -73,9 +70,31 @@ function RecipientsFilter({data, confirm, cancel}) {
         ceremony: {
             label: 'Ceremony',
         },
+        ceremony_opt_out: {
+            label: 'Ceremony Opt Out',
+            input: 'select',
+            valueKey: 'value',
+            labelKey: 'name',
+            options: [{name: 'Yes', value: true}, {name: 'No', value: false}, {name: 'Ignore', value: null}]
+        },
         confirmed: {
             label: 'Confirmed',
-            input: 'switch'
+            input: 'select',
+            valueKey: 'value',
+            labelKey: 'name',
+            options: [{name: 'Yes', value: true}, {name: 'No', value: false}, {name: 'Ignore', value: null}]
+        },
+        status: {
+            label: 'Ceremony Opt Out',
+            input: 'select',
+            valueKey: 'value',
+            labelKey: 'name',
+            options: [
+                {name: 'Self', value: 'self'},
+                {name: 'Delegated', value: 'delegated'},
+                {name: 'Validated', value: 'validated'},
+                {name: 'Archived', value: 'archived'},
+            ]
         },
         updated_at: {
             label: 'Last Updated Date'

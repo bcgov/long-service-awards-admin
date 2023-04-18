@@ -17,27 +17,28 @@ import AdminData from "@/views/recipients/data/AdminData";
  * Inherited model component
  */
 
-export default function RecipientView({data}) {
+export default function RecipientView({data, currentCycle}) {
 
-    const {service, status} = data || {};
-    const {confirmed} = service || {};
+    const {services, status} = data || {};
+    console.log(services)
+    // get current milestone service selection
+    const currentService = (services || []).find(srv => srv.cycle === currentCycle);
+    const {confirmed} = currentService || {};
 
     return <div>
-        { status !== 'archived'
-            ? <Message
-                className={'mb-3 w-full'}
-                severity={confirmed ? 'success' : 'warn'}
-                text={confirmed ? 'Registration Confirmed' : 'Registration In Progress'}
-            />
-            : <Message
-                className={'mb-3 w-full'}
-                severity={'info'}
-                text={'Archived Registration'}
-            />
+        { status === 'archived'
+            ? <Message className={'mb-3 w-full'} severity={'info'} text={'Archived Registration'}/>
+            : confirmed && status === 'validated'
+                ? <Message className={'mb-3 w-full'} severity={'success'} text={'Registration Validated'}/>
+                : <Message
+                        className={'mb-3 w-full'}
+                        severity={confirmed ? 'info' : 'warn'}
+                        text={confirmed ? 'Registration Confirmed' : 'Registration In Progress'}
+                    />
         }
         <AdminData data={data} />
         <ProfileData data={data} />
-        <MilestoneData data={data} />
+        <MilestoneData data={data} currentCycle={currentCycle} />
         <ContactData data={data} />
         <AwardData data={data} />
         <SupervisorData data={data} />
