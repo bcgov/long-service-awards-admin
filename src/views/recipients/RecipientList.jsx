@@ -34,7 +34,7 @@ export default function RecipientList() {
         employee_number: null,
         organization: null,
         cycle: '2023',
-        milestones: [25, 30, 35, 40, 45, 50],
+        milestones: [25, 30, 35, 40, 45, 50, 55],
         qualifying_year: null,
         ceremony: null,
         ceremony_opt_out: null,
