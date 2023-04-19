@@ -45,6 +45,7 @@ export default function AwardInput() {
     const [confirmedAward, setConfirmedAward] = useState({});
     const [showAwards, setShowAwards] = useState(false);
     const [selectedAward, setSelectedAward] = useState(null);
+    const [currentCycle, setCurrentCycle] = useState(null);
     const [items, setItems] = useState([]);
     const [globalFilterValue, setGlobalFilterValue] = useState('');
     const [filters, setFilters] = useState({
@@ -79,6 +80,13 @@ export default function AwardInput() {
     useEffect(() => {
         api.getActiveAwards().then(setItems).catch(console.error);
         api.getMilestones().then(setMilestones).catch(console.error);
+        // get current cycle
+        api.getQualifyingYears()
+            .then((years) => {
+                const {name} = (years || []).find(y => y.current) || {};
+                setCurrentCycle(name)
+            })
+            .catch(console.error);
     }, []);
 
     /**
@@ -202,7 +210,8 @@ export default function AwardInput() {
 
         />
         {
-            currentAward && currentAward.hasOwnProperty('id') && <AwardData data={getValues()} />
+            !!currentCycle && currentAward && currentAward.hasOwnProperty('id') &&
+            <AwardData data={getValues()} currentCycle={currentCycle} />
         }
         <Dialog
             header={"Select an Award"}

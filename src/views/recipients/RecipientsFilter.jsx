@@ -85,7 +85,7 @@ function RecipientsFilter({data, confirm, cancel}) {
             options: [{name: 'Yes', value: true}, {name: 'No', value: false}, {name: 'Ignore', value: null}]
         },
         status: {
-            label: 'Ceremony Opt Out',
+            label: 'Registration Status',
             input: 'select',
             valueKey: 'value',
             labelKey: 'name',
