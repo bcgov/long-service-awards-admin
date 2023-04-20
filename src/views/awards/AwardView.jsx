@@ -69,7 +69,7 @@ export default function AwardView({data}) {
               <div className={'col-6'}>Value</div>
               <div className={'col-6'}>{option.value}</div>
               <div className={'col-6'}>Description</div>
-              <div className={'col-6'}>{parse(option.description)}</div>
+              <div className={'col-6'}>{parse(option.description || '-')}</div>
               <div className={'col-6'}>Customizable</div>
               <div className={'col-6'}>{option.customizable ? 'Yes' : 'No'}</div>
             </div>

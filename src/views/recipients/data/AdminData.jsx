@@ -30,7 +30,7 @@ export default function AdminData({data}) {
                 {
                     notes && <>
                         <div className={'col-12'}>Notes</div>
-                        <div className={'surface-hover col-12'}>{parse(notes)}</div>
+                        <div className={'surface-hover col-12'}>{parse(notes || '')}</div>
                     </>
                 }
                 <div className={'col-6'}>Last Updated</div>

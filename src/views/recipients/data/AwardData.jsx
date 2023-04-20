@@ -17,8 +17,10 @@ import {useAPI} from "@/providers/api.provider.jsx";
 export default function AwardData({data, currentCycle}) {
 
     // get current milestone service selection
-    const {services} = data || {};
-    const currentService = (services || []).find(srv => srv.cycle === currentCycle);
+    const {services, service} = data || {};
+    // - service is the current selected service milestone
+    // - services contains all previous and current service milestones
+    const currentService = service || (services || []).find(srv => srv.cycle === currentCycle);
     const { awards } = currentService || {};
     const { award, selections } = awards || {};
 
@@ -45,7 +47,7 @@ export default function AwardData({data, currentCycle}) {
                 <div className={'col-6'}>Name</div>
                 <div className={'col-6'}>{award && award.label || '-'}</div>
                 <div className={'col-6'}>Description</div>
-                <div className={'col-6'}>{award && parse(award.description) || '-'}</div>
+                <div className={'col-6'}>{award && parse(award.description || '-') || '-'}</div>
                 {
                     (selections || []).length > 0 && <div className={'col-12'}>
                         <div className={'font-bold mb-3'}>Options</div>

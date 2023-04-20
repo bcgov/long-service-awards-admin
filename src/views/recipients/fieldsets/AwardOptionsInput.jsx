@@ -236,7 +236,7 @@ export default function AwardOptionsInput({award, confirm, cancel, regControl}) 
     return <div className={'grid'}>
         <form onSubmit={handleSubmit(confirmOptions)}>
             {
-                award && <div>{ parse(award.description)}</div>
+                award && <div>{ parse(award.description || '')}</div>
             }
             <OptionInputTemplate />
             <div>
