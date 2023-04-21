@@ -10,6 +10,7 @@ import classNames from "classnames";
 import {Panel} from "primereact/panel";
 import FieldsetHeader from "@/components/common/FieldsetHeader.jsx";
 import {Editor} from "primereact/editor";
+import {Dropdown} from "primereact/dropdown";
 
 
 /**
@@ -22,12 +23,64 @@ export default function AdminInput() {
     // get context / hooks
     const { control } = useFormContext();
 
+    // define status options
+    const statuses = [
+        {
+            label: 'Registered',
+            value: 'registered'
+        },
+        {
+            label: 'Archived',
+            value: 'archived'
+        },
+        {
+            label: 'Validated',
+            value: 'validated'
+        },
+        {
+            label: 'Self',
+            value: 'self'
+        },
+        {
+            label: 'Delegated',
+            value: 'delegated'
+        }];
+
     return <Panel
         toggleable
         collapsed={true}
         headerTemplate={FieldsetHeader('Administrative Notes')}
         className={'mb-3'}
     >
+        <div className={"col-12 form-field-container"}>
+            <label htmlFor={'status'}>
+                Registration Status
+            </label>
+            <Controller
+                name={`status`}
+                control={control}
+                rules={{required: { value: true, message: "Status is required."}}}
+                render={({ field, fieldState: {invalid, error} }) => (
+                    <>
+                        <Dropdown
+                            className={classNames({"p-invalid": error})}
+                            id={field.name}
+                            inputId={field.name}
+                            value={field.value || ''}
+                            onChange={(e) => {
+                                field.onChange(e.value);
+                            }}
+                            aria-describedby={`status-help`}
+                            options={statuses}
+                            optionLabel="label"
+                            optionValue="value"
+                            placeholder={'Select the registration status'}
+                        />
+                        { invalid && <p className="error">{error.message}</p> }
+                    </>
+                )}
+            />
+        </div>
         <div className="col-12 form-field-container">
             <Controller
                 name={'notes'}

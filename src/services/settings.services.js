@@ -168,6 +168,17 @@ const schemaData = {
         closable: true
       },
     },
+    {
+      value: "downloadError",
+      text: {
+        severity: "error",
+        summary: "Download Error",
+        detail: "Download failed due to an error.",
+        sticky: true,
+        closable: false,
+        life: 5000
+      },
+    },
   ]
 };
 

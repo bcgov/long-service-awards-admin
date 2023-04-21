@@ -14,12 +14,15 @@ import {useAPI} from "@/providers/api.provider.jsx";
  * Model data display component
  */
 
-export default function AwardData({data}) {
+export default function AwardData({data, currentCycle}) {
 
-    const {service} = data || {};
-    const { awards } = service || {};
+    // get current milestone service selection
+    const {services, service} = data || {};
+    // - service is the current selected service milestone
+    // - services contains all previous and current service milestones
+    const currentService = service || (services || []).find(srv => srv.cycle === currentCycle);
+    const { awards } = currentService || {};
     const { award, selections } = awards || {};
-    const { options } = award || {};
 
     const api = useAPI();
 
@@ -44,42 +47,36 @@ export default function AwardData({data}) {
                 <div className={'col-6'}>Name</div>
                 <div className={'col-6'}>{award && award.label || '-'}</div>
                 <div className={'col-6'}>Description</div>
-                <div className={'col-6'}>{award && parse(award.description) || '-'}</div>
+                <div className={'col-6'}>{award && parse(award.description || '-') || '-'}</div>
                 {
-                    (options || []).length > 0 && <div className={'col-12'}>
+                    (selections || []).length > 0 && <div className={'col-12'}>
                         <div className={'font-bold mb-3'}>Options</div>
                         <div className={'container'}>
                             {
-                                (options || []).map(({id, type, customizable}) => {
-                                    const {pecsf_charity, custom_value, award_option} = selections
-                                        .find(selection => {
-                                            // match award option ID to selection ID
-                                            const {award_option} = selection || {};
-                                            return award_option.id === id;
-                                        }) || {};
-                                    const { label, description} = award_option || {};
-                                    return <div key={`award-option-${id}`}>
+                                (selections || []).map(({pecsf_charity, custom_value, award_option}, index) => {
+                                    const { type, label, description, customizable} = award_option || {};
+                                    return <div key={`award-option-${index}`}>
                                         {
-                                            pecsfCharities && pecsf_charity && label &&
+                                            pecsfCharities && type === 'pecsf-charity' && label &&
                                             <div className={'grid'}>
                                                 <div className={'col-6'}>{label}</div>
                                                 <div className={'col-6'}>
                                                     {
-                                                        pecsf_charity.hasOwnProperty('label') && pecsf_charity.hasOwnProperty('region') ?
-                                                            `${pecsf_charity.label} (${pecsf_charity.region})`
+                                                        pecsf_charity.hasOwnProperty('label') && pecsf_charity.hasOwnProperty('region')
+                                                            ? `${pecsf_charity.label} (${pecsf_charity.region})`
                                                             : lookupPecsfCharity(pecsf_charity)}
                                                 </div>
                                             </div>
                                         }
                                         {
-                                            !pecsf_charity && type === 'pecsf-charity' &&
+                                            type === 'pecsf-charity' && !pecsf_charity &&
                                             <div className={'grid'}>
                                                 <div className={'col-6'}>{label}</div>
                                                 <div className={'col-6'}>Donation Pool</div>
                                             </div>
                                         }
                                         {
-                                            !pecsf_charity && type !== 'pecsf-charity' && !customizable && label && description &&
+                                            type !== 'pecsf-charity' && !customizable && label && description &&
                                             <div className={'grid'}>
                                                 <div className={'col-6'}>{label || '-'}</div>
                                                 <div className={'col-6'}>{description || '-'}</div>
@@ -87,7 +84,7 @@ export default function AwardData({data}) {
                                             </div>
                                         }
                                         {
-                                            !pecsf_charity && type !== 'pecsf-charity' && customizable && description && custom_value &&
+                                            type !== 'pecsf-charity' && customizable && description && custom_value &&
                                             <div className={'grid'}>
                                                 <div className={'col-6'}>{description || '-'}</div>
                                                 <div className={'col-6'}>{custom_value || '-'}</div>

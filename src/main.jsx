@@ -27,6 +27,8 @@ import UserList from "@/views/users/UserList";
 import AwardList from "@/views/awards/AwardList";
 import SettingList from "@/views/settings/SettingList";
 import OrganizationList from "@/views/organizations/OrganizationList";
+import UserPasswordReset from "@/views/users/UserPasswordReset";
+import ReportList from "@/views/reports/ReportList";
 
 // init main router
 const router = createBrowserRouter([
@@ -45,6 +47,10 @@ const router = createBrowserRouter([
             {
                 path: "login",
                 element: <UserLogin />,
+            },
+            {
+                path: "password-reset/:token",
+                element: <UserPasswordReset />
             },
             {
                 path: "recipients",
@@ -73,15 +79,15 @@ const router = createBrowserRouter([
                 </ProtectedRoute>,
             },
             {
-                path: "ceremonies",
-                element: <ProtectedRoute authorizedRoles={['administrator']}>
-                    <h1>Ceremonies (In Development)</h1>
+                path: "reports",
+                element: <ProtectedRoute authorizedRoles={['org-contact']}>
+                    <ReportList />
                 </ProtectedRoute>,
             },
             {
-                path: "reports",
+                path: "ceremonies",
                 element: <ProtectedRoute authorizedRoles={['administrator']}>
-                    <h1>Reports (In Development)</h1>
+                    <h1>Ceremonies (In Development)</h1>
                 </ProtectedRoute>,
             },
             {

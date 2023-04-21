@@ -1,6 +1,6 @@
 /*!
- * LSA.Admin.Components.RecipientsSFiule
- * File: RecipientsSort.jsx
+ * LSA.Admin.Components.Recipients.Filter
+ * File: RecipientsFilter.jsx
  * Copyright(c) 2023 Government of British Columbia
  * Version 2.0
  * MIT Licensed
@@ -18,7 +18,17 @@ function RecipientsFilter({data, confirm, cancel}) {
     const api = useAPI();
     const [loading, setLoading] = useState(false);
 
+    function generateCycleYears() {
+        let currentYear = new Date().getFullYear(), years = [];
+        const startYear = currentYear - 60;
+        while ( startYear <= currentYear ) {
+            years.push({name: currentYear--});
+        }
+        return years;
+    }
+
     // init filter settings
+    const cycles = generateCycleYears();
     const [qualifyingYears, setQualifyingYears]= useState([]);
     const [organizations, setOrganizations]= useState([]);
     const [milestones, setMilestones]= useState([]);
@@ -26,9 +36,6 @@ function RecipientsFilter({data, confirm, cancel}) {
     const schema = {
         global: {
             label: 'Global'
-        },
-        status: {
-            label: 'Status'
         },
         first_name: {
             label: 'First Name',
@@ -51,10 +58,10 @@ function RecipientsFilter({data, confirm, cancel}) {
         },
         cycle: {
             label: 'Cycle',
-            input: 'select',
+            input: 'multiselect',
             valueKey: 'name',
             labelKey: 'name',
-            options: qualifyingYears
+            options: cycles
         },
         milestones: {
             label: 'Milestones',
@@ -65,7 +72,7 @@ function RecipientsFilter({data, confirm, cancel}) {
         },
         qualifying_year: {
             label: 'Qualifying Year',
-            input: 'select',
+            input: 'multiselect',
             valueKey: 'name',
             labelKey: 'name',
             options: qualifyingYears
@@ -73,9 +80,31 @@ function RecipientsFilter({data, confirm, cancel}) {
         ceremony: {
             label: 'Ceremony',
         },
+        ceremony_opt_out: {
+            label: 'Ceremony Opt Out',
+            input: 'select',
+            valueKey: 'value',
+            labelKey: 'name',
+            options: [{name: 'Yes', value: true}, {name: 'No', value: false}, {name: 'Ignore', value: null}]
+        },
         confirmed: {
             label: 'Confirmed',
-            input: 'switch'
+            input: 'select',
+            valueKey: 'value',
+            labelKey: 'name',
+            options: [{name: 'Yes', value: true}, {name: 'No', value: false}, {name: 'Ignore', value: null}]
+        },
+        status: {
+            label: 'Registration Status',
+            input: 'select',
+            valueKey: 'value',
+            labelKey: 'name',
+            options: [
+                {name: 'Self', value: 'self'},
+                {name: 'Delegated', value: 'delegated'},
+                {name: 'Validated', value: 'validated'},
+                {name: 'Archived', value: 'archived'},
+            ]
         },
         updated_at: {
             label: 'Last Updated Date'

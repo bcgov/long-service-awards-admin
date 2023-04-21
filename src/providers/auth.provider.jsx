@@ -112,7 +112,6 @@ function AuthProvider(props) {
                 const { result } = response || {};
                 if (error) status.setMessage('registerError')
                 else status.setMessage('register');
-                //setData(result);
                 return !!result;
             }).finally(() => {
                 setLoading(false);
@@ -123,8 +122,8 @@ function AuthProvider(props) {
      * Request password reset link
      */
 
-    const requestPasswordReset = async (route, data) => {
-        return api.post(route, data);
+    const requestPasswordReset = async (data) => {
+        return api.post('request-reset-password', data);
     }
 
     /**
@@ -132,7 +131,7 @@ function AuthProvider(props) {
      */
 
     const resetPassword = async (data) => {
-        return api.post(`reset-password`, data);
+        return await api.post('reset-password', data);
     }
 
     /**

@@ -19,6 +19,7 @@ import {BlockUI} from "primereact/blockui";
 import {Dialog} from "primereact/dialog";
 import React, {useState} from "react";
 import UserRegister from "@/views/users/UserRegister.jsx";
+import UserRequestPasswordReset from "@/views/users/UserRequestPasswordReset";
 
 function UserLogin() {
 
@@ -94,6 +95,21 @@ function UserLogin() {
                 style={{ width: '50vw' }}
             >
                 <UserRegister callback={onCancel} />
+            </Dialog>
+
+            <Dialog
+                visible={showDialog === 'reset-password'}
+                onHide={onCancel}
+                onClick={(e)=>{e.stopPropagation()}}
+                header={"Send Reset Password Request"}
+                position="center"
+                closable
+                maximizable
+                modal
+                breakpoints={{ '960px': '80vw' }}
+                style={{ width: '50vw' }}
+            >
+                <UserRequestPasswordReset callback={onCancel} />
             </Dialog>
 
             <BlockUI baseZIndex={1} blocked={authenticated} template={blockedTemplate}>
@@ -174,23 +190,43 @@ function UserLogin() {
                         </form>
                     </div>
                 </div>
-                <div className="login-form">
-                    <div className="surface-card border-round shadow-2 p-4">
-                        <p className="text-900 text-xl font-medium mb-4 block">
-                            Register for Account
-                        </p>
-                        <div className="container m-3">
-                            {id}
-                            <Button
-                                className={'p-button-secondary w-full'}
-                                label={id ? "Registered" : "Register"}
-                                disabled={!!id}
-                                icon="pi pi-user-plus"
-                                onClick={(e) => {
-                                    e.preventDefault();
-                                    setShowDialog('registration')
-                                }}
-                            />
+                <div className="grid">
+                    <div className={'col-6'}>
+                        <div className="mb-3 surface-card border-round shadow-2 p-4">
+                            <p className="text-900 text-xl font-medium mb-4 block">
+                                Register for Account
+                            </p>
+                            <div className="container m-3">
+                                <Button
+                                    className={'p-button-secondary w-full'}
+                                    label={id ? "Registered" : "Register"}
+                                    disabled={!!id}
+                                    icon="pi pi-user-plus"
+                                    onClick={(e) => {
+                                        e.preventDefault();
+                                        setShowDialog('registration')
+                                    }}
+                                />
+                            </div>
+                        </div>
+                    </div>
+                    <div className="col-6">
+                        <div className="surface-card border-round shadow-2 p-4">
+                            <p className="text-900 text-xl font-medium mb-4 block">
+                                Reset Your Password
+                            </p>
+                            <div className="container m-3">
+                                <Button
+                                    disabled={true}
+                                    className={'p-button-secondary w-full'}
+                                    label={"Reset Password"}
+                                    icon="pi pi-envelope"
+                                    onClick={(e) => {
+                                        e.preventDefault();
+                                        setShowDialog('reset-password')
+                                    }}
+                                />
+                            </div>
                         </div>
                     </div>
                 </div>
