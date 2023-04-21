@@ -75,6 +75,22 @@ export default function AwardList() {
         return rowData.active ? 'Yes' : 'No';
     };
 
+    /**
+     * Award quantity display template
+     * */
+
+    const quantityTemplate = (rowData) => {
+        return rowData.quantity > 0 ? rowData.quantity : '-';
+    };
+
+    /**
+     * Award quantity display template
+     * */
+
+    const selectedTemplate = (rowData) => {
+        return rowData.selected ? rowData.selected : 0;
+    };
+
     const schema = [
         {
             name: 'type',
@@ -105,6 +121,20 @@ export default function AwardList() {
             input: 'boolean',
             label: "Active",
             body: activeTemplate,
+            sortable: true
+        },
+        {
+            name: 'quantity',
+            input: 'text',
+            label: "Quantity",
+            body: quantityTemplate,
+            sortable: true
+        },
+        {
+            name: 'selected',
+            input: 'text',
+            label: "Selected",
+            body: selectedTemplate,
             sortable: true
         },
     ];
