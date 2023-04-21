@@ -6,33 +6,40 @@
  * MIT Licensed
  */
 
-import {useState} from 'react';
+import {useEffect, useState} from 'react';
 import {Button} from "primereact/button";
 import {Dropdown} from "primereact/dropdown";
 
 function RecipientsSort({data, confirm, cancel}) {
 
-    const {sortField, sortOrder} = data || {};
-    const [selectedSortField, setSelectedSortField] = useState(sortField);
-    const [selectedSortOrder, setSelectedSortOrder] = useState(sortOrder);
+    const {orderBy, order} = data || {};
+    const [selectedSortField, setSelectedSortField] = useState(orderBy);
+    const [selectedSortOrder, setSelectedSortOrder] = useState(order);
+
+    // init sort options states
+    useEffect( () => {
+        const {orderBy, order} = data || {};
+        setSelectedSortField(orderBy);
+        setSelectedSortOrder(order);
+    }, [data]);
 
     // define sortable columns
     const cols = [
-        {
-            value: 'status',
-            label: 'Status'
-        },
         {
             value: 'employee_number',
             label: 'Employee Number'
         },
         {
-            value: 'updated_at',
-            label: 'Updated Date'
+            value: 'first_name',
+            label: 'First Name'
         },
         {
-            value: 'created_at',
-            label: 'Created Date'
+            value: 'last_name',
+            label: 'Last Name'
+        },
+        {
+            value: 'updated_at',
+            label: 'Updated Date'
         }
     ];
     const orders = [
@@ -49,9 +56,9 @@ function RecipientsSort({data, confirm, cancel}) {
     return <>
         <div className="flex align-items-center flex-column pt-6 px-3">
             <div className={'m-2'}>
-                <label className={'mr-2'} htmlFor={'sortBy'}>Sort By</label>
+                <label className={'mr-2'} htmlFor={''}>Sort By</label>
                 <Dropdown
-                    id={'sortBy'}
+                    id={'orderBy'}
                     value={selectedSortField || ''}
                     onChange={(e) => {setSelectedSortField(e.target.value)}}
                     aria-describedby={`sortBy-help`}
@@ -62,7 +69,7 @@ function RecipientsSort({data, confirm, cancel}) {
             <div className={'m-2'}>
                 <label className={'mr-2'} htmlFor={'sortOrder'}>Sort Order</label>
                 <Dropdown
-                    id={'sortOrder'}
+                    id={'order'}
                     value={selectedSortOrder || ''}
                     onChange={(e) => {setSelectedSortOrder(e.target.value)}}
                     aria-describedby={`sortBy-help`}
@@ -77,7 +84,7 @@ function RecipientsSort({data, confirm, cancel}) {
                 label="Apply Sort"
                 className="p-button-success m-2"
                 autoFocus
-                onClick={() => {confirm({sortField: selectedSortField, sortOrder: selectedSortOrder})}}
+                onClick={() => {confirm({orderBy: selectedSortField, order: selectedSortOrder})}}
             />
             <Button
                 icon="pi pi-times"

@@ -165,6 +165,7 @@ export default function ProfileInput({validate}) {
                                     id={field.name}
                                     value={field.value || ''}
                                     maxLength={6}
+                                    minLength={6}
                                     placeholder="012345"
                                     onChange={(e) => {
                                         // require integers for employee number
