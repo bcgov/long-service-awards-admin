@@ -33,7 +33,7 @@ export default function RecipientList() {
         last_name: null,
         employee_number: null,
         organization: null,
-        cycle: '2023',
+        cycle: [2023],
         milestones: [25, 30, 35, 40, 45, 50, 55],
         qualifying_year: null,
         ceremony: null,
@@ -355,13 +355,6 @@ export default function RecipientList() {
                         <Button
                             className={'m-1'}
                             type="button"
-                            icon="pi pi-sort"
-                            label="Sort"
-                            onClick={showSortDialog}
-                        />
-                        <Button
-                            className={'m-1'}
-                            type="button"
                             icon="pi pi-filter"
                             label="Filter"
                             onClick={showFilterDialog}
@@ -372,6 +365,13 @@ export default function RecipientList() {
                             icon="pi pi-filter-slash"
                             label="Clear"
                             onClick={clearFilter}
+                        />
+                        <Button
+                            className={'m-1'}
+                            type="button"
+                            icon="pi pi-sort"
+                            label="Sort"
+                            onClick={showSortDialog}
                         />
                         <Button
                             className={'m-1'}
@@ -432,13 +432,37 @@ export default function RecipientList() {
             paginator
             paginatorPosition={'top'}
             paginatorLeft={
-                <DataTable className={'w-full text-xs'} value={[stats || {}]}>
-                    <Column className={'pt-0 pb-0'} field="lsa_current_count" header="LSA"></Column>
-                    <Column className={'pt-0 pb-0'} field="service_pins_count" header="Pins"></Column>
-                    <Column className={'pt-0 pb-0'} field="lsa_previous_count" header="Archived"></Column>
-                    <Column className={'pt-0 pb-0'} field="other_count" header="Other"></Column>
-                    <Column className={'pt-0 pb-0'} field="total_count" header="Total"></Column>
-                    <Column className={'pt-0 pb-0'} field="filtered" header="Filtered" body={<>{totalFilteredRecords}</>}></Column>
+                <DataTable className={'text-xs'} value={[stats || {}]}>
+                    <Column
+                        headerStyle={{ width: '5rem' }}
+                        bodyStyle={{ width: '5rem' }}
+                        field="lsa_current_count"
+                        header="LSA"></Column>
+                    <Column
+                        headerStyle={{ width: '5rem' }}
+                        bodyStyle={{ width: '5rem' }}
+                        field="service_pins_count"
+                        header="Pins"></Column>
+                    <Column
+                        headerStyle={{ width: '5rem' }}
+                        bodyStyle={{ width: '5rem' }}
+                        field="lsa_previous_count"
+                        header="Archived"></Column>
+                    <Column
+                        headerStyle={{ width: '5rem' }}
+                        bodyStyle={{ width: '5rem' }}
+                        field="other_count"
+                        header="Incomplete"></Column>
+                    <Column
+                        headerStyle={{ width: '5rem' }}
+                        bodyStyle={{ width: '5rem' }}
+                        field="total_count"
+                        header="Total"></Column>
+                    <Column
+                        headerStyle={{ width: '5rem' }}
+                        bodyStyle={{ width: '5rem' }}
+                        field="filtered" header="Filtered"
+                        body={<>{totalFilteredRecords}</>}></Column>
                 </DataTable>
             }
             paginatorRight={<Button
@@ -546,15 +570,6 @@ export default function RecipientList() {
                 field="updated_at"
                 header="Updated"
                 body={updatedDateTemplate}
-                headerStyle={{ minWidth: '7em' }}
-                bodyStyle={{ minWidth: '7em' }}
-
-            />
-            <Column
-                className={'p-1'}
-                field="created_at"
-                header="Created"
-                body={createdDateTemplate}
                 headerStyle={{ minWidth: '7em' }}
                 bodyStyle={{ minWidth: '7em' }}
 
