@@ -26,6 +26,7 @@ import RegistrationOptionsInput from "@/views/recipients/fieldsets/RegistrationO
 import validate, {validators} from "@/services/validation.services.js";
 import ConfirmationEmails from "@/views/recipients/fieldsets/ConfirmationEmails";
 import {useState} from "react";
+import RetroactiveMilestoneInput from "@/views/recipients/fieldsets/RetroactiveMilestoneInput.jsx";
 
 /**
  * Inherited model component
@@ -79,6 +80,7 @@ export default function RecipientEdit() {
     }
 
     // set default recipient form values
+    // Todo: update cycle to be dynamically set
     const defaults = {
         employee_number: "",
         organization: "",
@@ -261,6 +263,7 @@ export default function RecipientEdit() {
                 isAdmin && <AdminInput/>
             }
             <MilestoneInput validate={fieldsetValidators.milestone} threshold={25} />
+            <RetroactiveMilestoneInput />
             <ProfileInput validate={fieldsetValidators.profile} />
             <RegistrationOptionsInput />
             <BCGEUInput />

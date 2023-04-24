@@ -75,9 +75,9 @@ export default function MilestoneData({data, currentCycle}) {
             </div>
         </Panel>
         <Panel className={'mb-2 mt-2'} header={'Milestones'} toggleable>
-            <DataTable className={'w-full'} value={services}>
+            <DataTable sortField={'milestone'} sortOrder={-1} className={'w-full'} value={services}>
                 <Column field="service_years" header="YoS"></Column>
-                <Column field="milestone" header="Milestone"></Column>
+                <Column sortField={'milestone'} field="milestone" header="Milestone"></Column>
                 <Column field="cycle" header="Cycle"></Column>
                 <Column field="qualifying_year" header="Qualifying"></Column>
             </DataTable>

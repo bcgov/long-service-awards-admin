@@ -296,9 +296,16 @@ export default function RecipientList() {
 
     const servicesTemplate = (rowData) => {
         const {services} = rowData || {};
-        return <DataTable header={''} className={'w-full text-xs'} value={services}>
+        return <DataTable
+            dataKey={'milestone'}
+            sortField={'milestone'}
+            sortOrder={-1}
+            header={''}
+            className={'w-full text-xs'}
+            value={services}
+        >
             <Column className={'pt-0 pb-0'} field="cycle"></Column>
-            <Column className={'pt-0 pb-0'} field="milestone"></Column>
+            <Column sortField={'milestone'} className={'pt-0 pb-0'} field="milestone"></Column>
             <Column className={'pt-0 pb-0'} field="qualifying_year"></Column>
         </DataTable>
     };
@@ -335,7 +342,7 @@ export default function RecipientList() {
         const {id} = data || {};
         api.removeRecipient(id).then(() => {
             status.setMessage('delete');
-            loadData();
+            loadData(pageState, filters, sort);
         }).catch((e) => {
             console.error(e);
             status.setMessage('deleteError');
@@ -392,7 +399,7 @@ export default function RecipientList() {
                             type="button"
                             icon="pi pi-sync"
                             label="Refresh"
-                            onClick={() => loadData()}
+                            onClick={() => loadData(pageState, filters, sort)}
                         />
                         <Button
                             className={'m-1 p-button-success'}
