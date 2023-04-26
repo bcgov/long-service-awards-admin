@@ -23,6 +23,8 @@ import ProtectedRoute from "@/components/common/ProtectedRoute.jsx";
 import Dashboard from "@/components/common/Dashboard.jsx";
 import RecipientList from "@/views/recipients/RecipientList";
 import RecipientEdit from "@/views/recipients/RecipientEdit.jsx";
+import CeremonyList from "@/views/ceremonies/CeremonyList.jsx";
+import CeremonyEdit from "@/views/ceremonies/CeremonyEdit.jsx";
 import UserList from "@/views/users/UserList";
 import AwardList from "@/views/awards/AwardList";
 import SettingList from "@/views/settings/SettingList";
@@ -87,7 +89,14 @@ const router = createBrowserRouter([
             {
                 path: "ceremonies",
                 element: <ProtectedRoute authorizedRoles={['administrator']}>
-                    <h1>Ceremonies (In Development)</h1>
+                    <CeremonyList />
+                </ProtectedRoute>,
+            },
+            {
+                path: "ceremonies/edit/:id",
+                element: <ProtectedRoute
+                    authorizedRoles={['administrator', 'super-administrator', 'org-contact']}>
+                    <CeremonyEdit />
                 </ProtectedRoute>,
             },
             {

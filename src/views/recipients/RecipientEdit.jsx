@@ -52,7 +52,7 @@ export default function RecipientEdit() {
             if (!error && result) return result;
         } catch (error) {
             status.clear();
-            status.setMessage({message: "Error: Could Not Create New Recipient Record", severity: "danger"});
+            status.setMessage({message: "Error: Could Not Delete Recipient Record", severity: "danger"});
         }
     }
 

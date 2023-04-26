@@ -163,6 +163,29 @@ function APIProvider(props) {
     }
 
     /**
+     * Get ceremonies
+     * @returns All ceremonies
+     */
+    const getCeremonies = async () => {
+        const [_, res] = await api.get(`/ceremonies/list`);
+        const {result} = res || {};
+        return result;
+    }
+
+    const createCeremony = async () => {
+        return await api.post(`/ceremonies/create`, {});
+    }
+
+    const getCeremony = async (id) => {
+        const [_, result] = await api.get(`/ceremonies/view/${id}`);
+        return result;
+    }
+
+    const saveCeremony = async (data) => {
+        return await api.post(`/ceremonies/update/${data.id}`, data);
+    }
+
+    /**
      *  Get awards
      *
      * */
@@ -222,6 +245,8 @@ function APIProvider(props) {
     const removeAward = async (id) => {
         return await api.get(`/awards/delete/${id}`);
     }
+
+
 
     /**
      *  Get milestones
@@ -409,6 +434,10 @@ function APIProvider(props) {
                 createRecipient,
                 saveRecipient,
                 removeRecipient,
+                getCeremonies,
+                getCeremony,
+                createCeremony,
+                saveCeremony,
                 getMilestones,
                 getQualifyingYears,
                 getOrganizations,
