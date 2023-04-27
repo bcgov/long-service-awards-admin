@@ -202,7 +202,7 @@ export default function AwardEdit({awardTypes}) {
                                     max={9999}
                                     className={classNames('w-full', {"p-invalid": error})}
                                     aria-describedby={`award-quantity-help`}
-                                    onChange={(e) => field.onChange(e.target.value)}
+                                    onChange={(e) => field.onChange(e.value)}
                                     placeholder={`Enter a quantity for this award (-1 indicated unlimited)`}
                                 />
                                 { invalid && <p className="error">{error.message}</p> }

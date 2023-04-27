@@ -14,6 +14,7 @@ import {matchers} from "@/services/validation.services.js";
 import {Dialog} from "primereact/dialog";
 import React, {useState} from "react";
 import {Button} from "primereact/button";
+import {Message} from "primereact/message";
 
 function UserRequestPasswordReset({callback}) {
 
@@ -23,12 +24,16 @@ function UserRequestPasswordReset({callback}) {
     const { control, formState: { errors }, handleSubmit } = useForm({ defaultValues });
     const auth = useAuth();
     const [showDialog, setShowDialog] = useState(null);
+    const [mailError, setMailError] = useState(false);
+    const [loading, setLoading] = useState(false);
 
     // submit login credentials / redirect to dashboard
     const onSubmit = async (data) => {
-        const response = await auth.requestPasswordReset(data);
+        setLoading(true);
+        const [error, response] = await auth.requestPasswordReset(data);
+        if (error) setMailError(true);
         setShowDialog('confirmation');
-        callback();
+        setLoading(false);
     };
 
     const onCancel = () => {
@@ -45,12 +50,37 @@ function UserRequestPasswordReset({callback}) {
                 header="Password Reset Request Sent"
                 visible={showDialog === 'confirmation'}
                 style={{ width: '50vw' }}
-                onHide={onCancel}
+                onHide={() => {
+                    onCancel();
+                    callback();
+                }}
             >
                 <p className="m-0">
                     A password reset link has been sent to your user email inbox.
                 </p>
             </Dialog>
+
+            {
+                mailError &&
+                <Message
+                    className={'w-full'}
+                    severity={'error'}
+                    text={
+                        <p>Error: Could not update password.</p>
+                    }
+                />
+            }
+
+            {
+                loading &&
+                <Message
+                    className={'w-full'}
+                    severity={'info'}
+                    text={
+                        <p>Sending request...</p>
+                    }
+                />
+            }
 
             <div className="request-password-reset-form">
                 <form onSubmit={handleSubmit(onSubmit)} className="p-fluid">
@@ -91,6 +121,7 @@ function UserRequestPasswordReset({callback}) {
                         </div>
                         <div className="field col-12">
                             <Button
+                                disabled={loading}
                                 type="submit"
                                 label="Request Password Reset"
                                 icon="pi pi-envelope"
