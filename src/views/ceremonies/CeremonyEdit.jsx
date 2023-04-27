@@ -121,7 +121,7 @@ export default function CeremonyEdit() {
             validate={fieldsetValidators.confirmation}
         >
             <CeremonyDetailsInput />
-            <AddressInput validate={fieldsetValidators.ceremonyAddress} />
+            <AddressInput id={'address'} validate={fieldsetValidators.ceremonyAddress} />
         </FormContext>
     </>
 }
