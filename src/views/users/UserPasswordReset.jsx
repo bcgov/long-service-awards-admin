@@ -14,38 +14,66 @@ import {useAuth} from "../../providers/auth.provider.jsx";
 import {matchers} from "@/services/validation.services.js";
 import {Panel} from "primereact/panel";
 import {useParams} from "react-router-dom";
-import {useEffect} from "react";
+import {useEffect, useState} from "react";
+import {useUser} from "@/providers/user.provider.jsx";
+import {Message} from "primereact/message";
+import {BlockUI} from "primereact/blockui";
 
 export default function UserPasswordReset() {
 
-    // get token parameter
-    const { token } = useParams() || {};
+    const [validToken, setValidToken] = useState(false);
+    const [loading, setLoading] = useState(true);
+    const [submitted, setSubmitted] = useState(false);
 
-    useEffect(() => {
-
-    }, []);
+    // get user ID and token parameters
+    const { id, token } = useParams() || {};
 
     const defaultValues = {
         password: '',
-        password_repeat: ''
+        password_repeat: '',
+        id
     }
+
+    /**
+     * Validate user token
+     * */
+
+    const validateToken = () => {
+        auth.validateToken(id, token)
+            .then(setValidToken)
+            .catch((e) => {
+                console.error(e);
+                setValidToken(false)
+            })
+            .finally(() => {
+                setLoading(false);
+            });
+    }
+
+    // validate token on init
+    useEffect(validateToken, []);
+
     // init login form
     const {
         control,
         formState: { errors, isValid },
         handleSubmit,
         reset,
-        watch } = useForm({ defaultValues, mode: "onBlur" });
+        watch
+    } = useForm({ defaultValues, mode: "onBlur" });
     const auth = useAuth();
     let pwd = watch("password");
 
-    // submit login credentials / redirect to dashboard
+    // submit password reset / redirect to dashboard
     const onSubmit = async (data) => {
-        await auth.resetPassword(data);
-        reset();
-        // reload window
-        window.location.reload();
-        callback();
+        setLoading(true);
+        const isValid = await auth.validateToken(id, token);
+        if (!isValid) setValidToken(false);
+        const completed = await auth.resetPassword(id, token, data);
+        // confirm password reset was completed
+        if (completed) setSubmitted(completed);
+        else setValidToken(false);
+        setLoading(false);
     };
 
     const getFormErrorMessage = (name) => {
@@ -53,9 +81,31 @@ export default function UserPasswordReset() {
     };
 
     return <Panel header={<>Long Service Awards: Password Reset</>} toggleable={false}>
-        <form onSubmit={handleSubmit(onSubmit)} className="p-fluid">
-            <div className="p-grid">
-                <div className="field col-12">
+        {
+            !validToken && !loading &&
+            <Message
+                className={'w-full'}
+                severity={'error'}
+                text={
+                    <p>User token for password reset is not valid.
+                        Please <a href={`${import.meta.env.LSA_APPS_ADMIN_URL}`}>submit another request</a>.</p>
+                }
+            />
+        }
+        {
+            submitted && !loading &&
+            <Message
+                className={'w-full'}
+                severity={'success'}
+                text={
+                    <p>Password reset successfully! <a href={`${import.meta.env.LSA_APPS_ADMIN_URL}`}>Return to login page</a>.</p>
+                }
+            />
+        }
+        <BlockUI blocked={!validToken || loading || submitted}>
+            <form onSubmit={handleSubmit(onSubmit)} className="p-fluid">
+                <div className="p-grid">
+                    <div className="field col-12">
                         <span className="p-float-label">
                             <Controller
                                 name="password"
@@ -84,9 +134,9 @@ export default function UserPasswordReset() {
                                 )} />
 
                         </span>
-                    {getFormErrorMessage('password')}
-                </div>
-                <div className="field col-12">
+                        {getFormErrorMessage('password')}
+                    </div>
+                    <div className="field col-12">
                         <span className="p-float-label">
                             <Controller
                                 name="password_repeat"
@@ -111,12 +161,13 @@ export default function UserPasswordReset() {
                                     </>
                                 )} />
                         </span>
-                    {getFormErrorMessage('password_repeat')}
+                        {getFormErrorMessage('password_repeat')}
+                    </div>
+                    <div className="field col-12">
+                        <Button disabled={!isValid} type="submit" label="Reset Password" />
+                    </div>
                 </div>
-                <div className="field col-12">
-                    <Button disabled={!isValid} type="submit" label="Reset Password" />
-                </div>
-            </div>
-        </form>
+            </form>
+        </BlockUI>
     </Panel>
 }

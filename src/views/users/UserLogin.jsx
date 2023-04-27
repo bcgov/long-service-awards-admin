@@ -217,7 +217,7 @@ function UserLogin() {
                             </p>
                             <div className="container m-3">
                                 <Button
-                                    disabled={true}
+                                    disabled={false}
                                     className={'p-button-secondary w-full'}
                                     label={"Reset Password"}
                                     icon="pi pi-envelope"
