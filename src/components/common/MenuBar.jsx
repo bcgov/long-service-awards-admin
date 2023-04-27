@@ -102,6 +102,7 @@ function MenuBar() {
                 {
                     label:'Ceremonies',
                     icon:'pi pi-fw pi-calendar',
+                    url: `${import.meta.env.LSA_APPS_ADMIN_URL}/ceremonies`
                 },
                 {
                     label:'Users',
