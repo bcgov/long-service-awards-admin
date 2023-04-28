@@ -254,7 +254,7 @@ export default function AwardOptionsInput({award, confirm, cancel, regControl}) 
                     label="Cancel"
                 />
                 {
-                    award && award.hasOwnProperty('options') && award.options.length > 0 && <Button
+                    award && award.hasOwnProperty('options') && (award.options || []).length > 0 && <Button
                         type={'button'}
                         className={'p-button-info m-1'}
                         label="Reset"
