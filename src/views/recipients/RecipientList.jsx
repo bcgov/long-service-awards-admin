@@ -364,7 +364,6 @@ export default function RecipientList() {
     const value = event.value;
     setSelected(value);
     setSelectAll(value.length === stats);
-    console.log(selected);
   };
 
   const onSelectAllChange = () => {};
@@ -513,10 +512,13 @@ export default function RecipientList() {
               type="button"
               icon="pi pi-ticket"
               label="Assign to Ceremony"
-              onClick={createRecipient}
-              disabled={selected.every(
-                (r) => !r.services.find((s) => s.ceremony_opt_out === false)
-              )}
+              onClick={() => console.log(selected)}
+              disabled={
+                !selected.length ||
+                !selected.every((r) =>
+                  r.services.find((s) => s.ceremony_opt_out === false)
+                )
+              }
             />
             <Button
               className={"m-1 p-button-success"}
@@ -524,6 +526,7 @@ export default function RecipientList() {
               icon="pi pi-user-plus"
               label="Register"
               onClick={createRecipient}
+              disabled={selected.length}
             />
           </>
         }
