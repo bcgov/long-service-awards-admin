@@ -182,7 +182,8 @@ function APIProvider(props) {
     }
 
     const saveCeremony = async (data) => {
-        return await api.post(`/ceremonies/update/${data.id}`, data);
+        const {id} = data || {};
+        return await api.post(`/ceremonies/update/${id}`, data);
     }
 
     /**

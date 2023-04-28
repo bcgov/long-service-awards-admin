@@ -90,7 +90,7 @@ export default function CeremonyList() {
             else status.setMessage(message);
 
             if (!error && result) {
-                const { id } = result.ceremony;
+                const { id } = result;
                 navigate(`/ceremonies/edit/${id}`);
             }
         } catch (error) {
