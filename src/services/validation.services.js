@@ -17,7 +17,7 @@ export const matchers = {
   postal_code: /^[ABCEGHJ-NPRSTVXY]\d[ABCEGHJ-NPRSTV-Z][ -]?\d[ABCEGHJ-NPRSTV-Z]\d$/i,
   guid: /^[0-9a-fA-F]{8}[0-9a-fA-F]{4}[0-9a-fA-F]{4}[0-9a-fA-F]{4}[0-9a-fA-F]{12}$/,
   alphanumeric: /^[a-z0-9]+$/i,
-  password: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{10,}$/
+  password: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@^$!%*#?&])[A-Za-z\d@^$!%*#?&]{10,}$/
 }
 
 

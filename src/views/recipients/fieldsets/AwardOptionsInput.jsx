@@ -68,17 +68,17 @@ export default function AwardOptionsInput({award, confirm, cancel, regControl}) 
 
     const confirmOptions = (selectedOptions) => {
         // get engraving size (if exists)
-        const engravingSize = selectedOptions.hasOwnProperty('options') && selectedOptions.options;
+        const engravingSize = selectedOptions && selectedOptions.hasOwnProperty('options') && selectedOptions.options;
         // get available options for award
         const { options } = award || {};
         // map recipient option selections to available options in form context
         const filteredOptions = (options || [])
             .filter(({type, name, value, customizable}) => {
                 // filter available options by selected ones
-                return ( selectedOptions.hasOwnProperty(type) && customizable)
-                    || (selectedOptions.hasOwnProperty(type) && selectedOptions[type] === value)
-                    || (type === 'pecsf-charity' && selectedOptions.hasOwnProperty(name))
-                    || (type.includes('certificate') && selectedOptions.hasOwnProperty(name))
+                return ( selectedOptions && selectedOptions.hasOwnProperty(type) && customizable)
+                    || (selectedOptions && selectedOptions.hasOwnProperty(type) && selectedOptions[type] === value)
+                    || (type === 'pecsf-charity' && selectedOptions && selectedOptions.hasOwnProperty(name))
+                    || (type.includes('certificate') && selectedOptions && selectedOptions.hasOwnProperty(name))
             })
             .filter(({type, name, value, customizable}) => {
                 // filter engraving size to selected one
@@ -92,7 +92,7 @@ export default function AwardOptionsInput({award, confirm, cancel, regControl}) 
                     custom_value: customizable && selectedOptions[name]
                         ? selectedOptions[name]
                         : type === 'engraving'
-                            && selectedOptions.hasOwnProperty('engraving')
+                            && selectedOptions && selectedOptions.hasOwnProperty('engraving')
                             && selectedOptions.options === name
                                 ? selectedOptions['engraving']
                                 : value,
@@ -254,7 +254,7 @@ export default function AwardOptionsInput({award, confirm, cancel, regControl}) 
                     label="Cancel"
                 />
                 {
-                    award && award.options.length > 0 && <Button
+                    award && award.hasOwnProperty('options') && (award.options || []).length > 0 && <Button
                         type={'button'}
                         className={'p-button-info m-1'}
                         label="Reset"

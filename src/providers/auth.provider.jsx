@@ -123,15 +123,29 @@ function AuthProvider(props) {
      */
 
     const requestPasswordReset = async (data) => {
-        return api.post('request-reset-password', data);
+        const [_, res] = await api.post('request-reset-password', data);
+        const {result} = res || {};
+        return result;
     }
 
     /**
      * Reset password
      */
 
-    const resetPassword = async (data) => {
-        return await api.post('reset-password', data);
+    const resetPassword = async (id, token, data) => {
+        const [_, res] = await api.post(`reset-password/${id}/${token}`, data);
+        const {result} = res || {};
+        return result;
+    }
+
+    /**
+     * Validate user token
+     */
+
+    const validateToken = async (id, token) => {
+        const [_, res] = await api.get(`validate/${id}/${token}`, data);
+        const {error, result} = res || {};
+        return !error && !!result;
     }
 
     /**
@@ -211,6 +225,7 @@ function AuthProvider(props) {
             register,
             requestPasswordReset,
             resetPassword,
+            validateToken,
             getPermissions,
             createSetting,
             updateSetting,

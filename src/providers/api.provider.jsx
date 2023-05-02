@@ -171,6 +171,7 @@ function APIProvider(props) {
   const getAttendees = async () => {
     const [_, res] = await api.get(`/attendees/list`);
     const result = res || [];
+    console.log(result);
     return result;
   };
 

@@ -84,7 +84,7 @@ export default function AwardList() {
     };
 
     /**
-     * Award quantity display template
+     * Award selection quantity display template
      * */
 
     const selectedTemplate = (rowData) => {
