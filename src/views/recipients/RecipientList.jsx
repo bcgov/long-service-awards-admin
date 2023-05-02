@@ -53,20 +53,22 @@ export default function RecipientList() {
     lsa_current_count: 0,
     lsa_previous_count: 0,
     service_pins_count: 0,
+    retroactive_service_pins_count: 0,
     other_count: 0,
   });
   const [totalFilteredRecords, setTotalFilteredRecords] = useState(0);
   const [selected, setSelected] = useState([]);
   const [selectAll, setSelectAll] = useState(false);
   const [filters, setFilters] = useState(initFilters);
+  const [sort, setSort] = useState({
+    orderBy: "last_name",
+    order: 1,
+  });
   const [currentCycle, setCurrentCycle] = useState(null);
   const [pageState, setPageState] = useState({
     first: 0,
     rows: 10,
     page: 1,
-    sortField: "id",
-    sortOrder: 0,
-    filters: {},
   });
 
   /**
@@ -74,16 +76,17 @@ export default function RecipientList() {
    * */
 
   useEffect(() => {
-    loadData();
-  }, [pageState, filters]);
+    loadData(pageState, filters, sort);
+  }, [pageState, filters, sort]);
 
-  const loadData = () => {
+  const loadData = (pageState, filters, sort) => {
     setLoading(true);
-    const { first, rows, sortField, sortOrder } = pageState || {};
+    const { orderBy, order } = sort || {};
+    const { first, rows } = pageState || {};
     // compose list filters
     const filter = {
-      orderby: sortField,
-      order: sortOrder >= 0 ? "ASC" : "DESC",
+      orderby: orderBy,
+      order: order >= 0 ? "ASC" : "DESC",
       limit: rows,
       offset: first || 0,
       ...filters,
@@ -108,6 +111,7 @@ export default function RecipientList() {
             lsa_current_count: 0,
             lsa_previous_count: 0,
             service_pins_count: 0,
+            retroactive_service_pins_count: 0,
             other_count: 0,
           }
         )
@@ -158,23 +162,33 @@ export default function RecipientList() {
     });
   };
 
-  const clearFilter = () => {
-    setFilters(initFilters);
-  };
+  /**
+   * Filtered pagination
+   * */
 
   const showFilterDialog = () => {
     setShowDialog("filter");
   };
+
   const applyFilter = (filterData) => {
     if (filterData) setFilters(filterData);
     setShowDialog(null);
   };
 
+  const clearFilter = () => {
+    setFilters(initFilters);
+  };
+
+  /**
+   * Sorted pagination
+   * */
+
   const showSortDialog = () => {
     setShowDialog("sort");
   };
+
   const applySort = (sortData) => {
-    if (sortData) setPageState({ ...pageState, ...sortData });
+    if (sortData) setSort(sortData);
     setShowDialog(null);
   };
 
@@ -306,9 +320,20 @@ export default function RecipientList() {
   const servicesTemplate = (rowData) => {
     const { services } = rowData || {};
     return (
-      <DataTable header={""} className={"w-full text-xs"} value={services}>
+      <DataTable
+        dataKey={"milestone"}
+        sortField={"milestone"}
+        sortOrder={-1}
+        header={""}
+        className={"w-full text-xs"}
+        value={services}
+      >
         <Column className={"pt-0 pb-0"} field="cycle"></Column>
-        <Column className={"pt-0 pb-0"} field="milestone"></Column>
+        <Column
+          sortField={"milestone"}
+          className={"pt-0 pb-0"}
+          field="milestone"
+        ></Column>
         <Column className={"pt-0 pb-0"} field="qualifying_year"></Column>
       </DataTable>
     );
@@ -318,9 +343,9 @@ export default function RecipientList() {
     return formatDate(rowData.updated_at);
   };
 
-  const createdDateTemplate = (rowData) => {
-    return formatDate(rowData.created_at);
-  };
+  // const createdDateTemplate = (rowData) => {
+  //     return formatDate(rowData.created_at);
+  // };
 
   /**
    * Lazy loading
@@ -348,7 +373,7 @@ export default function RecipientList() {
       .removeRecipient(id)
       .then(() => {
         status.setMessage("delete");
-        loadData();
+        loadData(pageState, filters, sort);
       })
       .catch((e) => {
         console.error(e);
@@ -409,7 +434,27 @@ export default function RecipientList() {
                 type="button"
                 icon="pi pi-sync"
                 label="Refresh"
-                onClick={loadData}
+                onClick={() => loadData(pageState, filters, sort)}
+              />
+              <Button
+                className={"m-1 p-button-help"}
+                type="button"
+                icon="pi pi-ticket"
+                label="Assign to Ceremony"
+                onClick={() => console.log(selected)}
+                disabled={
+                  !selected.length ||
+                  !selected.every((r) =>
+                    r.services.find((s) => s.ceremony_opt_out === false)
+                  )
+                }
+              />
+              <Button
+                className={"m-1 p-button-success"}
+                type="button"
+                icon="pi pi-user-plus"
+                label="Register"
+                onClick={createRecipient}
               />
             </Fragment>
           }
@@ -436,7 +481,7 @@ export default function RecipientList() {
         style={{ width: "50vw" }}
       >
         <RecipientsSort
-          data={pageState}
+          data={sort}
           confirm={applySort}
           cancel={() => setShowDialog(null)}
         />
@@ -481,6 +526,12 @@ export default function RecipientList() {
             <Column
               headerStyle={{ width: "5rem" }}
               bodyStyle={{ width: "5rem" }}
+              field="retroactive_service_pins_count"
+              header="RetroPins"
+            ></Column>
+            <Column
+              headerStyle={{ width: "5rem" }}
+              bodyStyle={{ width: "5rem" }}
               field="lsa_previous_count"
               header="Archived"
             ></Column>
@@ -505,31 +556,6 @@ export default function RecipientList() {
             ></Column>
           </DataTable>
         }
-        paginatorRight={
-          <>
-            <Button
-              className={"m-1 p-button-help"}
-              type="button"
-              icon="pi pi-ticket"
-              label="Assign to Ceremony"
-              onClick={() => console.log(selected)}
-              disabled={
-                !selected.length ||
-                !selected.every((r) =>
-                  r.services.find((s) => s.ceremony_opt_out === false)
-                )
-              }
-            />
-            <Button
-              className={"m-1 p-button-success"}
-              type="button"
-              icon="pi pi-user-plus"
-              label="Register"
-              onClick={createRecipient}
-              disabled={selected.length}
-            />
-          </>
-        }
         rowClassName="m-0 p-0 w-full"
         stripedRows
         rows={pageState.rows}
@@ -537,8 +563,8 @@ export default function RecipientList() {
         totalRecords={totalFilteredRecords}
         onPage={onPage}
         first={pageState.first}
-        sortField={pageState.sortField}
-        sortOrder={pageState.sortOrder}
+        sortField={sort.orderBy}
+        sortOrder={sort.order}
         loading={loading}
         selection={selected}
         onSelectionChange={onSelectionChange}
