@@ -57,7 +57,7 @@ export default function AwardData({data, currentCycle}) {
                                     const { type, label, description, customizable} = award_option || {};
                                     return <div key={`award-option-${index}`}>
                                         {
-                                            !!pecsf_charity && pecsfCharities && type === 'pecsf-charity' && label &&
+                                            !!pecsf_charity && pecsf_charity.id !== null && pecsfCharities && type === 'pecsf-charity' && label &&
                                             <div className={'grid'}>
                                                 <div className={'col-6'}>{label}</div>
                                                 <div className={'col-6'}>
@@ -69,7 +69,7 @@ export default function AwardData({data, currentCycle}) {
                                             </div>
                                         }
                                         {
-                                            type === 'pecsf-charity' && !pecsf_charity &&
+                                            type === 'pecsf-charity' && (!pecsf_charity || pecsf_charity.id === null) &&
                                             <div className={'grid'}>
                                                 <div className={'col-6'}>{label}</div>
                                                 <div className={'col-6'}>Donation Pool</div>
