@@ -30,7 +30,7 @@ export default function AwardData({data, currentCycle}) {
 
     const lookupPecsfCharity = (id) => {
         const charity = (pecsfCharities || []).find(charity => charity.id === id);
-        return typeof charity ? `${charity.label} (${charity.region})` : 'Not Found';
+        return typeof charity && !!charity ? `${charity.label} (${charity.region})` : 'Not Found';
     }
 
     /**
@@ -57,7 +57,7 @@ export default function AwardData({data, currentCycle}) {
                                     const { type, label, description, customizable} = award_option || {};
                                     return <div key={`award-option-${index}`}>
                                         {
-                                            pecsfCharities && type === 'pecsf-charity' && label &&
+                                            !!pecsf_charity && pecsfCharities && type === 'pecsf-charity' && label &&
                                             <div className={'grid'}>
                                                 <div className={'col-6'}>{label}</div>
                                                 <div className={'col-6'}>
