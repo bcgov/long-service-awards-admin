@@ -21,6 +21,11 @@ import RecipientsFilter from "@/views/recipients/RecipientsFilter.jsx";
 import { useNavigate } from "react-router-dom";
 import RecipientView from "@/views/recipients/RecipientView";
 import { Card } from "primereact/card";
+import { Dropdown } from "primereact/dropdown";
+import { AutoComplete } from "primereact/autocomplete";
+import DataEdit from "@/views/default/DataEdit.jsx";
+import AttendeesEdit from "../attendees/AttendeesEdit";
+import AttendeesCreate from "../attendees/AttendeesCreate";
 
 export default function RecipientList() {
   // set default filter values:
@@ -45,9 +50,12 @@ export default function RecipientList() {
   const api = useAPI();
   const status = useStatus();
   const navigate = useNavigate();
+  // const { control, getValues } = useFormContext();
   const [loading, setLoading] = useState(false);
   const [showDialog, setShowDialog] = useState(null);
   const [recipients, setRecipients] = useState([]);
+  const [ceremonies, setCeremonies] = useState([]);
+  const [selectedCeremony, setSelectedCeremony] = useState({});
   const [stats, setStats] = useState({
     total_count: 0,
     lsa_current_count: 0,
@@ -57,7 +65,8 @@ export default function RecipientList() {
     other_count: 0,
   });
   const [totalFilteredRecords, setTotalFilteredRecords] = useState(0);
-  const [selected, setSelected] = useState([]);
+  const [filteredRecipients, setFilteredRecipients] = useState([]);
+  const [selectedRecipients, setSelectedRecipients] = useState([]);
   const [selectAll, setSelectAll] = useState(false);
   const [filters, setFilters] = useState(initFilters);
   const [sort, setSort] = useState({
@@ -70,7 +79,17 @@ export default function RecipientList() {
     rows: 10,
     page: 1,
   });
+  const [showCeremonyAssignDialog, setShowCeremonyAssignDialog] =
+    useState(false);
 
+  const searchRecipients = (event) => {
+    console.log(recipients);
+    let filteredRecipients = recipients.map((r) => {
+      if (r.services.find((s) => s.ceremony_opt_out === false)) return r;
+    });
+    console.log(filteredRecipients);
+    setFilteredRecipients(filteredRecipients);
+  };
   /**
    * Load recipients using applied filter
    * */
@@ -91,6 +110,16 @@ export default function RecipientList() {
       offset: first || 0,
       ...filters,
     };
+
+    // get ceremonies
+    api
+      .getCeremonies()
+      .then((results) => {
+        const { ceremonies } = results || {};
+        ceremonies.forEach((c) => (c.datetime = formatDateOnly(c.datetime)));
+        setCeremonies(ceremonies);
+      })
+      .catch(console.error);
 
     // get current cycle
     api
@@ -123,8 +152,14 @@ export default function RecipientList() {
       .getRecipients(filter)
       .then((results) => {
         const { total_filtered_records, recipients } = results || {};
-        // console.log(recipients)
-        setRecipients(recipients);
+
+        const recipientsWithFullNames = recipients.map((r) => {
+          Object.assign(r.contact, {
+            full_name: `${r.contact.first_name} ${r.contact.last_name}`,
+          });
+          return r;
+        });
+        setRecipients(recipientsWithFullNames);
         setTotalFilteredRecords(total_filtered_records);
       })
       .finally(() => {
@@ -387,7 +422,7 @@ export default function RecipientList() {
 
   const onSelectionChange = (event) => {
     const value = event.value;
-    setSelected(value);
+    setSelectedRecipients(value);
     setSelectAll(value.length === stats);
   };
 
@@ -396,6 +431,15 @@ export default function RecipientList() {
   /**
    * Render data table header component
    * */
+
+  const formatDateOnly = (value) => {
+    const date = new Date(value);
+    return date.toLocaleDateString("en-US", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+    });
+  };
 
   const header = () => {
     return (
@@ -441,10 +485,10 @@ export default function RecipientList() {
                 type="button"
                 icon="pi pi-ticket"
                 label="Assign to Ceremony"
-                onClick={() => console.log(selected)}
+                onClick={() => setShowCeremonyAssignDialog(true)}
                 disabled={
-                  !selected.length ||
-                  !selected.every((r) =>
+                  !selectedRecipients.length ||
+                  !selectedRecipients.every((r) =>
                     r.services.find((s) => s.ceremony_opt_out === false)
                   )
                 }
@@ -469,6 +513,39 @@ export default function RecipientList() {
 
   return (
     <>
+      <Dialog
+        visible={showCeremonyAssignDialog}
+        onHide={() => setShowCeremonyAssignDialog(false)}
+        header={"Assign to Ceremony"}
+        position="center"
+        closable
+        maximizable
+        modal
+        breakpoints={{ "960px": "80vw" }}
+        style={{ width: "50vw" }}
+      >
+        {/* <div className="flex flex-column p-4 gap-3">
+          <Dropdown
+            optionLabel="datetime"
+            value={selectedCeremony}
+            options={ceremonies}
+            onChange={(e) => {
+              setSelectedCeremony(e.target.value);
+            }}
+            placeholder="Select a Ceremony"
+          />
+
+          <AutoComplete
+            field="contact.full_name"
+            multiple
+            value={selectedRecipients}
+            suggestions={filteredRecipients}
+            completeMethod={searchRecipients}
+            onChange={(e) => setSelectedRecipients(e.value)}
+          />
+        </div> */}
+        <AttendeesCreate selectedRecipients={selectedRecipients} />
+      </Dialog>
       <Dialog
         visible={showDialog === "sort"}
         onHide={() => setShowDialog(null)}
@@ -566,7 +643,7 @@ export default function RecipientList() {
         sortField={sort.orderBy}
         sortOrder={sort.order}
         loading={loading}
-        selection={selected}
+        selection={selectedRecipients}
         onSelectionChange={onSelectionChange}
         selectAll={selectAll}
         onSelectAllChange={onSelectAllChange}

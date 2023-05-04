@@ -86,9 +86,15 @@ export default function AttendeesList() {
 
   const schema = [
     {
-      name: "name",
+      name: "recipient.contact.first_name",
       input: "select",
-      label: "Attendee Name",
+      label: "First Name",
+      sortable: true,
+    },
+    {
+      name: "recipient.contact.last_name",
+      input: "select",
+      label: "First Name",
       sortable: true,
     },
     {

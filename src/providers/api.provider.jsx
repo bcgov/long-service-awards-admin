@@ -171,12 +171,11 @@ function APIProvider(props) {
   const getAttendees = async () => {
     const [_, res] = await api.get(`/attendees/list`);
     const result = res || [];
-    console.log(result);
     return result;
   };
 
-  const createAttendee = async () => {
-    return await api.post(`/attendees/create`, {});
+  const createAttendee = async (data) => {
+    return await api.post(`/attendees/create`, data);
   };
 
   const getAttendee = async (id) => {
@@ -187,6 +186,11 @@ function APIProvider(props) {
   const saveAttendee = async (data) => {
     const { id } = data || {};
     return await api.post(`/attendees/update/${id}`, data);
+  };
+
+  const removeAttendee = async (id) => {
+    const [_, result] = await api.get(`/attendees/admin/delete/${id}`);
+    return result;
   };
 
   /**
@@ -210,6 +214,7 @@ function APIProvider(props) {
   };
 
   const saveCeremony = async (data) => {
+    console.log(data);
     const { id } = data || {};
     return await api.post(`/ceremonies/update/${id}`, data);
   };
@@ -470,6 +475,7 @@ function APIProvider(props) {
           getAttendee,
           createAttendee,
           saveAttendee,
+          removeAttendee,
           getMilestones,
           getQualifyingYears,
           getOrganizations,
