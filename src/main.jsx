@@ -28,6 +28,7 @@ import CeremonyEdit from "@/views/ceremonies/CeremonyEdit.jsx";
 import UserList from "@/views/users/UserList";
 import AwardList from "@/views/awards/AwardList";
 import AttendeesList from "@/views/attendees/AttendeesList";
+import AttendeesEdit from "@/views/attendees/AttendeesEdit";
 import SettingList from "@/views/settings/SettingList";
 import OrganizationList from "@/views/organizations/OrganizationList";
 import UserPasswordReset from "@/views/users/UserPasswordReset";
@@ -147,20 +148,20 @@ const router = createBrowserRouter(
             </ProtectedRoute>
           ),
         },
-        // {
-        //   path: "attendees/edit/:id",
-        //   element: (
-        //     <ProtectedRoute
-        //       authorizedRoles={[
-        //         "administrator",
-        //         "super-administrator",
-        //         "org-contact",
-        //       ]}
-        //     >
-        //       <CeremonyEdit />
-        //     </ProtectedRoute>
-        //   ),
-        // },
+        {
+          path: "attendees/edit/:id",
+          element: (
+            <ProtectedRoute
+              authorizedRoles={[
+                "administrator",
+                "super-administrator",
+                "org-contact",
+              ]}
+            >
+              <AttendeesEdit />
+            </ProtectedRoute>
+          ),
+        },
         {
           path: "organizations",
           element: (

@@ -152,14 +152,7 @@ export default function RecipientList() {
       .getRecipients(filter)
       .then((results) => {
         const { total_filtered_records, recipients } = results || {};
-
-        const recipientsWithFullNames = recipients.map((r) => {
-          Object.assign(r.contact, {
-            full_name: `${r.contact.first_name} ${r.contact.last_name}`,
-          });
-          return r;
-        });
-        setRecipients(recipientsWithFullNames);
+        setRecipients(recipients);
         setTotalFilteredRecords(total_filtered_records);
       })
       .finally(() => {
@@ -524,27 +517,10 @@ export default function RecipientList() {
         breakpoints={{ "960px": "80vw" }}
         style={{ width: "50vw" }}
       >
-        {/* <div className="flex flex-column p-4 gap-3">
-          <Dropdown
-            optionLabel="datetime"
-            value={selectedCeremony}
-            options={ceremonies}
-            onChange={(e) => {
-              setSelectedCeremony(e.target.value);
-            }}
-            placeholder="Select a Ceremony"
-          />
-
-          <AutoComplete
-            field="contact.full_name"
-            multiple
-            value={selectedRecipients}
-            suggestions={filteredRecipients}
-            completeMethod={searchRecipients}
-            onChange={(e) => setSelectedRecipients(e.value)}
-          />
-        </div> */}
-        <AttendeesCreate selectedRecipients={selectedRecipients} />
+        <AttendeesCreate
+          selectedRecipients={selectedRecipients}
+          callback={setShowCeremonyAssignDialog}
+        />
       </Dialog>
       <Dialog
         visible={showDialog === "sort"}

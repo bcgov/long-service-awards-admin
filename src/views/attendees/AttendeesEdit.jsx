@@ -167,7 +167,17 @@ import { MultiSelect } from "primereact/multiselect";
  * @returns {JSX.Element}
  */
 
-export default function AttendeesEdit({ selectedRecipients }) {
+export default function AttendeesEdit({
+  selectedRecipients,
+  selectedCeremony,
+}) {
+  selectedRecipients = selectedRecipients.map((r) => {
+    Object.assign(r.contact, {
+      full_name: `${r.contact.first_name} ${r.contact.last_name}`,
+    });
+    return r;
+  });
+
   const api = useAPI();
   const { control } = useFormContext();
   const [ceremonies, setCeremonies] = useState([]);
@@ -208,6 +218,7 @@ export default function AttendeesEdit({ selectedRecipients }) {
                 <>
                   <MultiSelect
                     id={field.name}
+                    key={field.name}
                     display="chip"
                     value={field.value}
                     onChange={(e) => {
@@ -227,6 +238,7 @@ export default function AttendeesEdit({ selectedRecipients }) {
             <Controller
               name={`ceremony`}
               control={control}
+              defaultValue={selectedCeremony ? selectedCeremony.id : ""}
               rules={{
                 required: "Ceremony is required.",
               }}
