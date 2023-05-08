@@ -18,7 +18,8 @@ import FormContext from "@/components/common/FormContext";
 
 //Fieldsets
 import CeremonyDetailsInput from "@/views/ceremonies/fieldsets/CeremonyDetailsInput.jsx";
-import AddressInput from "@/views/recipients/fieldsets/AddressInput.jsx";
+import CeremonyAddressInput from "@/views/ceremonies/fieldsets/CeremonyAddressInput.jsx";
+
 
 /**
  * Inherited model component
@@ -72,8 +73,10 @@ export default function CeremonyEdit() {
 
     // set default ceremony form values
     const defaults = {
-        
-        ceremony_address: {
+        venue: "",
+        datetime: "",
+        active: false,
+        address: {
             pobox: "",
             street1: "",
             street2: "",
@@ -87,41 +90,39 @@ export default function CeremonyEdit() {
     // define recipient fieldset validation checks
     const fieldsetValidators = {
         ceremonyAddress: (data) => {
-            const {contact} = data || {};
-            const {personal_address} = contact || {};
+            const {address} = data || {};
             return validate([
-                {key: "personal_phone", validators: [validators.phone]},
-            ], contact) && validate([
                 { key: "street1", validators: [validators.required] },
                 { key: "community", validators: [validators.required] },
                 { key: "province", validators: [validators.required] },
                 { key: "postal_code", validators: [validators.required, validators.postal_code] },
-            ], personal_address);
-        },
-        confirmation: (data) => {
-            return true;
+            ], address);
         }
     };
 
     // loader for ceremony record data
     const _loader = async () => {
         const { result } = await api.getCeremony(id) || {};
+        if (!result.address)
+        {
+            delete result["address"];
+        }
         return result;
     };
 
     return <>
         <PageHeader heading="Create Ceremony" />
         <FormContext
-            defaults={defaults}
             loader={_loader}
             save={_handleSave}
             remove={_handleDelete}
             cancel={_handleCancel}
+            defaults={defaults}
             blocked={false}
-            validate={fieldsetValidators.confirmation}
+            validate={fieldsetValidators.ceremonyAddress}
         >
             <CeremonyDetailsInput />
-            <AddressInput id={'address'} validate={fieldsetValidators.ceremonyAddress} />
+            <CeremonyAddressInput validate={fieldsetValidators.ceremonyAddress} />
         </FormContext>
     </>
 }
