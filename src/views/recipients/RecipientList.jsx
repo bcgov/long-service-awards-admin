@@ -24,7 +24,7 @@ import { Card } from "primereact/card";
 import { Dropdown } from "primereact/dropdown";
 import { AutoComplete } from "primereact/autocomplete";
 import DataEdit from "@/views/default/DataEdit.jsx";
-import AttendeesEdit from "../attendees/AttendeesEdit";
+import AttendeesEdit from "../attendees/AttendeesEditInput";
 import AttendeesCreate from "../attendees/AttendeesCreate";
 
 export default function RecipientList() {
@@ -50,12 +50,9 @@ export default function RecipientList() {
   const api = useAPI();
   const status = useStatus();
   const navigate = useNavigate();
-  // const { control, getValues } = useFormContext();
   const [loading, setLoading] = useState(false);
   const [showDialog, setShowDialog] = useState(null);
   const [recipients, setRecipients] = useState([]);
-  const [ceremonies, setCeremonies] = useState([]);
-  const [selectedCeremony, setSelectedCeremony] = useState({});
   const [stats, setStats] = useState({
     total_count: 0,
     lsa_current_count: 0,
@@ -67,6 +64,7 @@ export default function RecipientList() {
   const [totalFilteredRecords, setTotalFilteredRecords] = useState(0);
   const [filteredRecipients, setFilteredRecipients] = useState([]);
   const [selectedRecipients, setSelectedRecipients] = useState([]);
+  const [attendees, setAttendees] = useState([]);
   const [selectAll, setSelectAll] = useState(false);
   const [filters, setFilters] = useState(initFilters);
   const [sort, setSort] = useState({
@@ -83,11 +81,9 @@ export default function RecipientList() {
     useState(false);
 
   const searchRecipients = (event) => {
-    console.log(recipients);
     let filteredRecipients = recipients.map((r) => {
       if (r.services.find((s) => s.ceremony_opt_out === false)) return r;
     });
-    console.log(filteredRecipients);
     setFilteredRecipients(filteredRecipients);
   };
   /**
@@ -111,15 +107,8 @@ export default function RecipientList() {
       ...filters,
     };
 
-    // get ceremonies
-    api
-      .getCeremonies()
-      .then((results) => {
-        const { ceremonies } = results || {};
-        ceremonies.forEach((c) => (c.datetime = formatDateOnly(c.datetime)));
-        setCeremonies(ceremonies);
-      })
-      .catch(console.error);
+    // get attendees records
+    api.getAttendees().then((results) => setAttendees(results));
 
     // get current cycle
     api
@@ -229,6 +218,7 @@ export default function RecipientList() {
     const ceremonyOptOut = (services || []).some(
       (service) => service.cycle === currentCycle && service.ceremony_opt_out
     );
+
     const statuses = {
       assigned: {
         label: "Assigned",
@@ -264,10 +254,10 @@ export default function RecipientList() {
       },
     };
     // select the recipient status
-    // Todo: Include ceremony attendee status
-    const statusIndicator = ceremonyOptOut
-      ? statuses.declined
-      : statuses.default;
+    let statusIndicator = ceremonyOptOut ? statuses.declined : statuses.default;
+    // check if recipient is an attendee
+    const attendee = attendees.find((a) => a.recipient.id === rowData.id);
+    if (attendee) statusIndicator = statuses[attendee.status.toLowerCase()];
 
     return (
       <>

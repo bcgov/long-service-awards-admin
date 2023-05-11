@@ -8,7 +8,6 @@
 
 import { useContext, createContext, useMemo } from "react";
 import api from "../services/api.services.js";
-import { format } from "date-fns";
 
 /**
  * Global authentication context.
@@ -170,19 +169,11 @@ function APIProvider(props) {
    */
 
   const getAttendees = async () => {
+    //   const [_, res] = await api.get(
+    //   `/recipients/admin/list?${formatQueryParams(params)}`
+    // );
     const [_, res] = await api.get(`/attendees/list`);
     const result = res || [];
-    //TODO : is this the best place to do this type of conversion?
-    result.forEach((r) => {
-      r.ceremony.datetime = format(
-        new Date(r.ceremony.datetime),
-        "EEEE, MMMM dd, yyyy"
-      );
-      r.ceremony.created_at = format(
-        new Date(r.ceremony.created_at),
-        "EEEE, MMMM dd, yyyy"
-      );
-    });
     return result;
   };
 
