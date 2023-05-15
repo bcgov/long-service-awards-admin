@@ -155,36 +155,31 @@
 //  */
 
 import { useEffect, useState } from "react";
-import { Controller, useFormContext } from "react-hook-form";
+import { Controller, useFormContext, useWatch } from "react-hook-form";
 import { Panel } from "primereact/panel";
 import classNames from "classnames";
 import { Dropdown } from "primereact/dropdown";
 import { useAPI } from "@/providers/api.provider.jsx";
 import { format } from "date-fns";
 import { MultiSelect } from "primereact/multiselect";
+import { Chip } from "primereact/chip";
 /**
  * Model data edit component
  * @returns {JSX.Element}
  */
 
-export default function AttendeesEditInput(props) {
-  let { selectedRecipients, selectedCeremony } = props;
-  console.log(props);
+export default function AttendeesEditInput({ isEditing, selectedRecipients }) {
   selectedRecipients
-    ? (selectedRecipients = selectedRecipients.map((r) => {
+    ? selectedRecipients.map((r) =>
         Object.assign(r.contact, {
           full_name: `${r.contact.first_name} ${r.contact.last_name}`,
-        });
-        return r;
-      }))
-    : (selectedRecipients = {});
+        })
+      )
+    : {};
 
-  const api = useAPI();
   const { control } = useFormContext();
+  const api = useAPI();
   const [ceremonies, setCeremonies] = useState([]);
-
-  const [selectedRecipientsToBeAssigned, setSelectedRecipientsToBeAssigned] =
-    useState(selectedRecipients);
 
   useEffect(() => {
     api
@@ -209,37 +204,42 @@ export default function AttendeesEditInput(props) {
               Selected Recipients Will be Assigned to Ceremony :
             </label>
             <Controller
-              name={`recipients`}
+              name={isEditing ? `recipient.contact.full_name` : `recipients`}
               control={control}
               rules={{
                 required: "Recipient is required.",
               }}
-              defaultValue={selectedRecipientsToBeAssigned}
-              render={({ field, fieldState: { invalid, error } }) => (
-                <>
-                  <MultiSelect
-                    id={field.name}
-                    key={field.name}
-                    display="chip"
-                    value={field.value}
-                    onChange={(e) => {
-                      field.onChange(e.value);
-                    }}
-                    options={selectedRecipients}
-                    optionLabel="contact.full_name"
-                    placeholder="Select a Recipient"
+              defaultValue={
+                selectedRecipients ? selectedRecipients.map((r) => r.id) : []
+              }
+              render={({ field, fieldState: { invalid, error } }) => {
+                return !isEditing ? (
+                  <>
+                    <div className="flex">
+                      {selectedRecipients.map((r) => (
+                        <Chip
+                          label={r.contact.full_name}
+                          style={{ width: "max-content", margin: "2px" }}
+                          key={r.contact.full_name}
+                        />
+                      ))}
+                    </div>
+                    {invalid && <p className="error">{error.message}</p>}
+                  </>
+                ) : (
+                  <Chip
+                    label={field.value}
+                    style={{ width: "max-content", margin: "2px" }}
                   />
-                  {invalid && <p className="error">{error.message}</p>}
-                </>
-              )}
+                );
+              }}
             />
           </div>
           <div className={"col-12 form-field-container"}>
             <label htmlFor={"ceremony"}>Select Ceremony</label>
             <Controller
-              name={`ceremony`}
+              name={isEditing ? `ceremony.id` : `ceremony`}
               control={control}
-              defaultValue={selectedCeremony ? selectedCeremony.id : ""}
               rules={{
                 required: "Ceremony is required.",
               }}
@@ -247,7 +247,7 @@ export default function AttendeesEditInput(props) {
                 <>
                   <Dropdown
                     className={classNames({ "p-invalid": error })}
-                    id={field.name}
+                    id={field.id}
                     optionLabel="datetime"
                     value={field.value || ""}
                     options={ceremonies}

@@ -102,6 +102,7 @@ import { Card } from "primereact/card";
 import AttendeeView from "@/views/attendees/AttendeeView";
 import DataEdit from "@/views/default/DataEdit.jsx";
 import AttendeesEdit from "@/views/attendees/AttendeesEdit.jsx";
+import InvitationCreate from "@/views/invitations/InvitationCreate";
 
 export default function AttendeesList() {
   // set default filter values:
@@ -123,6 +124,7 @@ export default function AttendeesList() {
   const [stats, setStats] = useState({
     total_count: 0,
   });
+  const [showRSVPDialog, setShowRSVPDialog] = useState(false);
   const [selected, setSelected] = useState([]);
   const [selectAll, setSelectAll] = useState(false);
   const [filters, setFilters] = useState(initFilters);
@@ -162,6 +164,7 @@ export default function AttendeesList() {
       .then((results) => {
         // const { total_filtered_records, attendees } = results || {};
         const attendees = results || {};
+        console.log(attendees);
         results.forEach((r) => {
           r.ceremony.datetime = format(
             new Date(r.ceremony.datetime),
@@ -233,7 +236,6 @@ export default function AttendeesList() {
    * */
 
   const onView = (data) => {
-    console.log(data);
     return <AttendeeView data={data} />;
   };
 
@@ -375,6 +377,19 @@ export default function AttendeesList() {
   return (
     <>
       <Dialog
+        visible={showRSVPDialog}
+        onHide={() => setShowRSVPDialog(false)}
+        header={"RSVP"}
+        position="center"
+        closable
+        maximizable
+        modal
+        breakpoints={{ "960px": "80vw" }}
+        style={{ width: "50vw" }}
+      >
+        <InvitationCreate selected={selected} />
+      </Dialog>
+      <Dialog
         visible={showDialog === "sort"}
         onHide={() => setShowDialog(null)}
         header={"Sort Ceremonies"}
@@ -419,8 +434,8 @@ export default function AttendeesList() {
             className={"m-1 p-button-success"}
             type="button"
             icon="pi pi-user-plus"
-            label="Register"
-            onClick={createCeremony}
+            label="Send RSVP Invite"
+            onClick={() => setShowRSVPDialog(true)}
           />
         }
         rowClassName="m-0 p-0 w-full"
@@ -481,7 +496,7 @@ export default function AttendeesList() {
         />
         <Column
           className={"p-1"}
-          field="recipient.organization"
+          field="recipient.organization.abbreviation"
           header="Organization"
           headerStyle={{ minWidth: "7em" }}
           bodyStyle={{ minWidth: "7em" }}

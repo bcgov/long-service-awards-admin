@@ -158,7 +158,7 @@ const router = createBrowserRouter(
                 "org-contact",
               ]}
             >
-              <AttendeesEdit />
+              <AttendeesEdit isEditing />
             </ProtectedRoute>
           ),
         },

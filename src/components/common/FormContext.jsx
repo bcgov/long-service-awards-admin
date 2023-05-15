@@ -37,6 +37,8 @@ export default function FormContext({
   blocked,
   validate,
   children,
+  header,
+  buttonText,
 }) {
   // get context / hooks
   const status = useStatus();
@@ -129,7 +131,10 @@ export default function FormContext({
               text="Form is incomplete. Please check for errors or missing fields."
             />
           )}
-          <Panel icons={<i className={"pi pi-save"} />} header={"Save Form"}>
+          <Panel
+            icons={<i className={"pi pi-save"} />}
+            header={header ?? "Save Form"}
+          >
             <ConfirmDialog
               header="Confirmation"
               visible={showConfirm}
@@ -151,7 +156,7 @@ export default function FormContext({
                     type="submit"
                     onClick={handleSubmit(_submitForm)}
                   >
-                    Save
+                    {buttonText ? buttonText : "Save"}
                   </Button>
                 </div>
                 <div className={"col-5"}>

@@ -24,7 +24,7 @@ import { Card } from "primereact/card";
 import { Dropdown } from "primereact/dropdown";
 import { AutoComplete } from "primereact/autocomplete";
 import DataEdit from "@/views/default/DataEdit.jsx";
-import AttendeesEdit from "../attendees/AttendeesEditInput";
+import AttendeesEdit from "../attendees/fieldsets/AttendeesEditInput";
 import AttendeesCreate from "../attendees/AttendeesCreate";
 
 export default function RecipientList() {
@@ -63,7 +63,7 @@ export default function RecipientList() {
   });
   const [totalFilteredRecords, setTotalFilteredRecords] = useState(0);
   const [filteredRecipients, setFilteredRecipients] = useState([]);
-  const [selectedRecipients, setSelectedRecipients] = useState([]);
+  const [selected, setSelected] = useState([]);
   const [attendees, setAttendees] = useState([]);
   const [selectAll, setSelectAll] = useState(false);
   const [filters, setFilters] = useState(initFilters);
@@ -142,6 +142,7 @@ export default function RecipientList() {
       .then((results) => {
         const { total_filtered_records, recipients } = results || {};
         setRecipients(recipients);
+        console.log(recipients);
         setTotalFilteredRecords(total_filtered_records);
       })
       .finally(() => {
@@ -243,10 +244,6 @@ export default function RecipientList() {
       attending: {
         label: "Attending",
         severity: "success",
-      },
-      waitlisted: {
-        label: "Waitlisted",
-        severity: "warning",
       },
       default: {
         label: "Not Assigned",
@@ -405,7 +402,7 @@ export default function RecipientList() {
 
   const onSelectionChange = (event) => {
     const value = event.value;
-    setSelectedRecipients(value);
+    setSelected(value);
     setSelectAll(value.length === stats);
   };
 
@@ -470,8 +467,8 @@ export default function RecipientList() {
                 label="Assign to Ceremony"
                 onClick={() => setShowCeremonyAssignDialog(true)}
                 disabled={
-                  !selectedRecipients.length ||
-                  !selectedRecipients.every((r) =>
+                  !selected.length ||
+                  !selected.every((r) =>
                     r.services.find((s) => s.ceremony_opt_out === false)
                   )
                 }
@@ -508,7 +505,7 @@ export default function RecipientList() {
         style={{ width: "50vw" }}
       >
         <AttendeesCreate
-          selectedRecipients={selectedRecipients}
+          selectedRecipients={selected}
           callback={setShowCeremonyAssignDialog}
         />
       </Dialog>
@@ -609,7 +606,7 @@ export default function RecipientList() {
         sortField={sort.orderBy}
         sortOrder={sort.order}
         loading={loading}
-        selection={selectedRecipients}
+        selection={selected}
         onSelectionChange={onSelectionChange}
         selectAll={selectAll}
         onSelectAllChange={onSelectAllChange}

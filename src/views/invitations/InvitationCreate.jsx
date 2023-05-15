@@ -1,6 +1,6 @@
 /*!
- * Edit Attendees Record
- * File: AttendeesEdit.js
+ * Edit Invitation Record
+ * File: InvitationCreate.js
  * Copyright(c) 2023 BC Gov
  * MIT Licensed
  */
@@ -14,13 +14,10 @@ import PageHeader from "@/components/common/PageHeader.jsx";
 import FormContext from "@/components/common/FormContext";
 
 //Fieldsets
-import AttendeesEditInput from "./fieldsets/AttendeesEditInput";
+import InvitationInput from "@/views/invitations/fieldsets/InvitationInput";
 
-/**
- * Inherited model component
- */
-
-export default function AttendeesEdit({ isEditing, selectedRecipients }) {
+export default function InvitationCreate({ selected }) {
+  console.log(selected);
   const status = useStatus();
   const api = useAPI();
   const user = useUser();
@@ -30,7 +27,11 @@ export default function AttendeesEdit({ isEditing, selectedRecipients }) {
 
   const [submitted, setSubmitted] = useState(false);
 
-  // create new registration
+  /**
+   * Inherited model component
+   */
+
+  // // create new registration
   const _handleDelete = async (id) => {
     try {
       const [error, result] = await api.removeAttendee(id);
@@ -84,19 +85,11 @@ export default function AttendeesEdit({ isEditing, selectedRecipients }) {
   };
 
   // loader for Attendees record data
-  const _loader = async () => {
-    const result = (await api.getAttendee(id)) || {};
-    Object.assign(result.recipient.contact, {
-      full_name: `${result.recipient.contact.first_name} ${result.recipient.contact.last_name}`,
-    });
-    return result;
-  };
+  const _loader = async () => {};
 
   return (
     <>
-      <PageHeader
-        heading={isEditing ? "Editing Attendee" : "Create Attendees"}
-      />
+      <PageHeader heading={"Send RSVP"} />
       <FormContext
         loader={_loader}
         save={_handleSave}
@@ -104,11 +97,10 @@ export default function AttendeesEdit({ isEditing, selectedRecipients }) {
         cancel={_handleCancel}
         defaults={defaults}
         blocked={false}
+        buttonText={"Send"}
+        header={"Send Invitation"}
       >
-        <AttendeesEditInput
-          isEditing={isEditing}
-          selectedRecipients={selectedRecipients}
-        />
+        <InvitationInput selected={selected} />
       </FormContext>
     </>
   );

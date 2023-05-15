@@ -5,7 +5,7 @@
  * MIT Licensed
  */
 import DataEdit from "@/views/default/DataEdit.jsx";
-import AttendeesEdit from "./AttendeesEditInput";
+import AttendeesEdit from "./fieldsets/AttendeesEditInput";
 import { useAPI } from "@/providers/api.provider.jsx";
 
 export default function AttendeesCreate({ selectedRecipients, callback }) {
