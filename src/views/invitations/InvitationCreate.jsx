@@ -62,6 +62,7 @@ export default function InvitationCreate({ selected }) {
     try {
       status.setMessage("save");
       const [error, result] = await api.saveAttendee(data);
+
       if (error) status.setMessage("saveError");
       else status.setMessage("saveSuccess");
       if (!error && result) {

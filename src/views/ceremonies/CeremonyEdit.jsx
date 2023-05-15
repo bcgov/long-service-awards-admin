@@ -121,7 +121,6 @@ export default function CeremonyEdit() {
     if (!result.address) {
       delete result["address"];
     }
-    console.log(result);
     return result;
   };
 

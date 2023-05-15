@@ -61,6 +61,7 @@ export default function AttendeesEdit({ isEditing, selectedRecipients }) {
     try {
       status.setMessage("save");
       const [error, result] = await api.saveAttendee(data);
+      console.log("Saved:", result);
       if (error) status.setMessage("saveError");
       else status.setMessage("saveSuccess");
       if (!error && result) {

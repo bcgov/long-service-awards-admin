@@ -243,24 +243,27 @@ export default function AttendeesEditInput({ isEditing, selectedRecipients }) {
               rules={{
                 required: "Ceremony is required.",
               }}
-              render={({ field, fieldState: { invalid, error } }) => (
-                <>
-                  <Dropdown
-                    className={classNames({ "p-invalid": error })}
-                    id={field.id}
-                    optionLabel="datetime"
-                    value={field.value || ""}
-                    options={ceremonies}
-                    optionValue="id"
-                    onChange={(e) => {
-                      field.onChange(e.value);
-                    }}
-                    aria-describedby={`ceremony-date-help`}
-                    placeholder={"Select ceremony"}
-                  />
-                  {invalid && <p className="error">{error.message}</p>}
-                </>
-              )}
+              render={({ field, fieldState: { invalid, error } }) => {
+                console.log(field.value);
+                return (
+                  <>
+                    <Dropdown
+                      className={classNames({ "p-invalid": error })}
+                      id={field.id}
+                      optionLabel="datetime"
+                      value={field.value || ""}
+                      options={ceremonies}
+                      optionValue="id"
+                      onChange={(e) => {
+                        field.onChange(e.value);
+                      }}
+                      aria-describedby={`ceremony-date-help`}
+                      placeholder={"Select ceremony"}
+                    />
+                    {invalid && <p className="error">{error.message}</p>}
+                  </>
+                );
+              }}
             />
           </div>
         </div>
