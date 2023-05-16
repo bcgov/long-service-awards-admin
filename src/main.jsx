@@ -33,6 +33,7 @@ import SettingList from "@/views/settings/SettingList";
 import OrganizationList from "@/views/organizations/OrganizationList";
 import UserPasswordReset from "@/views/users/UserPasswordReset";
 import ReportList from "@/views/reports/ReportList";
+import RSVPCreate from "@/views/rsvp/RSVPCreate";
 
 // init main router
 const router = createBrowserRouter(
@@ -159,6 +160,20 @@ const router = createBrowserRouter(
               ]}
             >
               <AttendeesEdit isEditing />
+            </ProtectedRoute>
+          ),
+        },
+        {
+          path: "rsvp/:id",
+          element: (
+            <ProtectedRoute
+              authorizedRoles={[
+                "administrator",
+                "super-administrator",
+                "org-contact",
+              ]}
+            >
+              <RSVPCreate />
             </ProtectedRoute>
           ),
         },

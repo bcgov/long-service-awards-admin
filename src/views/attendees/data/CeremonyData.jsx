@@ -12,6 +12,7 @@ import { Panel } from "primereact/panel";
  */
 
 export default function CeremonyData({ data }) {
+  console.log(data);
   const { active, address, created_at, datetime, venue } = data || {};
 
   return (

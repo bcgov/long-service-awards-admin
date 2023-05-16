@@ -223,7 +223,7 @@ export default function RecipientList() {
     const statuses = {
       assigned: {
         label: "Assigned",
-        severity: "primary",
+        severity: "info",
       },
       declined: {
         label: "Declined",

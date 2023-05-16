@@ -192,7 +192,7 @@ function APIProvider(props) {
   };
 
   const removeAttendee = async (id) => {
-    const [_, result] = await api.get(`/attendees/admin/delete/${id}`);
+    const [_, result] = await api.get(`/attendees/delete/${id}`);
     return result;
   };
 

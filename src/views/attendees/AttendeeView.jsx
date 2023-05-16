@@ -15,9 +15,11 @@ import CeremonyData from "@/views/attendees/data/CeremonyData";
 export default function AttendeeView({ data }) {
   const { ceremony, recipient } = data || {};
 
+  console.log(ceremony);
+
   return (
     <div>
-      <ProfileData data={recipient} />
+      {/* <ProfileData data={recipient} /> */}
       <CeremonyData data={ceremony} />
     </div>
   );

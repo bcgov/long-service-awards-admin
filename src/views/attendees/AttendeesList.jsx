@@ -164,7 +164,7 @@ export default function AttendeesList() {
       .then((results) => {
         // const { total_filtered_records, attendees } = results || {};
         const attendees = results || {};
-        console.log(attendees);
+        // console.log(attendees);
         results.forEach((r) => {
           r.ceremony.datetime = format(
             new Date(r.ceremony.datetime),
@@ -246,7 +246,7 @@ export default function AttendeesList() {
   const onDelete = (data) => {
     const { id } = data || {};
     api
-      .removeCeremony(id)
+      .removeAttendee(id)
       .then(() => {
         status.setMessage("delete");
         loadData();
@@ -289,7 +289,7 @@ export default function AttendeesList() {
     const statuses = {
       assigned: {
         label: "Assigned",
-        severity: "primary",
+        severity: "info",
         description: "Attendee was assigned to the ceremony.",
       },
       expired: {
