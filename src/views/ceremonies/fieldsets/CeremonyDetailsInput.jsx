@@ -60,30 +60,35 @@ export default function CeremonyDetailsInput({ id, label }) {
           </div>
 
           <div className={"col-12 form-field-container"}>
-            <label className={"m-1"} htmlFor={`ceremony_date`}>
+            <label className={"m-1"} htmlFor={`datetime`}>
               Ceremony Date
             </label>
             <Controller
               name={`datetime`}
               control={control}
-              render={({ field, fieldState: { invalid, error } }) => (
-                <>
-                  <Calendar
-                    id={field.datetime}
-                    aria-describedby={`ceremony_date-help`}
-                    className={classNames("m-1", { "p-invalid": error })}
-                    value={convertDate(field.value || "")}
-                    onChange={(e) => {
-                      field.onChange(e.value);
-                    }}
-                    dateFormat="dd/mm/yy"
-                    mask="99/99/9999"
-                    showIcon
-                    placeholder="Select ceremony date"
-                  />
-                  {invalid && <p className="error">{error.message}</p>}
-                </>
-              )}
+              render={({ field, fieldState: { invalid, error } }) => {
+                console.log(field.value);
+                return (
+                  <>
+                    <Calendar
+                      id={field.datetime}
+                      aria-describedby={`ceremony_date-help`}
+                      className={classNames("m-1", { "p-invalid": error })}
+                      value={convertDate(field.value || "")}
+                      onChange={(e) => {
+                        field.onChange(e.value);
+                      }}
+                      dateFormat="dd/mm/yy"
+                      mask="99/99/9999"
+                      showTime
+                      hourFormat="12"
+                      showIcon
+                      placeholder="Select ceremony date"
+                    />
+                    {invalid && <p className="error">{error.message}</p>}
+                  </>
+                );
+              }}
             />
             <small>Select the ceremony date.</small>
           </div>

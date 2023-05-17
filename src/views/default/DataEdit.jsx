@@ -12,7 +12,15 @@ import FormContext from "@/components/common/FormContext";
  * Default edit form component for record data
  */
 
-export default function DataEdit({ loader, save, remove, defaults, children }) {
+export default function DataEdit({
+  loader,
+  save,
+  remove,
+  defaults,
+  children,
+  buttonText,
+  header,
+}) {
   const status = useStatus();
 
   // create new record
@@ -54,6 +62,8 @@ export default function DataEdit({ loader, save, remove, defaults, children }) {
         loader={_loader}
         save={_handleSave}
         remove={remove ? _handleDelete : null}
+        buttonText={buttonText}
+        header={header}
       >
         {children}
       </FormContext>

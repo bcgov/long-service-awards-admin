@@ -216,6 +216,11 @@ function APIProvider(props) {
     return result;
   };
 
+  const removeCeremony = async (id) => {
+    const [_, result] = await api.get(`/ceremonies/delete/${id}`);
+    return result;
+  };
+
   const saveCeremony = async (data) => {
     const { id } = data || {};
     return await api.post(`/ceremonies/update/${id}`, data);
@@ -473,6 +478,7 @@ function APIProvider(props) {
           getCeremony,
           createCeremony,
           saveCeremony,
+          removeCeremony,
           getAttendees,
           getAttendee,
           createAttendee,

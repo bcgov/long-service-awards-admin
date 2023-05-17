@@ -14,7 +14,14 @@ export default function AttendeesCreate({ selectedRecipients, callback }) {
   const _save = async (data) =>
     api.createAttendee(data).finally(callback(false));
   return (
-    <DataEdit loader={_loader} save={_save} remove={null} defaults={{}}>
+    <DataEdit
+      loader={_loader}
+      save={_save}
+      remove={null}
+      defaults={{}}
+      buttonText="Assign"
+      header="Confirmation"
+    >
       <AttendeesEdit selectedRecipients={selectedRecipients} />
     </DataEdit>
   );

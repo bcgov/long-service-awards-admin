@@ -17,6 +17,7 @@ import EditToolBar from "@/views/default/EditToolBar.jsx";
 import { Toolbar } from "primereact/toolbar";
 import { Dialog } from "primereact/dialog";
 import { useNavigate } from "react-router-dom";
+import { format } from "date-fns";
 //import CeremonyView from "@/views/ceremonies/CeremonyView";
 import { Card } from "primereact/card";
 
@@ -155,7 +156,7 @@ export default function CeremonyList() {
   };
 
   const ceremonyDateTemplate = (rowData) => {
-    return formatDateOnly(rowData.datetime);
+    return format(new Date(rowData.datetime), `p 'on' EEEE, MMMM dd, yyyy`);
   };
 
   /**
@@ -180,6 +181,7 @@ export default function CeremonyList() {
 
   const onDelete = (data) => {
     const { id } = data || {};
+    console.log(id);
     api
       .removeCeremony(id)
       .then(() => {

@@ -88,12 +88,12 @@ export default function AttendeesEditInput({ isEditing, selectedRecipients }) {
   };
 
   const statusCeremonyTemplate = (option) => {
-    return format(new Date(option.datetime), "EEEE, MMMM dd, yyyy");
+    return format(new Date(option.datetime), `p 'on' EEEE, MMMM dd, yyyy`);
   };
 
   const selectedCeremonyTemplate = (option) => {
     if (option) {
-      return format(new Date(option.datetime), "EEEE, MMMM dd, yyyy");
+      return format(new Date(option.datetime), `p 'on' EEEE, MMMM dd, yyyy`);
     } else {
       return <span>Select Ceremony</span>;
     }
@@ -181,6 +181,11 @@ export default function AttendeesEditInput({ isEditing, selectedRecipients }) {
                         }}
                         aria-describedby={`ceremony-date-help`}
                         placeholder={"Select ceremony"}
+                        dateFormat="dd/mm/yy"
+                        mask="99/99/9999"
+                        showTime
+                        hourFormat="12"
+                        showIcon
                       />
                       {invalid && <p className="error">{error.message}</p>}
                     </>

@@ -57,7 +57,6 @@ export default function AttendeesEdit({ isEditing, selectedRecipients }) {
   // save registration data
   const _handleSave = async (data) => {
     console.log("Save:", data);
-
     try {
       status.setMessage("save");
       const [error, result] = await api.saveAttendee(data);

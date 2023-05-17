@@ -99,7 +99,6 @@ export default function RSVPCreate() {
     Object.assign(result.recipient.contact, {
       full_name: `${result.recipient.contact.first_name} ${result.recipient.contact.last_name}`,
     });
-    console.log(result);
     return result;
   };
 
