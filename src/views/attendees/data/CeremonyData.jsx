@@ -24,7 +24,9 @@ export default function CeremonyData({ data }) {
           <div className={"col-6"}>Venue</div>
           <div className={"col-6"}>{venue || "-"}</div>
           <div className={"col-6"}>Address</div>
-          <div className={"col-6"}>{address || "-"}</div>
+          <div className={"col-6"}>
+            {address.street1} {address.street2} {address.community} {address.province} {address.country} {address.postal_code} {address.pobox}
+            </div>
         </div>
       </div>
     </Panel>
