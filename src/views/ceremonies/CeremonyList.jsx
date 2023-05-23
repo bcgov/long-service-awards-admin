@@ -18,7 +18,7 @@ import { Toolbar } from "primereact/toolbar";
 import { Dialog } from "primereact/dialog";
 import { useNavigate } from "react-router-dom";
 import { format } from "date-fns";
-//import CeremonyView from "@/views/ceremonies/CeremonyView";
+import CeremonyView from "@/views/ceremonies/CeremonyView";
 import { Card } from "primereact/card";
 
 export default function CeremonyList() {
@@ -171,9 +171,9 @@ export default function CeremonyList() {
    * View ceremony record
    * */
 
-  // const onView = (data) => {
-  //     return <CeremonyView data={data} />
-  // }
+  const onView = (data) => {
+      return <CeremonyView data={data} />
+  }
 
   /**
    * Delete ceremony record
