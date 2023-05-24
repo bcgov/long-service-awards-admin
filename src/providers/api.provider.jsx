@@ -165,31 +165,48 @@ function APIProvider(props) {
 
   /**
    * Get attendees
-   * @returns All attendees
+   *
    */
 
   const getAttendees = async () => {
-    //   const [_, res] = await api.get(
-    //   `/recipients/admin/list?${formatQueryParams(params)}`
-    // );
     const [_, res] = await api.get(`/attendees/list`);
     const result = res || [];
     return result;
   };
 
+  /**
+   * Create attendee record
+   *
+   */
+
   const createAttendee = async (data) => {
     return await api.post(`/attendees/create`, data);
   };
+
+  /**
+   * Get single attendee record
+   *
+   */
 
   const getAttendee = async (id) => {
     const [_, result] = await api.get(`/attendees/view/${id}`);
     return result;
   };
 
+  /**
+   * Save single attendee record
+   *
+   */
+
   const saveAttendee = async (data) => {
     const { id } = data || {};
     return await api.post(`/attendees/update/${id}`, data);
   };
+
+  /**
+   * Remove single attendee record
+   *
+   */
 
   const removeAttendee = async (id) => {
     const [_, result] = await api.get(`/attendees/delete/${id}`);
@@ -197,8 +214,19 @@ function APIProvider(props) {
   };
 
   /**
+   * Get accommodations
+   *
+   */
+
+  const getAccommodations = async () => {
+    const [_, res] = await api.get(`/accommodations/list`);
+    const result = res || {};
+    return result;
+  };
+
+  /**
    * Get ceremonies
-   * @returns All ceremonies
+   *
    */
 
   const getCeremonies = async () => {
@@ -207,19 +235,39 @@ function APIProvider(props) {
     return result;
   };
 
+  /**
+   * Create ceremony record
+   *
+   */
+
   const createCeremony = async () => {
     return await api.post(`/ceremonies/create`, {});
   };
+
+  /**
+   * Get single ceremony record
+   *
+   */
 
   const getCeremony = async (id) => {
     const [_, result] = await api.get(`/ceremonies/view/${id}`);
     return result;
   };
 
+  /**
+   * Remove  single ceremony record
+   *
+   */
+
   const removeCeremony = async (id) => {
     const [_, result] = await api.get(`/ceremonies/delete/${id}`);
     return result;
   };
+
+  /**
+   * Save single ceremony record
+   *
+   */
 
   const saveCeremony = async (data) => {
     const { id } = data || {};
@@ -501,6 +549,7 @@ function APIProvider(props) {
           createAward,
           saveAward,
           removeAward,
+          getAccommodations,
           getPecsfCharities,
           getPecsfCharity,
           getPecsfRegions,

@@ -15,7 +15,6 @@ export default function AttendeeView({ data }) {
   console.log("data: ", data);
   return (
     <div>
-      {/* <ProfileData data={recipient} /> */}
       <CeremonyData data={data} />
     </div>
   );

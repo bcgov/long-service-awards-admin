@@ -5,15 +5,13 @@
  * MIT Licensed
  */
 
-import { useEffect, useState } from "react";
-import { Controller, useFormContext, useWatch } from "react-hook-form";
-import { Panel } from "primereact/panel";
-import classNames from "classnames";
-import { Dropdown } from "primereact/dropdown";
 import { useAPI } from "@/providers/api.provider.jsx";
 import { format } from "date-fns";
-import { MultiSelect } from "primereact/multiselect";
 import { Chip } from "primereact/chip";
+import { Panel } from "primereact/panel";
+import { useEffect, useState } from "react";
+import { Controller, useFormContext } from "react-hook-form";
+
 /**
  * Model data edit component
  * @returns {JSX.Element}
@@ -25,8 +23,6 @@ export default function InvitationInput({ selected }) {
       full_name: `${a.recipient.contact.first_name} ${a.recipient.contact.last_name}`,
     })
   );
-
-  console.log(selected);
 
   const { control } = useFormContext();
   const api = useAPI();
@@ -51,30 +47,29 @@ export default function InvitationInput({ selected }) {
       <div className="container">
         <div className="grid">
           <div className={"col-12 form-field-container"}>
-            {/* <label htmlFor={"recipients"}>
-              Send RSVP to selected Attendees :
-            </label> */}
             <Controller
-              name={`recipient.contact.full_name`}
+              name={`recipients`}
               control={control}
               rules={{
                 required: "Recipient is required.",
               }}
-              defaultValue={selected.map((r) => r.id)}
-              render={({ field, fieldState: { invalid, error } }) => (
-                <>
-                  <div className="flex">
-                    {selected.map((a) => (
-                      <Chip
-                        label={a.recipient.contact.full_name}
-                        style={{ width: "max-content", margin: "2px" }}
-                        key={a.recipient.contact.full_name}
-                      />
-                    ))}
-                  </div>
-                  {invalid && <p className="error">{error.message}</p>}
-                </>
-              )}
+              render={({ field, fieldState: { invalid, error } }) => {
+                console.log(field.value);
+                return (
+                  <>
+                    <div className="flex">
+                      {selected.map((a) => (
+                        <Chip
+                          label={a.recipient.contact.full_name}
+                          style={{ width: "max-content", margin: "2px" }}
+                          key={a.recipient.contact.full_name}
+                        />
+                      ))}
+                    </div>
+                    {invalid && <p className="error">{error.message}</p>}
+                  </>
+                );
+              }}
             />
           </div>
         </div>

@@ -29,7 +29,7 @@ export default function RSVPGuest() {
     <Fieldset
       toggleable={false}
       className={"mb-3"}
-      legend={<>Retiring before the ceremony date?</>}
+      legend={<>Are you bringing a guest?</>}
     >
       <div className="container">
         <div className="grid">

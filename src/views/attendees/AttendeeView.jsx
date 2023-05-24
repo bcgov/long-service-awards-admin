@@ -19,7 +19,7 @@ export default function AttendeeView({ data }) {
 
   return (
     <div>
-      {/* <ProfileData data={recipient} /> */}
+      <ProfileData data={recipient} />
       <CeremonyData data={ceremony} />
     </div>
   );

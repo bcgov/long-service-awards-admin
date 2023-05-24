@@ -5,30 +5,20 @@
  * MIT Licensed
  */
 
-import { useState } from "react";
-import { useAPI } from "@/providers/api.provider.jsx";
-import { useNavigate, useParams } from "react-router-dom";
-import { useStatus } from "@/providers/status.provider.jsx";
-import { useUser } from "@/providers/user.provider.jsx";
-import PageHeader from "@/components/common/PageHeader.jsx";
 import FormContext from "@/components/common/FormContext";
+import PageHeader from "@/components/common/PageHeader.jsx";
+import { useAPI } from "@/providers/api.provider.jsx";
+import { useStatus } from "@/providers/status.provider.jsx";
+import { useNavigate, useParams } from "react-router-dom";
 
 //Fieldsets
 import AttendeesEditInput from "./fieldsets/AttendeesEditInput";
 
-/**
- * Inherited model component
- */
-
 export default function AttendeesEdit({ isEditing, selectedRecipients }) {
   const status = useStatus();
   const api = useAPI();
-  const user = useUser();
-  const { role } = user || {};
   const navigate = useNavigate();
   const { id } = useParams() || {};
-
-  const [submitted, setSubmitted] = useState(false);
 
   // create new registration
   const _handleDelete = async (id) => {

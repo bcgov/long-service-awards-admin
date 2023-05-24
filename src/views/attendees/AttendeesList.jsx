@@ -1,87 +1,7 @@
 /*!
  * Attendees Management View
- * File: AwardList.js
+ * File: AttendeesList.js
  * Copyright(c) 2023 BC Gov
- * MIT Licensed
- */
-
-// import { useAPI } from "@/providers/api.provider.jsx";
-// import DataList from "@/views/default/DataList";
-// import AttendeeView from "@/views/attendees/AttendeeView";
-// import DataEdit from "@/views/default/DataEdit.jsx";
-// import AttendeesEdit from "@/views/attendees/AttendeesEdit.jsx";
-
-// /**
-//  * Inherited model component
-//  */
-
-// export default function AttendeesList() {
-//   const api = useAPI();
-
-//   // build edit form template
-//   const editTemplate = (data, callback) => {
-//     console.log(data);
-//     const _loader = async () => {};
-//     const _save = async (data) =>
-//       api.saveAttendee(data).then((data) => console.log(data));
-//     return (
-//       <DataEdit loader={_loader} save={_save} remove={null} defaults={{}}>
-//         <AttendeesEdit
-//           selectedRecipients={[data.recipient]}
-//           selectedCeremony={data.ceremony}
-//         />
-//       </DataEdit>
-//     );
-//   };
-
-//   const viewTemplate = (data) => <AttendeeView data={data} />;
-
-//   const schema = [
-//     {
-//       name: "status",
-//       input: "date",
-//       label: "Status",
-//       sortable: true,
-//     },
-//     {
-//       name: "recipient.contact.first_name",
-//       input: "select",
-//       label: "First Name",
-//       sortable: true,
-//     },
-//     {
-//       name: "recipient.contact.last_name",
-//       input: "select",
-//       label: "Last Name",
-//       sortable: true,
-//     },
-//     {
-//       name: "ceremony.datetime",
-//       input: "text",
-//       label: "Ceremony",
-//       sortable: true,
-//     },
-//   ];
-
-//   return (
-//     <DataList
-//       idKey={"id"}
-//       schema={schema}
-//       title={"Attendees"}
-//       loader={api.getAttendees}
-//       edit={editTemplate}
-//       view={viewTemplate}
-//       remove={api.removeAttendee}
-//       //   options={optionsTemplate}
-//     />
-//   );
-// }
-
-/*!
- * LSA.Admin.Components.CeremonyList
- * File: Ceremony.jsx
- * Copyright(c) 2023 Government of British Columbia
- * Version 2.0
  * MIT Licensed
  */
 
@@ -164,17 +84,19 @@ export default function AttendeesList() {
       .then((results) => {
         // const { total_filtered_records, attendees } = results || {};
         const attendees = results || {};
-        // console.log(attendees);
         results.forEach((r) => {
-          r.ceremony.datetime = format(
+          r.ceremony.datetime_formatted = format(
             new Date(r.ceremony.datetime),
-            "EEEE, MMMM dd, yyyy"
+            `p 'on' EEEE, MMMM dd, yyyy`
           );
-          r.ceremony.created_at = format(
+          r.ceremony.created_at_formatted = format(
             new Date(r.ceremony.created_at),
             "EEEE, MMMM dd, yyyy"
           );
-          r.created_at = format(new Date(r.created_at), "dd/mm/yy, h:mm aa");
+          r.created_at_formatted = format(
+            new Date(r.created_at),
+            "dd/mm/yy, h:mm aa"
+          );
         });
         setAttendees(attendees);
         // setTotalFilteredRecords(total_filtered_records);
@@ -182,25 +104,6 @@ export default function AttendeesList() {
       .finally(() => {
         setLoading(false);
       });
-  };
-
-  // // create new ceremony night
-  const createCeremony = async () => {
-    try {
-      status.setMessage("create");
-      // create ceremony record stub and redirect
-      const [error, res] = await api.createCeremony();
-      const { message, result } = res || {};
-      if (error) status.setMessage("createError");
-      else status.setMessage(message);
-
-      if (!error && result) {
-        const { id } = result;
-        navigate(`/ceremonies/edit/${id}`);
-      }
-    } catch (error) {
-      status.setMessage("createError");
-    }
   };
 
   const clearFilter = () => {
@@ -259,17 +162,8 @@ export default function AttendeesList() {
 
   // const editTemplate = (data, callback) => {
   //   console.log(data);
-  //   const _loader = async () => {};
+
   const _save = async (data) => api.saveAttendee(data);
-  //   return (
-  //     <DataEdit loader={_loader} save={_save} remove={null} defaults={{}}>
-  //       <AttendeesEdit
-  //         selectedRecipients={[data.recipient]}
-  //         selectedCeremony={data.ceremony}
-  //       />
-  //     </DataEdit>
-  //   );
-  // };
 
   /**
    * Select ceremony for action
@@ -503,14 +397,14 @@ export default function AttendeesList() {
         />
         <Column
           className={"p-1"}
-          field="ceremony.datetime"
+          field="ceremony.datetime_formatted"
           header="Ceremony"
           headerStyle={{ minWidth: "7em" }}
           bodyStyle={{ minWidth: "7em" }}
         />
         <Column
           className={"p-1"}
-          field="created_at"
+          field="created_at_formatted"
           header="Assigned"
           headerStyle={{ minWidth: "7em" }}
           bodyStyle={{ minWidth: "7em" }}

@@ -5,17 +5,16 @@
  * MIT Licensed
  */
 
-import { useState } from "react";
+import FormContext from "@/components/common/FormContext";
+import PageHeader from "@/components/common/PageHeader.jsx";
 import { useAPI } from "@/providers/api.provider.jsx";
-import { useNavigate, useParams } from "react-router-dom";
 import { useStatus } from "@/providers/status.provider.jsx";
 import { useUser } from "@/providers/user.provider.jsx";
-import PageHeader from "@/components/common/PageHeader.jsx";
-import FormContext from "@/components/common/FormContext";
+import RSVPGuest from "@/views/rsvp/fieldsets/RSVPGuest";
 import RSVPInviteeDetails from "@/views/rsvp/fieldsets/RSVPInviteeDetails";
 import RSVPOptions from "@/views/rsvp/fieldsets/RSVPOptions";
-import RSVPRetiring from "@/views/rsvp/fieldsets/RSVPRetiring";
-import RSVPGuest from "@/views/rsvp/fieldsets/RSVPGuest";
+import { useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 
 //Fieldsets
 
@@ -60,26 +59,29 @@ export default function RSVPCreate() {
   const _handleSave = async (data) => {
     let sanitizedData = { ...data };
     //remove unchecked dietary options
-    Object.keys(sanitizedData.dietary_requirements).forEach((key) =>
-      sanitizedData.dietary_requirements[key] === undefined
-        ? delete sanitizedData.dietary_requirements[key]
+    Object.keys(sanitizedData.accommodations).forEach((key) =>
+      sanitizedData.accommodations[key] === undefined
+        ? delete sanitizedData.accommodations[key]
         : {}
     );
-    console.log("Save:", sanitizedData);
 
-    // try {
-    //   status.setMessage("save");
-    //   const [error, result] = await api.saveAttendee(data);
-    //   console.log("Saved:", result);
-    //   if (error) status.setMessage("saveError");
-    //   else status.setMessage("saveSuccess");
-    //   if (!error && result) {
-    //     setSubmitted(true);
-    //     return result;
-    //   }
-    // } catch (error) {
-    //   status.setMessage("saveError");
-    // }
+    const updatedStatusData = { ...sanitizedData, status: "Attending" };
+
+    console.log("Save:", updatedStatusData);
+
+    try {
+      status.setMessage("save");
+      const [error, result] = await api.saveAttendee(updatedStatusData);
+      console.log("Saved:", result);
+      if (error) status.setMessage("saveError");
+      else status.setMessage("saveSuccess");
+      if (!error && result) {
+        setSubmitted(true);
+        return result;
+      }
+    } catch (error) {
+      status.setMessage("saveError");
+    }
   };
 
   // cancel edits
@@ -117,7 +119,6 @@ export default function RSVPCreate() {
       >
         <RSVPInviteeDetails />
         <RSVPOptions />
-        <RSVPRetiring />
         <RSVPGuest />
       </FormContext>
     </>
