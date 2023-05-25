@@ -5,23 +5,18 @@
  * MIT Licensed
  */
 
-import { useEffect, useState } from "react";
-import { Controller, useFormContext, useWatch } from "react-hook-form";
-import { useUser } from "@/providers/user.provider.jsx";
-import { Panel } from "primereact/panel";
-import classNames from "classnames";
-import { Dropdown } from "primereact/dropdown";
 import { useAPI } from "@/providers/api.provider.jsx";
+import { useUser } from "@/providers/user.provider.jsx";
+import classNames from "classnames";
 import { format } from "date-fns";
-import { MultiSelect } from "primereact/multiselect";
-import { Chip } from "primereact/chip";
-import { Tag } from "primereact/tag";
 import { Checkbox } from "primereact/checkbox";
-
-/**
- * Model data edit component
- * @returns {JSX.Element}
- */
+import { Chip } from "primereact/chip";
+import { Dropdown } from "primereact/dropdown";
+import { Panel } from "primereact/panel";
+import { Tag } from "primereact/tag";
+import { useEffect, useState } from "react";
+import { Controller, useFormContext } from "react-hook-form";
+import { ceremonyStatuses as statuses } from "@/constants/statuses.constants.js";
 
 export default function AttendeesEditInput({ isEditing, selectedRecipients }) {
   selectedRecipients
@@ -34,35 +29,11 @@ export default function AttendeesEditInput({ isEditing, selectedRecipients }) {
 
   const { control } = useFormContext();
   const api = useAPI();
-  const user = useUser();
-  const { role } = user || {};
+  // const user = useUser();
+  // const { role } = user || {};
   // const isAdmin = ["super-administrator"].includes(role.name);
-  const isAdmin = true;
+  // const isAdmin = true;
   const [ceremonies, setCeremonies] = useState([]);
-
-  const statuses = [
-    {
-      label: "Assigned",
-      severity: "info",
-      description: "Attendee was assigned to the ceremony.",
-    },
-    {
-      label: "Expired",
-      severity: "danger",
-      description: "The invitation has expired",
-    },
-    {
-      label: "Invited",
-      severity: "primary",
-      description: "Attendee was invited to the ceremony.",
-    },
-    {
-      label: "Attending",
-      severity: "success",
-      description: "Attendee is attending the ceremony.",
-    },
-  ];
-
   const statusOptionTemplate = (option) => {
     return (
       <Tag
@@ -181,11 +152,7 @@ export default function AttendeesEditInput({ isEditing, selectedRecipients }) {
                         }}
                         aria-describedby={`ceremony-date-help`}
                         placeholder={"Select ceremony"}
-                        dateFormat="dd/mm/yy"
                         mask="99/99/9999"
-                        showTime
-                        hourFormat="12"
-                        showIcon
                       />
                       {invalid && <p className="error">{error.message}</p>}
                     </>
@@ -196,7 +163,7 @@ export default function AttendeesEditInput({ isEditing, selectedRecipients }) {
           </div>
         </div>
       </Panel>
-      {isEditing && isAdmin && (
+      {isEditing && (
         <>
           <Panel className={"mb-3"} header={<>Status</>}>
             <div className="container">
@@ -219,7 +186,9 @@ export default function AttendeesEditInput({ isEditing, selectedRecipients }) {
                             id={field.value}
                             optionLabel="label"
                             value={field.value || ""}
-                            options={statuses}
+                            options={Object.keys(statuses).map(
+                              (k) => statuses[k]
+                            )}
                             optionValue="label"
                             onChange={(e) => {
                               field.onChange(e.value);
@@ -256,11 +225,15 @@ export default function AttendeesEditInput({ isEditing, selectedRecipients }) {
                           <Checkbox
                             id={field.name}
                             inputId={field.name}
-                            checked={!!field.value || false}
+                            checked={!!field.value}
                             aria-describedby={`active-help`}
-                            value={field.value || false}
+                            value={field.value}
                             onChange={(e) => {
-                              field.onChange(e.checked);
+                              field.onChange(
+                                e.target.checked
+                                  ? (field.value = 1)
+                                  : (field.value = 0)
+                              );
                             }}
                           />
                           {invalid && <p className="error">{error.message}</p>}

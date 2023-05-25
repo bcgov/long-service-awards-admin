@@ -20,7 +20,6 @@ export default function AttendeesEdit({ isEditing, selectedRecipients }) {
   const navigate = useNavigate();
   const { id } = useParams() || {};
 
-  // create new registration
   const _handleDelete = async (id) => {
     try {
       const [error, result] = await api.removeAttendee(id);
@@ -44,7 +43,6 @@ export default function AttendeesEdit({ isEditing, selectedRecipients }) {
     }
   };
 
-  // save registration data
   const _handleSave = async (data) => {
     console.log("Save:", data);
     try {
@@ -54,15 +52,14 @@ export default function AttendeesEdit({ isEditing, selectedRecipients }) {
       if (error) status.setMessage("saveError");
       else status.setMessage("saveSuccess");
       if (!error && result) {
-        setSubmitted(true);
         return result;
       }
     } catch (error) {
-      status.setMessage("saveError");
+      // status.setMessage("saveError");
+      console.log(error);
     }
   };
 
-  // cancel edits
   const _handleCancel = async () => {
     navigate("/attendees");
   };
@@ -79,7 +76,6 @@ export default function AttendeesEdit({ isEditing, selectedRecipients }) {
     Object.assign(result.recipient.contact, {
       full_name: `${result.recipient.contact.first_name} ${result.recipient.contact.last_name}`,
     });
-    console.log(result);
     return result;
   };
 

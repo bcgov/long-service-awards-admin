@@ -9,11 +9,9 @@ import FormContext from "@/components/common/FormContext";
 import PageHeader from "@/components/common/PageHeader.jsx";
 import { useAPI } from "@/providers/api.provider.jsx";
 import { useStatus } from "@/providers/status.provider.jsx";
-import { useUser } from "@/providers/user.provider.jsx";
 import RSVPGuest from "@/views/rsvp/fieldsets/RSVPGuest";
 import RSVPInviteeDetails from "@/views/rsvp/fieldsets/RSVPInviteeDetails";
 import RSVPOptions from "@/views/rsvp/fieldsets/RSVPOptions";
-import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
 //Fieldsets
@@ -25,13 +23,9 @@ import { useNavigate, useParams } from "react-router-dom";
 export default function RSVPCreate() {
   const status = useStatus();
   const api = useAPI();
-  const user = useUser();
   const navigate = useNavigate();
   const { id } = useParams() || {};
 
-  const [submitted, setSubmitted] = useState(false);
-
-  // create new registration
   const _handleDelete = async (id) => {
     try {
       const [error, result] = await api.removeAttendee(id);
@@ -55,7 +49,6 @@ export default function RSVPCreate() {
     }
   };
 
-  // save registration data
   const _handleSave = async (data) => {
     let sanitizedData = { ...data };
     //remove unchecked dietary options
@@ -64,19 +57,27 @@ export default function RSVPCreate() {
         ? delete sanitizedData.accommodations[key]
         : {}
     );
-
     const updatedStatusData = { ...sanitizedData, status: "Attending" };
 
     console.log("Save:", updatedStatusData);
 
     try {
       status.setMessage("save");
+      if (updatedStatusData.accommodations) {
+        for (const acc in updatedStatusData.accommodations) {
+          await api.createSelection({
+            attendee: updatedStatusData.id,
+            accommodation: acc,
+          });
+        }
+      }
+
       const [error, result] = await api.saveAttendee(updatedStatusData);
-      console.log("Saved:", result);
+
       if (error) status.setMessage("saveError");
       else status.setMessage("saveSuccess");
+
       if (!error && result) {
-        setSubmitted(true);
         return result;
       }
     } catch (error) {
@@ -101,6 +102,7 @@ export default function RSVPCreate() {
     Object.assign(result.recipient.contact, {
       full_name: `${result.recipient.contact.first_name} ${result.recipient.contact.last_name}`,
     });
+    console.log(result);
     return result;
   };
 

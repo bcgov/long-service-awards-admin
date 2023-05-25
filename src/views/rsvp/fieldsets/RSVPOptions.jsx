@@ -1,50 +1,21 @@
 /*!
- * Address fieldset component
- * File: CeremonyInput.js
+ * RSVP Options component
+ * File: RSVPOptions.js
  * Copyright(c) 2023 BC Gov
  * MIT Licensed
  */
 
-import { useEffect, useState } from "react";
-import { useFormContext, Controller } from "react-hook-form";
-import { InputText } from "primereact/inputtext";
-import { Calendar } from "primereact/calendar";
-import classNames from "classnames";
-import { matchers } from "@/services/validation.services.js";
-import { Dropdown } from "primereact/dropdown";
-import { InputMask } from "primereact/inputmask";
-import { BlockUI } from "primereact/blockui";
-import { AutoComplete } from "primereact/autocomplete";
 import { useAPI } from "@/providers/api.provider.jsx";
-import { Fieldset } from "primereact/fieldset";
-import { convertDate } from "@/services/validation.services.js";
-import { Chip } from "primereact/chip";
-import { format } from "date-fns";
-import { SelectButton } from "primereact/selectbutton";
 import { Checkbox } from "primereact/checkbox";
-/**
- * Address Input reusable component. Conditional PO Box requirement for Victoria addresses.
- * @returns address line 1, address line 2, city/community, province/state, country, postal code, po box
- */
+import { Fieldset } from "primereact/fieldset";
+import { SelectButton } from "primereact/selectbutton";
+import { useEffect, useState } from "react";
+import { Controller, useFormContext } from "react-hook-form";
 
 export default function RSVPOptions() {
   const api = useAPI();
-  const { control, setValue, getValues } = useFormContext();
+  const { control, setValue } = useFormContext();
   const [accommodations, setAccommodations] = useState([]);
-
-  // const dietaryOptionsValues = [
-  //   { option: "Dairy-free", name: "dairy_free" },
-  //   { option: "Gluten-free", name: "gluten_free" },
-  //   { option: "Sugar-free", name: "sugar_free" },
-  //   { option: "Shellfish-free", name: "shellfish_free" },
-  //   { option: "Peanut-free", name: "peanut_free" },
-  //   { option: "Nut-free", name: "nut_free" },
-  //   {
-  //     option:
-  //       "Other. Someone from the Long Service Awards team will contact you closer to the event for further information.",
-  //     name: "other",
-  //   },
-  // ];
 
   const accessibilityRequirements = [
     { name: "Yes", value: true },
@@ -56,12 +27,15 @@ export default function RSVPOptions() {
       .getAccommodations()
       .then((results) => {
         const accommodations = results || {};
+        //remove accesibility requirement from the list
+        accommodations.splice(
+          accommodations.findIndex(({ name }) => name == "accessibility"),
+          1
+        );
         setAccommodations(accommodations);
       })
       .catch(console.error);
   }, []);
-
-  console.log(accommodations);
 
   return (
     accommodations && (
@@ -70,7 +44,7 @@ export default function RSVPOptions() {
           <div className="grid">
             <div className={"col-12 form-field-container"}>
               <label
-                htmlFor={`accessibility_requirements`}
+                htmlFor={`accommodations.accessibility`}
                 className="font-bold"
               >
                 Accessibility requirements
@@ -81,30 +55,28 @@ export default function RSVPOptions() {
                 language interpreter (ASL), service dog access etc.)?
               </p>
               <Controller
-                name="accessibility_requirements"
+                name="accommodations.accessibility"
                 control={control}
                 defaultValue={false}
-                render={({ field, fieldState: { invalid, error } }) => {
+                render={({ field }) => {
                   return (
                     <>
                       <div className="flex align-items-center">
                         <SelectButton
                           className={"radio-toggle"}
                           value={field.value}
-                          // style={{ backgroundColor: "green" }}
                           onChange={(e) => {
                             setValue(
-                              "accessibility_requirements",
+                              "accommodations.accessibility",
                               e.value === true
                             );
                           }}
                           options={accessibilityRequirements}
                           optionLabel="name"
                         />
-                        {invalid && <p className="error">{error.message}</p>}
                         <label
                           className={"ml-2"}
-                          htmlFor={`accessibility_requirements`}
+                          htmlFor={`accommodations.accessibility`}
                         >
                           (Selected: No)
                         </label>
@@ -127,7 +99,7 @@ export default function RSVPOptions() {
                   name={`accommodations.` + `${o.name}`}
                   control={control}
                   key={i}
-                  render={({ field, fieldState: { invalid, error } }) => {
+                  render={({ field }) => {
                     return (
                       <div className="field-checkbox">
                         <Checkbox

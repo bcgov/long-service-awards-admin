@@ -5,24 +5,22 @@
  * MIT Licensed
  */
 
-import { useState, useEffect, Fragment } from "react";
-import { DataTable } from "primereact/datatable";
-import { Column } from "primereact/column";
-import { Button } from "primereact/button";
-import { Tag } from "primereact/tag";
-import { useStatus } from "@/providers/status.provider.jsx";
 import { useAPI } from "@/providers/api.provider.jsx";
-import EditToolBar from "@/views/default/EditToolBar.jsx";
-import { Toolbar } from "primereact/toolbar";
-import { Dialog } from "primereact/dialog";
-import { useNavigate } from "react-router-dom";
-import { format } from "date-fns";
-import AttendeesFilter from "@/views/attendees/AttendeesFilter.jsx";
-import { Card } from "primereact/card";
+import { useStatus } from "@/providers/status.provider.jsx";
 import AttendeeView from "@/views/attendees/AttendeeView";
-import DataEdit from "@/views/default/DataEdit.jsx";
-import AttendeesEdit from "@/views/attendees/AttendeesEdit.jsx";
+import AttendeesFilter from "@/views/attendees/AttendeesFilter.jsx";
+import EditToolBar from "@/views/default/EditToolBar.jsx";
 import InvitationCreate from "@/views/invitations/InvitationCreate";
+import { format } from "date-fns";
+import { Button } from "primereact/button";
+import { Card } from "primereact/card";
+import { Column } from "primereact/column";
+import { DataTable } from "primereact/datatable";
+import { Dialog } from "primereact/dialog";
+import { Tag } from "primereact/tag";
+import { Toolbar } from "primereact/toolbar";
+import { Fragment, useEffect, useState } from "react";
+import { ceremonyStatuses as statuses } from "@/constants/statuses.constants.js";
 
 export default function AttendeesList() {
   // set default filter values:
@@ -37,7 +35,6 @@ export default function AttendeesList() {
 
   const api = useAPI();
   const status = useStatus();
-  const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [showDialog, setShowDialog] = useState(null);
   const [attendees, setAttendees] = useState([]);
@@ -58,7 +55,7 @@ export default function AttendeesList() {
   });
 
   /**
-   * Load ceremonies using applied filter
+   * Load attendees using applied filter
    * */
 
   useEffect(() => {
@@ -163,8 +160,6 @@ export default function AttendeesList() {
   // const editTemplate = (data, callback) => {
   //   console.log(data);
 
-  const _save = async (data) => api.saveAttendee(data);
-
   /**
    * Select ceremony for action
    * */
@@ -177,34 +172,14 @@ export default function AttendeesList() {
 
   const onSelectAllChange = () => {};
 
+  const guestTemplate = (rowData) => {
+    const { guest } = rowData || {};
+    return guest === 1 ? "Yes" : "No";
+  };
+
   const statusTemplate = (rowData) => {
     const { status } = rowData || {};
-
-    const statuses = {
-      assigned: {
-        label: "Assigned",
-        severity: "info",
-        description: "Attendee was assigned to the ceremony.",
-      },
-      expired: {
-        label: "Expired",
-        severity: "danger",
-        description: "The invitation has expired",
-      },
-      invited: {
-        label: "Invited",
-        severity: "primary",
-        description: "Attendee was invited to the ceremony.",
-      },
-      attending: {
-        label: "Attending",
-        severity: "success",
-        description: "Attendee is attending the ceremony.",
-      },
-    };
-
     const statusIndicator = statuses[status.toLowerCase()];
-
     return (
       <Tag
         tooltip={statusIndicator.description}
@@ -265,7 +240,7 @@ export default function AttendeesList() {
   };
 
   /**
-   * Render ceremony data table
+   * Render attendees data table
    * */
 
   return (
@@ -326,6 +301,9 @@ export default function AttendeesList() {
         paginatorRight={
           <Button
             className={"m-1 p-button-success"}
+            disabled={
+              !selected.length || !selected.every((r) => r.status !== "Invited")
+            }
             type="button"
             icon="pi pi-user-plus"
             label="Send RSVP Invite"
@@ -399,6 +377,14 @@ export default function AttendeesList() {
           className={"p-1"}
           field="ceremony.datetime_formatted"
           header="Ceremony"
+          headerStyle={{ minWidth: "7em" }}
+          bodyStyle={{ minWidth: "7em" }}
+        />
+        <Column
+          className={"p-1"}
+          field="guest"
+          header="Guest"
+          body={guestTemplate}
           headerStyle={{ minWidth: "7em" }}
           bodyStyle={{ minWidth: "7em" }}
         />

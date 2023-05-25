@@ -225,6 +225,15 @@ function APIProvider(props) {
   };
 
   /**
+   * Create accommodation selection
+   *
+   */
+
+  const createSelection = async (data) => {
+    return await api.post(`/accommodations/create`, data);
+  };
+
+  /**
    * Get ceremonies
    *
    */
@@ -255,7 +264,7 @@ function APIProvider(props) {
   };
 
   /**
-   * Remove  single ceremony record
+   * Remove single ceremony record
    *
    */
 
@@ -549,6 +558,7 @@ function APIProvider(props) {
           createAward,
           saveAward,
           removeAward,
+          createSelection,
           getAccommodations,
           getPecsfCharities,
           getPecsfCharity,
