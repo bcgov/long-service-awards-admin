@@ -214,6 +214,14 @@ function APIProvider(props) {
   };
 
   /**
+   * Send RSVP
+   */
+  const sendRSVP = async (recipient) => {
+    const [_, result] = await api.post('/rsvp/send', recipient);
+    return result;
+  }
+
+  /**
    * Get accommodations
    *
    */
@@ -541,6 +549,7 @@ function APIProvider(props) {
           createAttendee,
           saveAttendee,
           removeAttendee,
+          sendRSVP,
           getMilestones,
           getQualifyingYears,
           getOrganizations,
