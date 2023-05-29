@@ -222,6 +222,14 @@ function APIProvider(props) {
   }
 
   /**
+   * Get RSVP
+   */
+  const getRSVP = async (id, token) => {
+    const [_, result] = await api.get(`/rsvp/${id}/${token}`);
+    return result;
+  }
+
+  /**
    * Get accommodations
    *
    */
@@ -550,6 +558,7 @@ function APIProvider(props) {
           saveAttendee,
           removeAttendee,
           sendRSVP,
+          getRSVP,
           getMilestones,
           getQualifyingYears,
           getOrganizations,
