@@ -13,6 +13,8 @@ import RSVPGuest from "@/views/rsvp/fieldsets/RSVPGuest";
 import RSVPInviteeDetails from "@/views/rsvp/fieldsets/RSVPInviteeDetails";
 import RSVPOptions from "@/views/rsvp/fieldsets/RSVPOptions";
 import { useNavigate, useParams } from "react-router-dom";
+import RSVPConfirmationInput from "@/views/rsvp/fieldsets/RSVPConfirmationInput";
+import validate, { validators } from "@/services/validation.services.js";
 
 //Fieldsets
 
@@ -25,6 +27,14 @@ export default function RSVPCreate() {
   const api = useAPI();
   const navigate = useNavigate();
   const { id } = useParams() || {};
+
+  // define fieldset validation checks
+  const fieldsetValidators = {
+    confirmation: (data) => {
+      const { confirmed } = data || {};
+      return !!confirmed;
+    },
+  };
 
   const _handleDelete = async (id) => {
     try {
@@ -102,7 +112,6 @@ export default function RSVPCreate() {
     Object.assign(result.recipient.contact, {
       full_name: `${result.recipient.contact.first_name} ${result.recipient.contact.last_name}`,
     });
-    console.log(result);
     return result;
   };
 
@@ -114,14 +123,17 @@ export default function RSVPCreate() {
         save={_handleSave}
         remove={_handleDelete}
         cancel={_handleCancel}
+        validate={fieldsetValidators.confirmation}
         defaults={defaults}
         blocked={false}
         header="Confirm attendance"
         buttonText="RSVP: I WILL BE ATTENDING THE CEREMONY"
+        isRSVP
       >
         <RSVPInviteeDetails />
         <RSVPOptions />
         <RSVPGuest />
+        <RSVPConfirmationInput validate={fieldsetValidators.confirmation} />
       </FormContext>
     </>
   );

@@ -219,7 +219,6 @@ export default function AttendeesEditInput({ isEditing, selectedRecipients }) {
                     name="guest"
                     control={control}
                     render={({ field, fieldState: { invalid, error } }) => {
-                      console.log(field.value);
                       return (
                         <div className="flex align-items-center">
                           <Checkbox

@@ -12,7 +12,6 @@ import CeremonyData from "@/views/attendees/data/CeremonyData";
  */
 
 export default function AttendeeView({ data }) {
-  console.log("data: ", data);
   return (
     <div>
       <CeremonyData data={data} />

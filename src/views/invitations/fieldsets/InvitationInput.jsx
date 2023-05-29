@@ -53,23 +53,20 @@ export default function InvitationInput({ selected }) {
               rules={{
                 required: "Recipient is required.",
               }}
-              render={({ field, fieldState: { invalid, error } }) => {
-                console.log(field.value);
-                return (
-                  <>
-                    <div className="flex">
-                      {selected.map((a) => (
-                        <Chip
-                          label={a.recipient.contact.full_name}
-                          style={{ width: "max-content", margin: "2px" }}
-                          key={a.recipient.contact.full_name}
-                        />
-                      ))}
-                    </div>
-                    {invalid && <p className="error">{error.message}</p>}
-                  </>
-                );
-              }}
+              render={({ field, fieldState: { invalid, error } }) => (
+                <>
+                  <div className="flex">
+                    {selected.map((a) => (
+                      <Chip
+                        label={a.recipient.contact.full_name}
+                        style={{ width: "max-content", margin: "2px" }}
+                        key={a.recipient.contact.full_name}
+                      />
+                    ))}
+                  </div>
+                  {invalid && <p className="error">{error.message}</p>}
+                </>
+              )}
             />
           </div>
         </div>

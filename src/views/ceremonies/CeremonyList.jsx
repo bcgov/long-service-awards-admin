@@ -75,7 +75,6 @@ export default function CeremonyList() {
       .getCeremonies()
       .then((results) => {
         const { total_filtered_records, ceremonies } = results || {};
-        console.log(ceremonies);
         setCeremonies(ceremonies);
       })
       .finally(() => {
@@ -111,15 +110,6 @@ export default function CeremonyList() {
       year: "numeric",
       hour: "2-digit",
       minute: "2-digit",
-    });
-  };
-
-  const formatDateOnly = (value) => {
-    const date = new Date(value);
-    return date.toLocaleDateString("en-US", {
-      day: "2-digit",
-      month: "2-digit",
-      year: "numeric",
     });
   };
 
@@ -172,8 +162,8 @@ export default function CeremonyList() {
    * */
 
   const onView = (data) => {
-      return <CeremonyView data={data} />
-  }
+    return <CeremonyView data={data} />;
+  };
 
   /**
    * Delete ceremony record
@@ -181,7 +171,6 @@ export default function CeremonyList() {
 
   const onDelete = (data) => {
     const { id } = data || {};
-    console.log(id);
     api
       .removeCeremony(id)
       .then(() => {
