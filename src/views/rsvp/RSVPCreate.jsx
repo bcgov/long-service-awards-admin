@@ -26,7 +26,7 @@ export default function RSVPCreate() {
   const status = useStatus();
   const api = useAPI();
   const navigate = useNavigate();
-  const { id } = useParams() || {};
+  const { id, token } = useParams() || {};
 
   // define fieldset validation checks
   const fieldsetValidators = {
@@ -108,7 +108,7 @@ export default function RSVPCreate() {
 
   // loader for Attendees record data
   const _loader = async () => {
-    const result = (await api.getAttendee(id)) || {};
+    const result = (await api.getRSVP(id, token)) || {};
     Object.assign(result.recipient.contact, {
       full_name: `${result.recipient.contact.first_name} ${result.recipient.contact.last_name}`,
     });
