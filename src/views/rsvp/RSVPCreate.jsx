@@ -84,7 +84,7 @@ export default function RSVPCreate() {
         }
       }
 
-      const [error, result] = await api.saveAttendee(updatedStatusData);
+      const [error, result] = await api.saveRSVP(updatedStatusData, id, token);
 
       if (error) status.setMessage("saveError");
       else status.setMessage("saveSuccess");
