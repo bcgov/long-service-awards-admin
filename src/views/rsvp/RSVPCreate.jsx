@@ -75,10 +75,12 @@ export default function RSVPCreate() {
       status.setMessage("save");
       if (updatedStatusData.accommodations) {
         for (const acc in updatedStatusData.accommodations) {
+          if (updatedStatusData.accommodations[acc] === true) {
           await api.createSelection({
             attendee: updatedStatusData.id,
             accommodation: acc,
-          });
+          }, id, token);
+        }
         }
       }
 
