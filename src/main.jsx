@@ -34,6 +34,7 @@ import OrganizationList from "@/views/organizations/OrganizationList";
 import UserPasswordReset from "@/views/users/UserPasswordReset";
 import ReportList from "@/views/reports/ReportList";
 import RSVPCreate from "@/views/rsvp/RSVPCreate";
+import CeremonyListBasic from "@/views/ceremonies/CeremonyListBasic";
 
 // init main router
 const router = createBrowserRouter(
@@ -123,7 +124,8 @@ const router = createBrowserRouter(
           path: "ceremonies",
           element: (
             <ProtectedRoute authorizedRoles={["administrator"]}>
-              <CeremonyList />
+              {/* <CeremonyList /> */}
+              <CeremonyListBasic />
             </ProtectedRoute>
           ),
         },

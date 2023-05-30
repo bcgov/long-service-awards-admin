@@ -217,9 +217,9 @@ function APIProvider(props) {
    * Send RSVP
    */
   const sendRSVP = async (recipient) => {
-    const [_, result] = await api.post('/rsvp/send', recipient);
+    const [_, result] = await api.post("/rsvp/send", recipient);
     return result;
-  }
+  };
 
   /**
    * Get RSVP
@@ -227,7 +227,7 @@ function APIProvider(props) {
   const getRSVP = async (id, token) => {
     const [_, result] = await api.get(`/rsvp/${id}/${token}`);
     return result;
-  }
+  };
 
   /**
    * Get accommodations
@@ -257,7 +257,7 @@ function APIProvider(props) {
   const getCeremonies = async () => {
     const [_, res] = await api.get(`/ceremonies/list`);
     const { result } = res || {};
-    return result;
+    return result.ceremonies;
   };
 
   /**
@@ -265,8 +265,8 @@ function APIProvider(props) {
    *
    */
 
-  const createCeremony = async () => {
-    return await api.post(`/ceremonies/create`, {});
+  const createCeremony = async (data) => {
+    return await api.post(`/ceremonies/create`, data);
   };
 
   /**
