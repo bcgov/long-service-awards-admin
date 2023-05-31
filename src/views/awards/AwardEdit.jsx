@@ -22,7 +22,7 @@ import { InputNumber } from "primereact/inputnumber";
  * @returns {JSX.Element}
  */
 
-export default function CeremonyEditBasic() {
+export default function AwardEdit({ awardTypes }) {
   const api = useAPI();
   const { control, getValues } = useFormContext();
   const [milestones, setMilestones] = useState([]);

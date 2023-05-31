@@ -50,7 +50,6 @@ export default function DataList({
     // load records into view
     loader()
       .then((data) => {
-        console.log(data);
         setItems(data);
         setTotalRecords(data.length);
       })
