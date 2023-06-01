@@ -21,6 +21,7 @@ import { Tag } from "primereact/tag";
 import { Toolbar } from "primereact/toolbar";
 import { Fragment, useEffect, useState } from "react";
 import { ceremonyStatuses as statuses } from "@/constants/statuses.constants.js";
+import { formatDate } from "@/services/utils.services";
 
 export default function AttendeesList() {
   // set default filter values:
@@ -81,20 +82,6 @@ export default function AttendeesList() {
       .then((results) => {
         // const { total_filtered_records, attendees } = results || {};
         const attendees = results || {};
-        results.forEach((r) => {
-          r.ceremony.datetime_formatted = format(
-            new Date(r.ceremony.datetime),
-            `p 'on' EEEE, MMMM dd, yyyy`
-          );
-          r.ceremony.created_at_formatted = format(
-            new Date(r.ceremony.created_at),
-            "EEEE, MMMM dd, yyyy"
-          );
-          r.created_at_formatted = format(
-            new Date(r.created_at),
-            "dd/mm/yy, h:mm aa"
-          );
-        });
         setAttendees(attendees);
         // setTotalFilteredRecords(total_filtered_records);
       })
@@ -175,6 +162,22 @@ export default function AttendeesList() {
   const guestTemplate = (rowData) => {
     const { guest } = rowData || {};
     return guest === 1 ? "Yes" : "No";
+  };
+
+  const formattedCeremonyDateTemplate = (rowData) => {
+    return format(
+      new Date(rowData.ceremony.datetime),
+      `p 'on' EEEE, MMMM dd, yyyy`
+    );
+  };
+
+  const formattedCreatedDateTemplate = (rowData) => {
+    return formatDate(new Date(rowData.created_at));
+  };
+
+  const formattedUpdatedDateTemplate = (rowData) => {
+    return formatDate(new Date(rowData.updated_at));
+    // return format(new Date(rowData.updated_at), "dd/mm/yy, h:mm aa");
   };
 
   const statusTemplate = (rowData) => {
@@ -375,7 +378,8 @@ export default function AttendeesList() {
         />
         <Column
           className={"p-1"}
-          field="ceremony.datetime_formatted"
+          field="ceremony.datetime"
+          body={formattedCeremonyDateTemplate}
           header="Ceremony"
           headerStyle={{ minWidth: "7em" }}
           bodyStyle={{ minWidth: "7em" }}
@@ -390,8 +394,17 @@ export default function AttendeesList() {
         />
         <Column
           className={"p-1"}
-          field="created_at_formatted"
+          field="created_at"
           header="Assigned"
+          body={formattedCreatedDateTemplate}
+          headerStyle={{ minWidth: "7em" }}
+          bodyStyle={{ minWidth: "7em" }}
+        />
+        <Column
+          className={"p-1"}
+          field="updated_at"
+          header="Updated"
+          body={formattedUpdatedDateTemplate}
           headerStyle={{ minWidth: "7em" }}
           bodyStyle={{ minWidth: "7em" }}
         />

@@ -74,7 +74,7 @@ export default function AttendeesEditInput({ isEditing, selectedRecipients }) {
     api
       .getCeremonies()
       .then((results) => {
-        const { ceremonies } = results || {};
+        const ceremonies = results || {};
         setCeremonies(ceremonies);
       })
       .catch(console.error);

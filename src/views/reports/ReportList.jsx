@@ -63,7 +63,7 @@ export default function ReportList() {
       filename: "attendees-report",
       format: "csv",
       label: "Attendees Report",
-      description: "Ceremonies.",
+      description: "All attendees registered for ceremonies.",
       authorized: isAdmin,
     },
   ];

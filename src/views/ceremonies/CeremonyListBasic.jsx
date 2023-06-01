@@ -28,7 +28,14 @@ export default function CeremonyListBasic() {
       ? async () => api.removeCeremony(id).finally(callback)
       : null;
     return (
-      <DataEdit loader={_loader} save={_save} remove={_remove} defaults={data}>
+      <DataEdit
+        loader={_loader}
+        save={_save}
+        remove={_remove}
+        defaults={data}
+        isEditing
+        header={"Save Ceremony"}
+      >
         <CeremonyEditBasic />
       </DataEdit>
     );
@@ -41,7 +48,13 @@ export default function CeremonyListBasic() {
       return api.createCeremony(data).finally(callback);
     };
     return (
-      <DataEdit loader={_loader} save={_save} remove={null} defaults={{}}>
+      <DataEdit
+        loader={_loader}
+        save={_save}
+        remove={null}
+        defaults={{}}
+        header={"Create Ceremony"}
+      >
         <CeremonyEditBasic />
       </DataEdit>
     );
