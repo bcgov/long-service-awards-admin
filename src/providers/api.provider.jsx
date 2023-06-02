@@ -168,8 +168,8 @@ function APIProvider(props) {
    *
    */
 
-  const getAttendees = async () => {
-    const [_, res] = await api.get(`/attendees/list`);
+  const getAttendees = async (params) => {
+    const [_, res] = await api.get(`/attendees/list?${formatQueryParams(params)}`);
     const result = res || [];
     return result;
   };

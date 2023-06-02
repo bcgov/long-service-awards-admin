@@ -82,8 +82,7 @@ export default function AttendeesList() {
 
     // apply filters to ceremony data request
     api
-      // .getAttendees(filter)
-      .getAttendees()
+      .getAttendees(filter)
       .then((results) => {
         // const { total_filtered_records, fetchedAttendees } = results || {};
         const fetchedAttendees = results || {};
