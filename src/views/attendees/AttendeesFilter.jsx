@@ -190,8 +190,7 @@ function AttendeesFilter({ data, confirm, cancel }) {
           className="p-button-success m-2"
           autoFocus
           onClick={() => {
-            // confirm(filters);
-            console.log(filters);
+            confirm(filters);
           }}
         />
         <Button
