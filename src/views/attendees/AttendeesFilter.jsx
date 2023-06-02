@@ -55,8 +55,8 @@ function AttendeesFilter({ data, confirm, cancel }) {
     status: {
       label: "Registration Status",
       input: "multiselect",
-      // valueKey: "value",
-      // labelKey: "name",
+      valueKey: "label",
+      labelKey: "label",
       options: Object.keys(statuses).map((k) => statuses[k]),
     },
   };
@@ -190,7 +190,8 @@ function AttendeesFilter({ data, confirm, cancel }) {
           className="p-button-success m-2"
           autoFocus
           onClick={() => {
-            confirm(filters);
+            // confirm(filters);
+            console.log(filters);
           }}
         />
         <Button
