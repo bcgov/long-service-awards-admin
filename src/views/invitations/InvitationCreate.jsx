@@ -1,37 +1,25 @@
 /*!
- * Edit Invitation Record
+ * Create Invitation Record
  * File: InvitationCreate.js
  * Copyright(c) 2023 BC Gov
  * MIT Licensed
  */
 
-import { useState } from "react";
-import { useAPI } from "@/providers/api.provider.jsx";
-import { useNavigate, useParams } from "react-router-dom";
-import { useStatus } from "@/providers/status.provider.jsx";
-import { useUser } from "@/providers/user.provider.jsx";
-import PageHeader from "@/components/common/PageHeader.jsx";
 import FormContext from "@/components/common/FormContext";
+import PageHeader from "@/components/common/PageHeader.jsx";
+import { useAPI } from "@/providers/api.provider.jsx";
+import { useStatus } from "@/providers/status.provider.jsx";
+import { useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 
 //Fieldsets
 import InvitationInput from "@/views/invitations/fieldsets/InvitationInput";
 
 export default function InvitationCreate({ selected }) {
-  console.log(selected);
   const status = useStatus();
   const api = useAPI();
-  const user = useUser();
-  const { role } = user || {};
   const navigate = useNavigate();
-  const { id } = useParams() || {};
 
-  const [submitted, setSubmitted] = useState(false);
-
-  /**
-   * Inherited model component
-   */
-
-  // // create new registration
   const _handleDelete = async (id) => {
     try {
       const [error, result] = await api.removeAttendee(id);
@@ -57,18 +45,23 @@ export default function InvitationCreate({ selected }) {
 
   // save registration data
   const _handleSave = async (data) => {
-    console.log("Save:", data);
-
+    const updatedStatusData = data.recipients.map((a) => ({
+      ...a,
+      status: "Invited",
+    }));
     try {
-      status.setMessage("save");
-      const [error, result] = await api.saveAttendee(data);
-
-      if (error) status.setMessage("saveError");
-      else status.setMessage("saveSuccess");
-      if (!error && result) {
-        setSubmitted(true);
-        return result;
-      }
+      updatedStatusData.forEach(async (a) => {
+        status.setMessage("save");
+        const [error, result] = await api.saveAttendee(a);
+        const [sendError, sendResult] = await api.sendRSVP(a);
+        if (error) status.setMessage("saveError");
+        else if (sendError) status.setMessage("mailError")
+        else status.setMessage("mailSuccess");
+        if (!error && !sendError && result && sendResult) {
+          setSubmitted(true);
+          return result;
+        }
+      });
     } catch (error) {
       status.setMessage("saveError");
     }
@@ -81,8 +74,7 @@ export default function InvitationCreate({ selected }) {
 
   // set default attendee form values
   const defaults = {
-    recipients: [],
-    ceremony: "",
+    recipients: selected,
   };
 
   // loader for Attendees record data

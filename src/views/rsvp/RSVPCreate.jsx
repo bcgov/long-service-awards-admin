@@ -5,17 +5,16 @@
  * MIT Licensed
  */
 
-import { useState } from "react";
-import { useAPI } from "@/providers/api.provider.jsx";
-import { useNavigate, useParams } from "react-router-dom";
-import { useStatus } from "@/providers/status.provider.jsx";
-import { useUser } from "@/providers/user.provider.jsx";
-import PageHeader from "@/components/common/PageHeader.jsx";
 import FormContext from "@/components/common/FormContext";
+import PageHeader from "@/components/common/PageHeader.jsx";
+import { useAPI } from "@/providers/api.provider.jsx";
+import { useStatus } from "@/providers/status.provider.jsx";
+import RSVPGuest from "@/views/rsvp/fieldsets/RSVPGuest";
 import RSVPInviteeDetails from "@/views/rsvp/fieldsets/RSVPInviteeDetails";
 import RSVPOptions from "@/views/rsvp/fieldsets/RSVPOptions";
-import RSVPRetiring from "@/views/rsvp/fieldsets/RSVPRetiring";
-import RSVPGuest from "@/views/rsvp/fieldsets/RSVPGuest";
+import { useNavigate, useParams } from "react-router-dom";
+import RSVPConfirmationInput from "@/views/rsvp/fieldsets/RSVPConfirmationInput";
+import validate, { validators } from "@/services/validation.services.js";
 
 //Fieldsets
 
@@ -26,13 +25,17 @@ import RSVPGuest from "@/views/rsvp/fieldsets/RSVPGuest";
 export default function RSVPCreate() {
   const status = useStatus();
   const api = useAPI();
-  const user = useUser();
   const navigate = useNavigate();
-  const { id } = useParams() || {};
+  const { id, token } = useParams() || {};
 
-  const [submitted, setSubmitted] = useState(false);
+  // define fieldset validation checks
+  const fieldsetValidators = {
+    confirmation: (data) => {
+      const { confirmed } = data || {};
+      return !!confirmed;
+    },
+  };
 
-  // create new registration
   const _handleDelete = async (id) => {
     try {
       const [error, result] = await api.removeAttendee(id);
@@ -56,30 +59,42 @@ export default function RSVPCreate() {
     }
   };
 
-  // save registration data
   const _handleSave = async (data) => {
     let sanitizedData = { ...data };
     //remove unchecked dietary options
-    Object.keys(sanitizedData.dietary_requirements).forEach((key) =>
-      sanitizedData.dietary_requirements[key] === undefined
-        ? delete sanitizedData.dietary_requirements[key]
+    Object.keys(sanitizedData.accommodations).forEach((key) =>
+      sanitizedData.accommodations[key] === undefined
+        ? delete sanitizedData.accommodations[key]
         : {}
     );
-    console.log("Save:", sanitizedData);
+    const updatedStatusData = { ...sanitizedData, status: "Attending" };
 
-    // try {
-    //   status.setMessage("save");
-    //   const [error, result] = await api.saveAttendee(data);
-    //   console.log("Saved:", result);
-    //   if (error) status.setMessage("saveError");
-    //   else status.setMessage("saveSuccess");
-    //   if (!error && result) {
-    //     setSubmitted(true);
-    //     return result;
-    //   }
-    // } catch (error) {
-    //   status.setMessage("saveError");
-    // }
+    console.log("Save:", updatedStatusData);
+
+    try {
+      status.setMessage("save");
+      if (updatedStatusData.accommodations) {
+        for (const acc in updatedStatusData.accommodations) {
+          if (updatedStatusData.accommodations[acc] === true) {
+          await api.createSelection({
+            attendee: updatedStatusData.id,
+            accommodation: acc,
+          }, id, token);
+        }
+        }
+      }
+
+      const [error, result] = await api.saveRSVP(updatedStatusData, id, token);
+
+      if (error) status.setMessage("saveError");
+      else status.setMessage("saveSuccess");
+
+      if (!error && result) {
+        return result;
+      }
+    } catch (error) {
+      status.setMessage("saveError");
+    }
   };
 
   // cancel edits
@@ -95,7 +110,7 @@ export default function RSVPCreate() {
 
   // loader for Attendees record data
   const _loader = async () => {
-    const result = (await api.getAttendee(id)) || {};
+    const result = (await api.getRSVP(id, token)) || {};
     Object.assign(result.recipient.contact, {
       full_name: `${result.recipient.contact.first_name} ${result.recipient.contact.last_name}`,
     });
@@ -110,15 +125,17 @@ export default function RSVPCreate() {
         save={_handleSave}
         remove={_handleDelete}
         cancel={_handleCancel}
+        validate={fieldsetValidators.confirmation}
         defaults={defaults}
         blocked={false}
         header="Confirm attendance"
         buttonText="RSVP: I WILL BE ATTENDING THE CEREMONY"
+        isRSVP
       >
         <RSVPInviteeDetails />
         <RSVPOptions />
-        <RSVPRetiring />
         <RSVPGuest />
+        <RSVPConfirmationInput validate={fieldsetValidators.confirmation} />
       </FormContext>
     </>
   );

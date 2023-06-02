@@ -6,13 +6,13 @@
  */
 
 import { Panel } from "primereact/panel";
+import { format } from "date-fns";
 
 /**
  * Model data display component
  */
 
 export default function CeremonyData({ data }) {
-  console.log(data);
   const { active, address, created_at, datetime, venue } = data || {};
 
   return (
@@ -20,11 +20,17 @@ export default function CeremonyData({ data }) {
       <div className={"container"}>
         <div className={"grid"}>
           <div className={"col-6"}>Date</div>
-          <div className={"col-6"}>{datetime || "-"}</div>
+          <div className={"col-6"}>
+            {format(new Date(datetime), `p 'on' EEEE, MMMM dd, yyyy`) || "-"}
+          </div>
           <div className={"col-6"}>Venue</div>
           <div className={"col-6"}>{venue || "-"}</div>
           <div className={"col-6"}>Address</div>
-          <div className={"col-6"}>{address || "-"}</div>
+          <div className={"col-6"}>
+            {address.street1} {address.street2} {address.community}{" "}
+            {address.province} {address.country} {address.postal_code}{" "}
+            {address.pobox}
+          </div>
         </div>
       </div>
     </Panel>

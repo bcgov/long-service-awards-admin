@@ -4,21 +4,19 @@
  * Copyright(c) 2023 BC Gov
  * MIT Licensed
  */
-import { useState } from "react";
 import { useAPI } from "@/providers/api.provider.jsx";
 import { useNavigate, useParams } from "react-router-dom";
 
 import { useStatus } from "@/providers/status.provider.jsx";
-import { useUser } from "@/providers/user.provider.jsx";
 
 import validate, { validators } from "@/services/validation.services.js";
 
-import PageHeader from "@/components/common/PageHeader.jsx";
 import FormContext from "@/components/common/FormContext";
+import PageHeader from "@/components/common/PageHeader.jsx";
 
 //Fieldsets
-import CeremonyDetailsInput from "@/views/ceremonies/fieldsets/CeremonyDetailsInput.jsx";
 import CeremonyAddressInput from "@/views/ceremonies/fieldsets/CeremonyAddressInput.jsx";
+import CeremonyDetailsInput from "@/views/ceremonies/fieldsets/CeremonyDetailsInput.jsx";
 
 /**
  * Inherited model component
@@ -27,14 +25,9 @@ import CeremonyAddressInput from "@/views/ceremonies/fieldsets/CeremonyAddressIn
 export default function CeremonyEdit() {
   const status = useStatus();
   const api = useAPI();
-  const user = useUser();
-  const { role } = user || {};
   const navigate = useNavigate();
   const { id } = useParams() || {};
 
-  const [submitted, setSubmitted] = useState(false);
-
-  // create new registration
   const _handleDelete = async (id) => {
     try {
       const [error, result] = await api.removeCeremony(id);
@@ -58,7 +51,6 @@ export default function CeremonyEdit() {
     }
   };
 
-  // save registration data
   const _handleSave = async (data) => {
     console.log("Save:", data);
     try {
@@ -67,7 +59,6 @@ export default function CeremonyEdit() {
       if (error) status.setMessage("saveError");
       else status.setMessage("saveSuccess");
       if (!error && result) {
-        setSubmitted(true);
         return result;
       }
     } catch (error) {

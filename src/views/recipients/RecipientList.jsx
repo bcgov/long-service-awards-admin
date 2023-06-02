@@ -6,26 +6,23 @@
  * MIT Licensed
  */
 
-import { useState, useEffect, Fragment } from "react";
-import { DataTable } from "primereact/datatable";
-import { Column } from "primereact/column";
-import { Button } from "primereact/button";
-import { Tag } from "primereact/tag";
-import { useStatus } from "@/providers/status.provider.jsx";
+import { ceremonyStatuses } from "@/constants/statuses.constants.js";
 import { useAPI } from "@/providers/api.provider.jsx";
+import { useStatus } from "@/providers/status.provider.jsx";
+import AttendeesCreate from "@/views/attendees/AttendeesCreate";
 import EditToolBar from "@/views/default/EditToolBar.jsx";
-import { Toolbar } from "primereact/toolbar";
-import { Dialog } from "primereact/dialog";
-import RecipientsSort from "@/views/recipients/RecipientsSort";
-import RecipientsFilter from "@/views/recipients/RecipientsFilter.jsx";
-import { useNavigate } from "react-router-dom";
 import RecipientView from "@/views/recipients/RecipientView";
+import RecipientsFilter from "@/views/recipients/RecipientsFilter.jsx";
+import RecipientsSort from "@/views/recipients/RecipientsSort";
+import { Button } from "primereact/button";
 import { Card } from "primereact/card";
-import { Dropdown } from "primereact/dropdown";
-import { AutoComplete } from "primereact/autocomplete";
-import DataEdit from "@/views/default/DataEdit.jsx";
-import AttendeesEdit from "../attendees/fieldsets/AttendeesEditInput";
-import AttendeesCreate from "../attendees/AttendeesCreate";
+import { Column } from "primereact/column";
+import { DataTable } from "primereact/datatable";
+import { Dialog } from "primereact/dialog";
+import { Tag } from "primereact/tag";
+import { Toolbar } from "primereact/toolbar";
+import { Fragment, useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 export default function RecipientList() {
   // set default filter values:
@@ -80,12 +77,6 @@ export default function RecipientList() {
   const [showCeremonyAssignDialog, setShowCeremonyAssignDialog] =
     useState(false);
 
-  const searchRecipients = (event) => {
-    let filteredRecipients = recipients.map((r) => {
-      if (r.services.find((s) => s.ceremony_opt_out === false)) return r;
-    });
-    setFilteredRecipients(filteredRecipients);
-  };
   /**
    * Load recipients using applied filter
    * */
@@ -108,7 +99,10 @@ export default function RecipientList() {
     };
 
     // get attendees records
-    api.getAttendees().then((results) => setAttendees(results));
+    api
+      .getAttendees()
+      .then((results) => setAttendees(results))
+      .catch(console.error);
 
     // get current cycle
     api
@@ -142,7 +136,6 @@ export default function RecipientList() {
       .then((results) => {
         const { total_filtered_records, recipients } = results || {};
         setRecipients(recipients);
-        console.log(recipients);
         setTotalFilteredRecords(total_filtered_records);
       })
       .finally(() => {
@@ -208,6 +201,7 @@ export default function RecipientList() {
   const applySort = (sortData) => {
     if (sortData) setSort(sortData);
     setShowDialog(null);
+    console.log(sort);
   };
 
   /**
@@ -220,41 +214,14 @@ export default function RecipientList() {
       (service) => service.cycle === currentCycle && service.ceremony_opt_out
     );
 
-    const statuses = {
-      assigned: {
-        label: "Assigned",
-        severity: "info",
-      },
-      declined: {
-        label: "Declined",
-        severity: "danger",
-      },
-      expired: {
-        label: "Expired",
-        severity: "danger",
-      },
-      invited: {
-        label: "Invited",
-        severity: "primary",
-      },
-      archived: {
-        label: "Archived",
-        severity: "info",
-      },
-      attending: {
-        label: "Attending",
-        severity: "success",
-      },
-      default: {
-        label: "Not Assigned",
-        severity: "secondary",
-      },
-    };
     // select the recipient status
-    let statusIndicator = ceremonyOptOut ? statuses.declined : statuses.default;
+    let statusIndicator = ceremonyOptOut
+      ? ceremonyStatuses.declined
+      : ceremonyStatuses.default;
     // check if recipient is an attendee
     const attendee = attendees.find((a) => a.recipient.id === rowData.id);
-    if (attendee) statusIndicator = statuses[attendee.status.toLowerCase()];
+    if (attendee)
+      statusIndicator = ceremonyStatuses[attendee.status.toLowerCase()];
 
     return (
       <>
@@ -358,10 +325,6 @@ export default function RecipientList() {
     return formatDate(rowData.updated_at);
   };
 
-  // const createdDateTemplate = (rowData) => {
-  //     return formatDate(rowData.created_at);
-  // };
-
   /**
    * Lazy loading
    * */
@@ -412,15 +375,6 @@ export default function RecipientList() {
    * Render data table header component
    * */
 
-  const formatDateOnly = (value) => {
-    const date = new Date(value);
-    return date.toLocaleDateString("en-US", {
-      day: "2-digit",
-      month: "2-digit",
-      year: "numeric",
-    });
-  };
-
   const header = () => {
     return (
       <>
@@ -468,8 +422,12 @@ export default function RecipientList() {
                 onClick={() => setShowCeremonyAssignDialog(true)}
                 disabled={
                   !selected.length ||
-                  !selected.every((r) =>
-                    r.services.find((s) => s.ceremony_opt_out === false)
+                  !selected.every(
+                    (r) => r.services.find((s) => s.ceremony_opt_out === false)
+                    // &&
+                    // attendees.find((a) => a.recipient.id === r.id) &&
+                    // attendees.find((a) => a.recipient.id === r.id).status !==
+                    //   "Assigned"
                   )
                 }
               />

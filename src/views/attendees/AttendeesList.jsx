@@ -1,108 +1,28 @@
 /*!
  * Attendees Management View
- * File: AwardList.js
+ * File: AttendeesList.js
  * Copyright(c) 2023 BC Gov
  * MIT Licensed
  */
 
-// import { useAPI } from "@/providers/api.provider.jsx";
-// import DataList from "@/views/default/DataList";
-// import AttendeeView from "@/views/attendees/AttendeeView";
-// import DataEdit from "@/views/default/DataEdit.jsx";
-// import AttendeesEdit from "@/views/attendees/AttendeesEdit.jsx";
-
-// /**
-//  * Inherited model component
-//  */
-
-// export default function AttendeesList() {
-//   const api = useAPI();
-
-//   // build edit form template
-//   const editTemplate = (data, callback) => {
-//     console.log(data);
-//     const _loader = async () => {};
-//     const _save = async (data) =>
-//       api.saveAttendee(data).then((data) => console.log(data));
-//     return (
-//       <DataEdit loader={_loader} save={_save} remove={null} defaults={{}}>
-//         <AttendeesEdit
-//           selectedRecipients={[data.recipient]}
-//           selectedCeremony={data.ceremony}
-//         />
-//       </DataEdit>
-//     );
-//   };
-
-//   const viewTemplate = (data) => <AttendeeView data={data} />;
-
-//   const schema = [
-//     {
-//       name: "status",
-//       input: "date",
-//       label: "Status",
-//       sortable: true,
-//     },
-//     {
-//       name: "recipient.contact.first_name",
-//       input: "select",
-//       label: "First Name",
-//       sortable: true,
-//     },
-//     {
-//       name: "recipient.contact.last_name",
-//       input: "select",
-//       label: "Last Name",
-//       sortable: true,
-//     },
-//     {
-//       name: "ceremony.datetime",
-//       input: "text",
-//       label: "Ceremony",
-//       sortable: true,
-//     },
-//   ];
-
-//   return (
-//     <DataList
-//       idKey={"id"}
-//       schema={schema}
-//       title={"Attendees"}
-//       loader={api.getAttendees}
-//       edit={editTemplate}
-//       view={viewTemplate}
-//       remove={api.removeAttendee}
-//       //   options={optionsTemplate}
-//     />
-//   );
-// }
-
-/*!
- * LSA.Admin.Components.CeremonyList
- * File: Ceremony.jsx
- * Copyright(c) 2023 Government of British Columbia
- * Version 2.0
- * MIT Licensed
- */
-
-import { useState, useEffect, Fragment } from "react";
-import { DataTable } from "primereact/datatable";
-import { Column } from "primereact/column";
-import { Button } from "primereact/button";
-import { Tag } from "primereact/tag";
-import { useStatus } from "@/providers/status.provider.jsx";
 import { useAPI } from "@/providers/api.provider.jsx";
-import EditToolBar from "@/views/default/EditToolBar.jsx";
-import { Toolbar } from "primereact/toolbar";
-import { Dialog } from "primereact/dialog";
-import { useNavigate } from "react-router-dom";
-import { format } from "date-fns";
-import AttendeesFilter from "@/views/attendees/AttendeesFilter.jsx";
-import { Card } from "primereact/card";
+import { useStatus } from "@/providers/status.provider.jsx";
 import AttendeeView from "@/views/attendees/AttendeeView";
-import DataEdit from "@/views/default/DataEdit.jsx";
-import AttendeesEdit from "@/views/attendees/AttendeesEdit.jsx";
+import AttendeesFilter from "@/views/attendees/AttendeesFilter.jsx";
+import AttendeesSort from "@/views/attendees/AttendeesSort";
+import EditToolBar from "@/views/default/EditToolBar.jsx";
 import InvitationCreate from "@/views/invitations/InvitationCreate";
+import { format } from "date-fns";
+import { Button } from "primereact/button";
+import { Card } from "primereact/card";
+import { Column } from "primereact/column";
+import { DataTable } from "primereact/datatable";
+import { Dialog } from "primereact/dialog";
+import { Tag } from "primereact/tag";
+import { Toolbar } from "primereact/toolbar";
+import { Fragment, useEffect, useState } from "react";
+import { ceremonyStatuses as statuses } from "@/constants/statuses.constants.js";
+import { formatDate } from "@/services/utils.services";
 
 export default function AttendeesList() {
   // set default filter values:
@@ -117,41 +37,44 @@ export default function AttendeesList() {
 
   const api = useAPI();
   const status = useStatus();
-  const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [showDialog, setShowDialog] = useState(null);
   const [attendees, setAttendees] = useState([]);
   const [stats, setStats] = useState({
     total_count: 0,
   });
+  const [totalFilteredRecords, setTotalFilteredRecords] = useState(0);
+  const [filteredRecipients, setFilteredRecipients] = useState([]);
   const [showRSVPDialog, setShowRSVPDialog] = useState(false);
   const [selected, setSelected] = useState([]);
   const [selectAll, setSelectAll] = useState(false);
   const [filters, setFilters] = useState(initFilters);
+  const [sort, setSort] = useState({
+    orderBy: "recipient.contact.last_name",
+    order: 1,
+  });
   const [pageState, setPageState] = useState({
     first: 0,
     rows: 10,
     page: 1,
-    sortField: "id",
-    sortOrder: 0,
-    filters: {},
   });
 
   /**
-   * Load ceremonies using applied filter
+   * Load attendees using applied filter
    * */
 
   useEffect(() => {
-    loadData();
-  }, [pageState, filters]);
+    loadData(pageState, filters, sort);
+  }, [pageState, filters, sort]);
 
   const loadData = () => {
     setLoading(true);
-    const { first, rows, sortField, sortOrder } = pageState || {};
+    const { orderBy, order } = sort || {};
+    const { first, rows } = pageState || {};
     // compose list filters
     const filter = {
-      orderby: sortField,
-      order: sortOrder >= 0 ? "ASC" : "DESC",
+      orderby: orderBy,
+      order: order >= 0 ? "ASC" : "DESC",
       limit: rows,
       offset: first || 0,
       ...filters,
@@ -159,48 +82,16 @@ export default function AttendeesList() {
 
     // apply filters to ceremony data request
     api
-      // .getAttendees(filter)
-      .getAttendees()
+      .getAttendees(filter)
       .then((results) => {
-        // const { total_filtered_records, attendees } = results || {};
-        const attendees = results || {};
-        // console.log(attendees);
-        results.forEach((r) => {
-          r.ceremony.datetime = format(
-            new Date(r.ceremony.datetime),
-            "EEEE, MMMM dd, yyyy"
-          );
-          r.ceremony.created_at = format(
-            new Date(r.ceremony.created_at),
-            "EEEE, MMMM dd, yyyy"
-          );
-          r.created_at = format(new Date(r.created_at), "dd/mm/yy, h:mm aa");
-        });
-        setAttendees(attendees);
+        // const { total_filtered_records, fetchedAttendees } = results || {};
+        const fetchedAttendees = results || {};
+        setAttendees(fetchedAttendees);
         // setTotalFilteredRecords(total_filtered_records);
       })
       .finally(() => {
         setLoading(false);
       });
-  };
-
-  // // create new ceremony night
-  const createCeremony = async () => {
-    try {
-      status.setMessage("create");
-      // create ceremony record stub and redirect
-      const [error, res] = await api.createCeremony();
-      const { message, result } = res || {};
-      if (error) status.setMessage("createError");
-      else status.setMessage(message);
-
-      if (!error && result) {
-        const { id } = result;
-        navigate(`/ceremonies/edit/${id}`);
-      }
-    } catch (error) {
-      status.setMessage("createError");
-    }
   };
 
   const clearFilter = () => {
@@ -219,8 +110,9 @@ export default function AttendeesList() {
     setShowDialog("sort");
   };
   const applySort = (sortData) => {
-    if (sortData) setPageState({ ...pageState, ...sortData });
+    if (sortData) setSort(sortData);
     setShowDialog(null);
+    console.log(sort);
   };
 
   /**
@@ -259,17 +151,6 @@ export default function AttendeesList() {
 
   // const editTemplate = (data, callback) => {
   //   console.log(data);
-  //   const _loader = async () => {};
-  const _save = async (data) => api.saveAttendee(data);
-  //   return (
-  //     <DataEdit loader={_loader} save={_save} remove={null} defaults={{}}>
-  //       <AttendeesEdit
-  //         selectedRecipients={[data.recipient]}
-  //         selectedCeremony={data.ceremony}
-  //       />
-  //     </DataEdit>
-  //   );
-  // };
 
   /**
    * Select ceremony for action
@@ -283,34 +164,30 @@ export default function AttendeesList() {
 
   const onSelectAllChange = () => {};
 
+  const guestTemplate = (rowData) => {
+    const { guest } = rowData || {};
+    return guest === 1 ? "Yes" : "No";
+  };
+
+  const formattedCeremonyDateTemplate = (rowData) => {
+    return format(
+      new Date(rowData.ceremony.datetime),
+      `p 'on' EEEE, MMMM dd, yyyy`
+    );
+  };
+
+  const formattedCreatedDateTemplate = (rowData) => {
+    return formatDate(new Date(rowData.created_at));
+  };
+
+  const formattedUpdatedDateTemplate = (rowData) => {
+    return formatDate(new Date(rowData.updated_at));
+    // return format(new Date(rowData.updated_at), "dd/mm/yy, h:mm aa");
+  };
+
   const statusTemplate = (rowData) => {
     const { status } = rowData || {};
-
-    const statuses = {
-      assigned: {
-        label: "Assigned",
-        severity: "info",
-        description: "Attendee was assigned to the ceremony.",
-      },
-      expired: {
-        label: "Expired",
-        severity: "danger",
-        description: "The invitation has expired",
-      },
-      invited: {
-        label: "Invited",
-        severity: "primary",
-        description: "Attendee was invited to the ceremony.",
-      },
-      attending: {
-        label: "Attending",
-        severity: "success",
-        description: "Attendee is attending the ceremony.",
-      },
-    };
-
     const statusIndicator = statuses[status.toLowerCase()];
-
     return (
       <Tag
         tooltip={statusIndicator.description}
@@ -371,7 +248,7 @@ export default function AttendeesList() {
   };
 
   /**
-   * Render ceremony data table
+   * Render attendees data table
    * */
 
   return (
@@ -400,11 +277,11 @@ export default function AttendeesList() {
         breakpoints={{ "960px": "80vw" }}
         style={{ width: "50vw" }}
       >
-        {/* <CeremoniesSort
-                data={pageState}
-                confirm={applySort}
-                cancel={() => setShowDialog(null)}
-            /> */}
+        <AttendeesSort
+          data={sort}
+          confirm={applySort}
+          cancel={() => setShowDialog(null)}
+        />
       </Dialog>
       <Dialog
         visible={showDialog === "filter"}
@@ -432,6 +309,9 @@ export default function AttendeesList() {
         paginatorRight={
           <Button
             className={"m-1 p-button-success"}
+            disabled={
+              !selected.length || !selected.every((r) => r.status !== "Invited")
+            }
             type="button"
             icon="pi pi-user-plus"
             label="Send RSVP Invite"
@@ -444,8 +324,8 @@ export default function AttendeesList() {
         rowsPerPageOptions={[10, 25, 50]}
         onPage={onPage}
         first={pageState.first}
-        sortField={pageState.sortField}
-        sortOrder={pageState.sortOrder}
+        sortField={sort.orderBy}
+        sortOrder={sort.order}
         loading={loading}
         selection={selected}
         onSelectionChange={onSelectionChange}
@@ -504,7 +384,16 @@ export default function AttendeesList() {
         <Column
           className={"p-1"}
           field="ceremony.datetime"
+          body={formattedCeremonyDateTemplate}
           header="Ceremony"
+          headerStyle={{ minWidth: "7em" }}
+          bodyStyle={{ minWidth: "7em" }}
+        />
+        <Column
+          className={"p-1"}
+          field="guest"
+          header="Guest"
+          body={guestTemplate}
           headerStyle={{ minWidth: "7em" }}
           bodyStyle={{ minWidth: "7em" }}
         />
@@ -512,6 +401,15 @@ export default function AttendeesList() {
           className={"p-1"}
           field="created_at"
           header="Assigned"
+          body={formattedCreatedDateTemplate}
+          headerStyle={{ minWidth: "7em" }}
+          bodyStyle={{ minWidth: "7em" }}
+        />
+        <Column
+          className={"p-1"}
+          field="updated_at"
+          header="Updated"
+          body={formattedUpdatedDateTemplate}
           headerStyle={{ minWidth: "7em" }}
           bodyStyle={{ minWidth: "7em" }}
         />

@@ -39,6 +39,7 @@ export default function FormContext({
   children,
   header,
   buttonText,
+  isRSVP,
 }) {
   // get context / hooks
   const status = useStatus();
@@ -159,31 +160,35 @@ export default function FormContext({
                     {buttonText ? buttonText : "Save"}
                   </Button>
                 </div>
-                <div className={"col-5"}>
-                  <Button
-                    className={
-                      "p-button-secondary w-full flex justify-content-center"
-                    }
-                    icon={"pi pi-fw pi-times"}
-                    onClick={_cancelForm}
-                  >
-                    Cancel
-                  </Button>
-                </div>
-                <div className={"col-2"}>
-                  <Button
-                    disabled={!remove}
-                    type={"button"}
-                    className={
-                      "p-button-danger w-full flex justify-content-center"
-                    }
-                    icon={"pi pi-fw pi-trash"}
-                    onClick={(e) => {
-                      e.preventDefault();
-                      setShowConfirm(true);
-                    }}
-                  ></Button>
-                </div>
+                {!isRSVP && (
+                  <>
+                    <div className={"col-5"}>
+                      <Button
+                        className={
+                          "p-button-secondary w-full flex justify-content-center"
+                        }
+                        icon={"pi pi-fw pi-times"}
+                        onClick={_cancelForm}
+                      >
+                        Cancel
+                      </Button>
+                    </div>
+                    <div className={"col-2"}>
+                      <Button
+                        disabled={!remove}
+                        type={"button"}
+                        className={
+                          "p-button-danger w-full flex justify-content-center"
+                        }
+                        icon={"pi pi-fw pi-trash"}
+                        onClick={(e) => {
+                          e.preventDefault();
+                          setShowConfirm(true);
+                        }}
+                      ></Button>
+                    </div>
+                  </>
+                )}
               </div>
             </div>
           </Panel>

@@ -28,6 +28,7 @@ export default function DataList({
   view,
   options,
   loader,
+  isEditing,
 }) {
   const status = useStatus();
   const [loading, setLoading] = useState(false);
@@ -219,7 +220,7 @@ export default function DataList({
         onClick={(e) => {
           e.stopPropagation();
         }}
-        header={"Edit Record"}
+        header={isEditing ? "Edit Record" : "Create Record"}
         position="center"
         closable
         maximizable

@@ -165,31 +165,48 @@ function APIProvider(props) {
 
   /**
    * Get attendees
-   * @returns All attendees
+   *
    */
 
-  const getAttendees = async () => {
-    //   const [_, res] = await api.get(
-    //   `/recipients/admin/list?${formatQueryParams(params)}`
-    // );
-    const [_, res] = await api.get(`/attendees/list`);
+  const getAttendees = async (params) => {
+    const [_, res] = await api.get(`/attendees/list?${formatQueryParams(params)}`);
     const result = res || [];
     return result;
   };
 
+  /**
+   * Create attendee record
+   *
+   */
+
   const createAttendee = async (data) => {
     return await api.post(`/attendees/create`, data);
   };
+
+  /**
+   * Get single attendee record
+   *
+   */
 
   const getAttendee = async (id) => {
     const [_, result] = await api.get(`/attendees/view/${id}`);
     return result;
   };
 
+  /**
+   * Save single attendee record
+   *
+   */
+
   const saveAttendee = async (data) => {
     const { id } = data || {};
     return await api.post(`/attendees/update/${id}`, data);
   };
+
+  /**
+   * Remove single attendee record
+   *
+   */
 
   const removeAttendee = async (id) => {
     const [_, result] = await api.get(`/attendees/delete/${id}`);
@@ -197,29 +214,89 @@ function APIProvider(props) {
   };
 
   /**
+   * Send RSVP
+   */
+  const sendRSVP = async (recipient) => {
+    const [_, result] = await api.post("/rsvp/send", recipient);
+    return result;
+  };
+
+  /**
+   * Get RSVP
+   */
+  const getRSVP = async (id, token) => {
+    const [_, result] = await api.get(`/RSVP/${id}/${token}`);
+    return result;
+  };
+
+  const saveRSVP = async (data, id, token) => {
+    return await api.post(`/RSVP/${id}/${token}`, data);
+  };
+
+  /**
+   * Get accommodations
+   *
+   */
+
+  const getAccommodations = async () => {
+    const [_, res] = await api.get(`/accommodations/list`);
+    const result = res || {};
+    return result;
+  };
+
+  /**
+   * Create accommodation selection
+   *
+   */
+
+  const createSelection = async (data, id, token) => {
+    return await api.post(`/RSVP/create/${id}/${token}`, data);
+  };
+
+  /**
    * Get ceremonies
-   * @returns All ceremonies
+   *
    */
 
   const getCeremonies = async () => {
     const [_, res] = await api.get(`/ceremonies/list`);
     const { result } = res || {};
-    return result;
+    return result.ceremonies;
   };
 
-  const createCeremony = async () => {
-    return await api.post(`/ceremonies/create`, {});
+  /**
+   * Create ceremony record
+   *
+   */
+
+  const createCeremony = async (data) => {
+    return await api.post(`/ceremonies/create`, data);
   };
+
+  /**
+   * Get single ceremony record
+   *
+   */
 
   const getCeremony = async (id) => {
     const [_, result] = await api.get(`/ceremonies/view/${id}`);
     return result;
   };
 
+  /**
+   * Remove single ceremony record
+   *
+   */
+
   const removeCeremony = async (id) => {
     const [_, result] = await api.get(`/ceremonies/delete/${id}`);
     return result;
   };
+
+  /**
+   * Save single ceremony record
+   *
+   */
 
   const saveCeremony = async (data) => {
     const { id } = data || {};
@@ -484,6 +561,9 @@ function APIProvider(props) {
           createAttendee,
           saveAttendee,
           removeAttendee,
+          sendRSVP,
+          getRSVP,
+          saveRSVP,
           getMilestones,
           getQualifyingYears,
           getOrganizations,
@@ -501,6 +581,8 @@ function APIProvider(props) {
           createAward,
           saveAward,
           removeAward,
+          createSelection,
+          getAccommodations,
           getPecsfCharities,
           getPecsfCharity,
           getPecsfRegions,

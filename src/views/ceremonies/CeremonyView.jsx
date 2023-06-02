@@ -5,7 +5,6 @@
  * MIT Licensed
  */
 
-import ProfileData from "@/views/recipients/data/ProfileData.jsx";
 import CeremonyData from "@/views/attendees/data/CeremonyData";
 
 /**
@@ -13,12 +12,9 @@ import CeremonyData from "@/views/attendees/data/CeremonyData";
  */
 
 export default function AttendeeView({ data }) {
-  const { ceremony, recipient } = data || {};
-
   return (
     <div>
-      <ProfileData data={recipient} />
-      <CeremonyData data={ceremony} />
+      <CeremonyData data={data} />
     </div>
   );
 }

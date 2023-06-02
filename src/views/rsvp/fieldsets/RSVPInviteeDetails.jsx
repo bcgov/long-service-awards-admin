@@ -1,34 +1,17 @@
 /*!
- * Address fieldset component
- * File: CeremonyInput.js
+ * RSVP Invitee Details fieldset component
+ * File: RSVPInviteeDetails.js
  * Copyright(c) 2023 BC Gov
  * MIT Licensed
  */
 
-import { useEffect, useState } from "react";
-import { useFormContext, Controller } from "react-hook-form";
-import { InputText } from "primereact/inputtext";
-import { Calendar } from "primereact/calendar";
-import classNames from "classnames";
-import { matchers } from "@/services/validation.services.js";
-import { Dropdown } from "primereact/dropdown";
-import { InputMask } from "primereact/inputmask";
-import { BlockUI } from "primereact/blockui";
-import { AutoComplete } from "primereact/autocomplete";
-import { useAPI } from "@/providers/api.provider.jsx";
-import { Fieldset } from "primereact/fieldset";
-import { convertDate } from "@/services/validation.services.js";
-import { Chip } from "primereact/chip";
 import { format } from "date-fns";
-
-/**
- * Address Input reusable component. Conditional PO Box requirement for Victoria addresses.
- * @returns address line 1, address line 2, city/community, province/state, country, postal code, po box
- */
+import { Chip } from "primereact/chip";
+import { Fieldset } from "primereact/fieldset";
+import { Controller, useFormContext } from "react-hook-form";
 
 export default function RSVPInviteeDetails() {
-  const api = useAPI();
-  const { control, setValue, getValues } = useFormContext();
+  const { control } = useFormContext();
 
   return (
     <Fieldset
@@ -45,11 +28,10 @@ export default function RSVPInviteeDetails() {
             >
               Invitee
             </label>
-
             <Controller
               name={`recipient.contact.full_name`}
               control={control}
-              render={({ field, fieldState: { invalid, error } }) => (
+              render={({ field }) => (
                 <Chip
                   label={field.value}
                   style={{ width: "max-content" }}
