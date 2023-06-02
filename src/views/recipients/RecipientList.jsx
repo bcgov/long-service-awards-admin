@@ -6,27 +6,23 @@
  * MIT Licensed
  */
 
-import { useState, useEffect, Fragment } from "react";
-import { DataTable } from "primereact/datatable";
-import { Column } from "primereact/column";
-import { Button } from "primereact/button";
-import { Tag } from "primereact/tag";
-import { useStatus } from "@/providers/status.provider.jsx";
-import { useAPI } from "@/providers/api.provider.jsx";
-import EditToolBar from "@/views/default/EditToolBar.jsx";
-import { Toolbar } from "primereact/toolbar";
-import { Dialog } from "primereact/dialog";
-import RecipientsSort from "@/views/recipients/RecipientsSort";
-import RecipientsFilter from "@/views/recipients/RecipientsFilter.jsx";
-import { useNavigate } from "react-router-dom";
-import RecipientView from "@/views/recipients/RecipientView";
-import { Card } from "primereact/card";
-import { Dropdown } from "primereact/dropdown";
-import { AutoComplete } from "primereact/autocomplete";
-import DataEdit from "@/views/default/DataEdit.jsx";
-import AttendeesEdit from "../attendees/fieldsets/AttendeesEditInput";
-import AttendeesCreate from "../attendees/AttendeesCreate";
 import { ceremonyStatuses } from "@/constants/statuses.constants.js";
+import { useAPI } from "@/providers/api.provider.jsx";
+import { useStatus } from "@/providers/status.provider.jsx";
+import AttendeesCreate from "@/views/attendees/AttendeesCreate";
+import EditToolBar from "@/views/default/EditToolBar.jsx";
+import RecipientView from "@/views/recipients/RecipientView";
+import RecipientsFilter from "@/views/recipients/RecipientsFilter.jsx";
+import RecipientsSort from "@/views/recipients/RecipientsSort";
+import { Button } from "primereact/button";
+import { Card } from "primereact/card";
+import { Column } from "primereact/column";
+import { DataTable } from "primereact/datatable";
+import { Dialog } from "primereact/dialog";
+import { Tag } from "primereact/tag";
+import { Toolbar } from "primereact/toolbar";
+import { Fragment, useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 export default function RecipientList() {
   // set default filter values:
@@ -205,6 +201,7 @@ export default function RecipientList() {
   const applySort = (sortData) => {
     if (sortData) setSort(sortData);
     setShowDialog(null);
+    console.log(sort);
   };
 
   /**

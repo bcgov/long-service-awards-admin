@@ -13,6 +13,8 @@ import { Dropdown } from "primereact/dropdown";
 import { MultiSelect } from "primereact/multiselect";
 import { useAPI } from "@/providers/api.provider.jsx";
 import { InputSwitch } from "primereact/inputswitch";
+import { format } from "date-fns";
+import { ceremonyStatuses as statuses } from "@/constants/statuses.constants.js";
 
 function AttendeesFilter({ data, confirm, cancel }) {
   const api = useAPI();
@@ -22,7 +24,7 @@ function AttendeesFilter({ data, confirm, cancel }) {
 
   const [organizations, setOrganizations] = useState([]);
   const [ceremonies, setCeremonies] = useState([]);
-  //   const [status, setStatus] = useState([]);
+  const [status, setStatus] = useState([]);
   const [filters, setFilters] = useState(data || {});
   const schema = {
     global: {
@@ -36,10 +38,6 @@ function AttendeesFilter({ data, confirm, cancel }) {
       label: "Last Name",
       input: "text",
     },
-    employee_number: {
-      label: "Employee Number",
-      input: "text",
-    },
     organization: {
       label: "Organizations",
       input: "multiselect",
@@ -49,19 +47,17 @@ function AttendeesFilter({ data, confirm, cancel }) {
     },
     ceremony: {
       label: "Ceremony",
-      input: "text",
+      input: "multiselect",
+      valueKey: "id",
+      labelKey: "datetime",
+      options: ceremonies,
     },
     status: {
       label: "Registration Status",
-      input: "select",
-      valueKey: "value",
-      labelKey: "name",
-      options: [
-        { name: "Assigned", value: "assigned" },
-        { name: "Invited", value: "invited" },
-        { name: "Expired", value: "expired" },
-        { name: "Invited", value: "invited" },
-      ],
+      input: "multiselect",
+      // valueKey: "value",
+      // labelKey: "name",
+      options: Object.keys(statuses).map((k) => statuses[k]),
     },
   };
 
@@ -71,7 +67,17 @@ function AttendeesFilter({ data, confirm, cancel }) {
     setLoading(true);
     api
       .getCeremonies()
-      .then(setCeremonies)
+      .then((data) => {
+        data.forEach(
+          (d) =>
+            (d.datetime_formatted = format(
+              new Date(d.datetime),
+              `p 'on' EEEE, MMMM dd, yyyy`
+            ))
+        );
+        console.log(data);
+        setCeremonies(data);
+      })
       .catch(console.error)
       .finally(() => setLoading(false));
     api

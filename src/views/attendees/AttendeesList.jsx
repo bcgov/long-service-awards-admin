@@ -9,6 +9,7 @@ import { useAPI } from "@/providers/api.provider.jsx";
 import { useStatus } from "@/providers/status.provider.jsx";
 import AttendeeView from "@/views/attendees/AttendeeView";
 import AttendeesFilter from "@/views/attendees/AttendeesFilter.jsx";
+import AttendeesSort from "@/views/attendees/AttendeesSort";
 import EditToolBar from "@/views/default/EditToolBar.jsx";
 import InvitationCreate from "@/views/invitations/InvitationCreate";
 import { format } from "date-fns";
@@ -42,17 +43,20 @@ export default function AttendeesList() {
   const [stats, setStats] = useState({
     total_count: 0,
   });
+  const [totalFilteredRecords, setTotalFilteredRecords] = useState(0);
+  const [filteredRecipients, setFilteredRecipients] = useState([]);
   const [showRSVPDialog, setShowRSVPDialog] = useState(false);
   const [selected, setSelected] = useState([]);
   const [selectAll, setSelectAll] = useState(false);
   const [filters, setFilters] = useState(initFilters);
+  const [sort, setSort] = useState({
+    orderBy: "recipient.contact.last_name",
+    order: 1,
+  });
   const [pageState, setPageState] = useState({
     first: 0,
     rows: 10,
     page: 1,
-    sortField: "id",
-    sortOrder: 0,
-    filters: {},
   });
 
   /**
@@ -60,16 +64,17 @@ export default function AttendeesList() {
    * */
 
   useEffect(() => {
-    loadData();
-  }, [pageState, filters]);
+    loadData(pageState, filters, sort);
+  }, [pageState, filters, sort]);
 
   const loadData = () => {
     setLoading(true);
-    const { first, rows, sortField, sortOrder } = pageState || {};
+    const { orderBy, order } = sort || {};
+    const { first, rows } = pageState || {};
     // compose list filters
     const filter = {
-      orderby: sortField,
-      order: sortOrder >= 0 ? "ASC" : "DESC",
+      orderby: orderBy,
+      order: order >= 0 ? "ASC" : "DESC",
       limit: rows,
       offset: first || 0,
       ...filters,
@@ -80,9 +85,9 @@ export default function AttendeesList() {
       // .getAttendees(filter)
       .getAttendees()
       .then((results) => {
-        // const { total_filtered_records, attendees } = results || {};
-        const attendees = results || {};
-        setAttendees(attendees);
+        // const { total_filtered_records, fetchedAttendees } = results || {};
+        const fetchedAttendees = results || {};
+        setAttendees(fetchedAttendees);
         // setTotalFilteredRecords(total_filtered_records);
       })
       .finally(() => {
@@ -106,8 +111,9 @@ export default function AttendeesList() {
     setShowDialog("sort");
   };
   const applySort = (sortData) => {
-    if (sortData) setPageState({ ...pageState, ...sortData });
+    if (sortData) setSort(sortData);
     setShowDialog(null);
+    console.log(sort);
   };
 
   /**
@@ -272,11 +278,11 @@ export default function AttendeesList() {
         breakpoints={{ "960px": "80vw" }}
         style={{ width: "50vw" }}
       >
-        {/* <CeremoniesSort
-                data={pageState}
-                confirm={applySort}
-                cancel={() => setShowDialog(null)}
-            /> */}
+        <AttendeesSort
+          data={sort}
+          confirm={applySort}
+          cancel={() => setShowDialog(null)}
+        />
       </Dialog>
       <Dialog
         visible={showDialog === "filter"}
@@ -319,8 +325,8 @@ export default function AttendeesList() {
         rowsPerPageOptions={[10, 25, 50]}
         onPage={onPage}
         first={pageState.first}
-        sortField={pageState.sortField}
-        sortOrder={pageState.sortOrder}
+        sortField={sort.orderBy}
+        sortOrder={sort.order}
         loading={loading}
         selection={selected}
         onSelectionChange={onSelectionChange}

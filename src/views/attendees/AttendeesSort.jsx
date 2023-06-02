@@ -10,11 +10,12 @@ import { useEffect, useState } from "react";
 import { Button } from "primereact/button";
 import { Dropdown } from "primereact/dropdown";
 
-function RecipientsSort({ data, confirm, cancel }) {
-  console.log(confirm);
+function AttendeesSort({ data, confirm, cancel }) {
   const { orderBy, order } = data || {};
   const [selectedSortField, setSelectedSortField] = useState(orderBy);
   const [selectedSortOrder, setSelectedSortOrder] = useState(order);
+
+  console.log(data);
 
   // init sort options states
   useEffect(() => {
@@ -26,16 +27,16 @@ function RecipientsSort({ data, confirm, cancel }) {
   // define sortable columns
   const cols = [
     {
-      value: "employee_number",
-      label: "Employee Number",
-    },
-    {
-      value: "first_name",
+      value: "recipient.contact.first_name",
       label: "First Name",
     },
     {
-      value: "last_name",
+      value: "recipient.contact.last_name",
       label: "Last Name",
+    },
+    {
+      value: "ceremony.datetime",
+      label: "Ceremony",
     },
     {
       value: "updated_at",
@@ -108,4 +109,4 @@ function RecipientsSort({ data, confirm, cancel }) {
   );
 }
 
-export default RecipientsSort;
+export default AttendeesSort;
