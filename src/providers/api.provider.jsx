@@ -239,7 +239,7 @@ function APIProvider(props) {
    */
 
   const getAccommodations = async () => {
-    const [_, res] = await api.get(`/accommodations/list`);
+    const [_, res] = await api.get(`/RSVP/get/accommodations`);
     const result = res || {};
     return result;
   };
