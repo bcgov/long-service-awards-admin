@@ -29,6 +29,8 @@ export default function AttendeesEditInput({ isEditing, selectedRecipients }) {
 
   const { control } = useFormContext();
   const api = useAPI();
+  //Remove Default status from the list
+  delete statuses.default;
   // const user = useUser();
   // const { role } = user || {};
   // const isAdmin = ["super-administrator"].includes(role.name);

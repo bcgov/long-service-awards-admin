@@ -24,6 +24,11 @@ export const ceremonyStatuses = {
     severity: "secondary",
     description: "Attendee has not been the ceremony.",
   },
+  default: {
+    label: "Not Assigned",
+    severity: "secondary",
+    description: "Attendee has not been the ceremony.",
+  },
   declined: {
     label: "Declined",
     severity: "danger",
