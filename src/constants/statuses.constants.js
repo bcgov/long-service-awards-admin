@@ -19,7 +19,7 @@ export const ceremonyStatuses = {
     severity: "success",
     description: "Attendee is attending the ceremony.",
   },
-  default: {
+  notassigned: {
     label: "Not Assigned",
     severity: "secondary",
     description: "Attendee has not been the ceremony.",

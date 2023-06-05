@@ -67,6 +67,13 @@ export default function RSVPCreate() {
         ? delete sanitizedData.accommodations[key]
         : {}
     );
+    if (sanitizedData.guest_count) {
+      Object.keys(sanitizedData.guest_accommodations).forEach((key) =>
+        sanitizedData.guest_accommodations[key] === undefined
+          ? delete sanitizedData.guest_accommodations[key]
+          : {}
+      );
+    }
     const updatedStatusData = { ...sanitizedData, status: "Attending" };
 
     console.log("Save:", updatedStatusData);
@@ -76,11 +83,15 @@ export default function RSVPCreate() {
       if (updatedStatusData.accommodations) {
         for (const acc in updatedStatusData.accommodations) {
           if (updatedStatusData.accommodations[acc] === true) {
-          await api.createSelection({
-            attendee: updatedStatusData.id,
-            accommodation: acc,
-          }, id, token);
-        }
+            await api.createSelection(
+              {
+                attendee: updatedStatusData.id,
+                accommodation: acc,
+              },
+              id,
+              token
+            );
+          }
         }
       }
 
