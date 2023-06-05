@@ -221,7 +221,10 @@ export default function RecipientList() {
     // check if recipient is an attendee
     const attendee = attendees.find((a) => a.recipient.id === rowData.id);
     if (attendee)
-      statusIndicator = ceremonyStatuses[attendee.status.toLowerCase()];
+      statusIndicator =
+        ceremonyStatuses[attendee.status.toLowerCase().replace(/\s/g, "")];
+
+    console.log(statusIndicator);
 
     return (
       <>
