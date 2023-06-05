@@ -16,7 +16,6 @@ export default function RSVPOptions() {
   const api = useAPI();
   const { control, setValue } = useFormContext();
   const [accommodations, setAccommodations] = useState([]);
-
   const accessibilityRequirements = [
     { name: "Yes", value: true },
     { name: "No", value: false },

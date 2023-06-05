@@ -67,34 +67,41 @@ export default function RSVPCreate() {
         ? delete sanitizedData.accommodations[key]
         : {}
     );
+    if (sanitizedData.guest_count) {
+      Object.keys(sanitizedData.guest_accommodations).forEach((key) =>
+        sanitizedData.guest_accommodations[key] === undefined
+          ? delete sanitizedData.guest_accommodations[key]
+          : {}
+      );
+    }
     const updatedStatusData = { ...sanitizedData, status: "Attending" };
 
     console.log("Save:", updatedStatusData);
 
-    try {
-      status.setMessage("save");
-      if (updatedStatusData.accommodations) {
-        for (const acc in updatedStatusData.accommodations) {
-          if (updatedStatusData.accommodations[acc] === true) {
-          await api.createSelection({
-            attendee: updatedStatusData.id,
-            accommodation: acc,
-          }, id, token);
-        }
-        }
-      }
+    // try {
+    //   status.setMessage("save");
+    //   if (updatedStatusData.accommodations) {
+    //     for (const acc in updatedStatusData.accommodations) {
+    //       if (updatedStatusData.accommodations[acc] === true) {
+    //       await api.createSelection({
+    //         attendee: updatedStatusData.id,
+    //         accommodation: acc,
+    //       }, id, token);
+    //     }
+    //     }
+    //   }
 
-      const [error, result] = await api.saveRSVP(updatedStatusData, id, token);
+    //   const [error, result] = await api.saveRSVP(updatedStatusData, id, token);
 
-      if (error) status.setMessage("saveError");
-      else status.setMessage("saveSuccess");
+    //   if (error) status.setMessage("saveError");
+    //   else status.setMessage("saveSuccess");
 
-      if (!error && result) {
-        return result;
-      }
-    } catch (error) {
-      status.setMessage("saveError");
-    }
+    //   if (!error && result) {
+    //     return result;
+    //   }
+    // } catch (error) {
+    //   status.setMessage("saveError");
+    // }
   };
 
   // cancel edits

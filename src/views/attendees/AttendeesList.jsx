@@ -187,7 +187,7 @@ export default function AttendeesList() {
 
   const statusTemplate = (rowData) => {
     const { status } = rowData || {};
-    const statusIndicator = statuses[status.toLowerCase()];
+    const statusIndicator = statuses[status.toLowerCase().replace(/\s/g, "")];
     return (
       <Tag
         tooltip={statusIndicator.description}
