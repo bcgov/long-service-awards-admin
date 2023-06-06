@@ -167,16 +167,8 @@ const router = createBrowserRouter(
         },
         {
           path: "rsvp/:id/:token",
-          element: (
-            <ProtectedRoute
-              authorizedRoles={[
-                "administrator",
-                "super-administrator",
-                "org-contact",
-              ]}
-            >
+          element: (        
               <RSVPCreate />
-            </ProtectedRoute>
           ),
         },
         {
