@@ -1,12 +1,12 @@
 /*!
  * Attendees Edit fieldset component
- * File: AwardEdit.js
+ * File: AttendeesEditInput.js
  * Copyright(c) 2023 BC Gov
  * MIT Licensed
  */
 
+import { ceremonyStatuses as statuses } from "@/constants/statuses.constants.js";
 import { useAPI } from "@/providers/api.provider.jsx";
-import { useUser } from "@/providers/user.provider.jsx";
 import classNames from "classnames";
 import { format } from "date-fns";
 import { Checkbox } from "primereact/checkbox";
@@ -14,28 +14,18 @@ import { Chip } from "primereact/chip";
 import { Dropdown } from "primereact/dropdown";
 import { Panel } from "primereact/panel";
 import { Tag } from "primereact/tag";
-import { useEffect, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import { Controller, useFormContext } from "react-hook-form";
-import { ceremonyStatuses as statuses } from "@/constants/statuses.constants.js";
 
 export default function AttendeesEditInput({ isEditing, selectedRecipients }) {
-  selectedRecipients
-    ? selectedRecipients.map((r) =>
-        Object.assign(r.contact, {
-          full_name: `${r.contact.first_name} ${r.contact.last_name}`,
-        })
-      )
-    : {};
-
   const { control } = useFormContext();
   const api = useAPI();
-  //Remove Default status from the list
-  delete statuses.default;
   // const user = useUser();
   // const { role } = user || {};
   // const isAdmin = ["super-administrator"].includes(role.name);
-  // const isAdmin = true;
   const [ceremonies, setCeremonies] = useState([]);
+
+  //Cell Templates
   const statusOptionTemplate = (option) => {
     return (
       <Tag
@@ -45,7 +35,6 @@ export default function AttendeesEditInput({ isEditing, selectedRecipients }) {
       />
     );
   };
-
   const selectedStatusTemplate = (option) => {
     if (option) {
       return (
@@ -59,11 +48,9 @@ export default function AttendeesEditInput({ isEditing, selectedRecipients }) {
       return <span>Placeholder</span>;
     }
   };
-
   const statusCeremonyTemplate = (option) => {
     return format(new Date(option.datetime), `p 'on' EEEE, MMMM dd, yyyy`);
   };
-
   const selectedCeremonyTemplate = (option) => {
     if (option) {
       return format(new Date(option.datetime), `p 'on' EEEE, MMMM dd, yyyy`);
@@ -72,18 +59,28 @@ export default function AttendeesEditInput({ isEditing, selectedRecipients }) {
     }
   };
 
+  //Remove Default status from the list
+  delete statuses.default;
+
   useEffect(() => {
     api
       .getCeremonies()
       .then((results) => {
         const ceremonies = results || {};
         setCeremonies(ceremonies);
+        selectedRecipients
+          ? selectedRecipients.map((r) =>
+              Object.assign(r.contact, {
+                full_name: `${r.contact.first_name} ${r.contact.last_name}`,
+              })
+            )
+          : {};
       })
       .catch(console.error);
   }, []);
 
   return (
-    <>
+    <Fragment>
       <Panel className={"mb-3"} header={<>Recipients</>}>
         <div className="container">
           <div className="grid">
@@ -102,22 +99,23 @@ export default function AttendeesEditInput({ isEditing, selectedRecipients }) {
                 }
                 render={({ field, fieldState: { invalid, error } }) => {
                   return !isEditing ? (
-                    <>
+                    <Fragment>
                       <div className="flex">
                         {selectedRecipients.map((r) => (
                           <Chip
                             label={r.contact.full_name}
                             style={{ width: "max-content", margin: "2px" }}
-                            key={r.contact.full_name}
+                            key={r.contact.id}
                           />
                         ))}
                       </div>
                       {invalid && <p className="error">{error.message}</p>}
-                    </>
+                    </Fragment>
                   ) : (
                     <Chip
                       label={field.value}
                       style={{ width: "max-content", margin: "2px" }}
+                      key={field.value}
                     />
                   );
                 }}
@@ -139,7 +137,7 @@ export default function AttendeesEditInput({ isEditing, selectedRecipients }) {
                 }}
                 render={({ field, fieldState: { invalid, error } }) => {
                   return (
-                    <>
+                    <Fragment>
                       <Dropdown
                         className={classNames({ "p-invalid": error })}
                         id={field.id}
@@ -157,7 +155,7 @@ export default function AttendeesEditInput({ isEditing, selectedRecipients }) {
                         mask="99/99/9999"
                       />
                       {invalid && <p className="error">{error.message}</p>}
-                    </>
+                    </Fragment>
                   );
                 }}
               />
@@ -166,7 +164,7 @@ export default function AttendeesEditInput({ isEditing, selectedRecipients }) {
         </div>
       </Panel>
       {isEditing && (
-        <>
+        <Fragment>
           <Panel className={"mb-3"} header={<>Status</>}>
             <div className="container">
               <div className="grid">
@@ -182,7 +180,7 @@ export default function AttendeesEditInput({ isEditing, selectedRecipients }) {
                     }}
                     render={({ field, fieldState: { invalid, error } }) => {
                       return (
-                        <>
+                        <Fragment>
                           <Dropdown
                             className={classNames({ "p-invalid": error })}
                             id={field.value}
@@ -201,7 +199,7 @@ export default function AttendeesEditInput({ isEditing, selectedRecipients }) {
                             placeholder={"Change Status"}
                           />
                           {invalid && <p className="error">{error.message}</p>}
-                        </>
+                        </Fragment>
                       );
                     }}
                   />
@@ -249,8 +247,8 @@ export default function AttendeesEditInput({ isEditing, selectedRecipients }) {
               </div>
             </div>
           </Panel>
-        </>
+        </Fragment>
       )}
-    </>
+    </Fragment>
   );
 }

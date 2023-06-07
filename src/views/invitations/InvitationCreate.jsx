@@ -49,13 +49,14 @@ export default function InvitationCreate({ selected }) {
       ...a,
       status: "Invited",
     }));
+    console.log(updatedStatusData);
     try {
       updatedStatusData.forEach(async (a) => {
         status.setMessage("save");
         const [error, result] = await api.saveAttendee(a);
         const [sendError, sendResult] = await api.sendRSVP(a);
         if (error) status.setMessage("saveError");
-        else if (sendError) status.setMessage("mailError")
+        else if (sendError) status.setMessage("mailError");
         else status.setMessage("mailSuccess");
         if (!error && !sendError && result && sendResult) {
           setSubmitted(true);

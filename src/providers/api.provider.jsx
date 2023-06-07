@@ -169,7 +169,9 @@ function APIProvider(props) {
    */
 
   const getAttendees = async (params) => {
-    const [_, res] = await api.get(`/attendees/list?${formatQueryParams(params)}`);
+    const [_, res] = await api.get(
+      `/attendees/list?${formatQueryParams(params)}`
+    );
     const result = res || [];
     return result;
   };
@@ -239,7 +241,8 @@ function APIProvider(props) {
    */
 
   const getAccommodations = async () => {
-    const [_, res] = await api.get(`/RSVP/get/accommodations`);
+    // const [_, res] = await api.get(`/RSVP/get/accommodations/`);
+    const [_, res] = await api.get(`/accommodations/list`);
     const result = res || {};
     return result;
   };

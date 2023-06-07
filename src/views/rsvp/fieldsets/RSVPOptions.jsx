@@ -9,8 +9,8 @@ import { useAPI } from "@/providers/api.provider.jsx";
 import { Checkbox } from "primereact/checkbox";
 import { Fieldset } from "primereact/fieldset";
 import { SelectButton } from "primereact/selectbutton";
-import { useEffect, useState } from "react";
-import { Controller, useFormContext } from "react-hook-form";
+import { Fragment, useEffect, useState } from "react";
+import { Controller, useFormContext, useWatch } from "react-hook-form";
 
 export default function RSVPOptions() {
   const api = useAPI();
@@ -20,6 +20,7 @@ export default function RSVPOptions() {
     { name: "Yes", value: true },
     { name: "No", value: false },
   ];
+  const isAttending = useWatch({ control, name: "attendance_confirmed" });
 
   useEffect(() => {
     api
@@ -36,7 +37,7 @@ export default function RSVPOptions() {
       .catch(console.error);
   }, []);
 
-  return (
+  return isAttending ? (
     accommodations && (
       <Fieldset toggleable={false} className={"mb-3"} legend={<>Options</>}>
         <div className="container">
@@ -121,5 +122,7 @@ export default function RSVPOptions() {
         </div>
       </Fieldset>
     )
+  ) : (
+    <Fragment></Fragment>
   );
 }

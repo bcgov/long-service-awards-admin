@@ -17,7 +17,7 @@ import { useEffect, useState } from "react";
  * @returns {JSX.Element},
  */
 
-export default function RSVPConfirmationInput({ validate }) {
+export default function RSVPConfirmationInput({ validate, isAttending }) {
   // set local states
   const { control, getValues } = useFormContext();
   const [complete, setComplete] = useState(false);
@@ -62,7 +62,7 @@ export default function RSVPConfirmationInput({ validate }) {
                     <Checkbox
                       id={field.name}
                       inputId={"registration-confirmation"}
-                      checked={field.value || false}
+                      checked={field.value || isAttending}
                       aria-describedby={`service-confirmation-help`}
                       value={field.value || false}
                       className={"mr-1"}

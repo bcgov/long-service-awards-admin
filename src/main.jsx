@@ -167,9 +167,7 @@ const router = createBrowserRouter(
         },
         {
           path: "rsvp/:id/:token",
-          element: (        
-              <RSVPCreate />
-          ),
+          element: <RSVPCreate />,
         },
         {
           path: "organizations",
@@ -198,9 +196,9 @@ const router = createBrowserRouter(
 );
 
 ReactDOM.createRoot(document.getElementById("root")).render(
-  <React.StrictMode>
-    <AppProvider>
-      <RouterProvider router={router} fallbackElement={<ServerError />} />
-    </AppProvider>
-  </React.StrictMode>
+  // <React.StrictMode>
+  <AppProvider>
+    <RouterProvider router={router} fallbackElement={<ServerError />} />
+  </AppProvider>
+  // </React.StrictMode>
 );

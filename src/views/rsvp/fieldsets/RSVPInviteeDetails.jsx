@@ -8,12 +8,14 @@
 import { format } from "date-fns";
 import { Chip } from "primereact/chip";
 import { Fieldset } from "primereact/fieldset";
-import { Controller, useFormContext } from "react-hook-form";
+import { Controller, useFormContext, useWatch } from "react-hook-form";
+import { Fragment } from "react";
 
 export default function RSVPInviteeDetails() {
   const { control } = useFormContext();
+  const isAttending = useWatch({ control, name: "attendance_confirmed" });
 
-  return (
+  return isAttending ? (
     <Fieldset
       toggleable={false}
       className={"mb-3"}
@@ -72,5 +74,7 @@ export default function RSVPInviteeDetails() {
         </div>
       </div>
     </Fieldset>
+  ) : (
+    <Fragment></Fragment>
   );
 }

@@ -33,6 +33,7 @@ export default function AttendeesList() {
     ceremony: null,
     status: null,
     organization: null,
+    guest: null,
   };
 
   const api = useAPI();
@@ -40,11 +41,6 @@ export default function AttendeesList() {
   const [loading, setLoading] = useState(false);
   const [showDialog, setShowDialog] = useState(null);
   const [attendees, setAttendees] = useState([]);
-  const [stats, setStats] = useState({
-    total_count: 0,
-  });
-  const [totalFilteredRecords, setTotalFilteredRecords] = useState(0);
-  const [filteredRecipients, setFilteredRecipients] = useState([]);
   const [showRSVPDialog, setShowRSVPDialog] = useState(false);
   const [selected, setSelected] = useState([]);
   const [selectAll, setSelectAll] = useState(false);
@@ -65,6 +61,7 @@ export default function AttendeesList() {
 
   useEffect(() => {
     loadData(pageState, filters, sort);
+    api.getAccommodations().catch(console.error);
   }, [pageState, filters, sort]);
 
   const loadData = () => {
@@ -84,10 +81,8 @@ export default function AttendeesList() {
     api
       .getAttendees(filter)
       .then((results) => {
-        // const { total_filtered_records, fetchedAttendees } = results || {};
         const fetchedAttendees = results || {};
         setAttendees(fetchedAttendees);
-        // setTotalFilteredRecords(total_filtered_records);
       })
       .finally(() => {
         setLoading(false);
@@ -149,9 +144,6 @@ export default function AttendeesList() {
       });
   };
 
-  // const editTemplate = (data, callback) => {
-  //   console.log(data);
-
   /**
    * Select ceremony for action
    * */
@@ -159,14 +151,20 @@ export default function AttendeesList() {
   const onSelectionChange = (event) => {
     const value = event.value;
     setSelected(value);
-    setSelectAll(value.length === stats);
   };
 
   const onSelectAllChange = () => {};
 
   const guestTemplate = (rowData) => {
     const { guest } = rowData || {};
-    return guest === 1 ? "Yes" : "No";
+    const isGuest = guest === 1;
+    return (
+      <Tag
+        tooltip={isGuest ? "Guest" : "Recipient"}
+        value={isGuest ? "Guest" : "Recipient"}
+        severity={isGuest ? "danger" : "info"}
+      />
+    );
   };
 
   const formattedCeremonyDateTemplate = (rowData) => {
@@ -182,7 +180,6 @@ export default function AttendeesList() {
 
   const formattedUpdatedDateTemplate = (rowData) => {
     return formatDate(new Date(rowData.updated_at));
-    // return format(new Date(rowData.updated_at), "dd/mm/yy, h:mm aa");
   };
 
   const statusTemplate = (rowData) => {
@@ -203,7 +200,7 @@ export default function AttendeesList() {
 
   const header = () => {
     return (
-      <>
+      <Fragment>
         <Toolbar
           left={
             <Fragment>
@@ -243,7 +240,7 @@ export default function AttendeesList() {
             </Fragment>
           }
         />
-      </>
+      </Fragment>
     );
   };
 
@@ -252,7 +249,7 @@ export default function AttendeesList() {
    * */
 
   return (
-    <>
+    <Fragment>
       <Dialog
         visible={showRSVPDialog}
         onHide={() => setShowRSVPDialog(false)}
@@ -286,7 +283,7 @@ export default function AttendeesList() {
       <Dialog
         visible={showDialog === "filter"}
         onHide={() => setShowDialog(null)}
-        header={"Filter Ceremonies"}
+        header={"Filter Attendees"}
         position="center"
         closable
         maximizable
@@ -310,7 +307,8 @@ export default function AttendeesList() {
           <Button
             className={"m-1 p-button-success"}
             disabled={
-              !selected.length || !selected.every((r) => r.status !== "Invited")
+              !selected.length ||
+              !selected.every((r) => r.status !== "Attending")
             }
             type="button"
             icon="pi pi-user-plus"
@@ -362,6 +360,14 @@ export default function AttendeesList() {
         />
         <Column
           className={"p-1"}
+          field="guest"
+          header="Type"
+          body={guestTemplate}
+          headerStyle={{ minWidth: "7em" }}
+          bodyStyle={{ minWidth: "7em" }}
+        />
+        <Column
+          className={"p-1"}
           field="recipient.contact.first_name"
           header="First Name"
           headerStyle={{ minWidth: "7em" }}
@@ -389,14 +395,7 @@ export default function AttendeesList() {
           headerStyle={{ minWidth: "7em" }}
           bodyStyle={{ minWidth: "7em" }}
         />
-        <Column
-          className={"p-1"}
-          field="guest"
-          header="Guest"
-          body={guestTemplate}
-          headerStyle={{ minWidth: "7em" }}
-          bodyStyle={{ minWidth: "7em" }}
-        />
+
         <Column
           className={"p-1"}
           field="created_at"
@@ -414,6 +413,6 @@ export default function AttendeesList() {
           bodyStyle={{ minWidth: "7em" }}
         />
       </DataTable>
-    </>
+    </Fragment>
   );
 }

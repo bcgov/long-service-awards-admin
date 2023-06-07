@@ -6,21 +6,15 @@
  */
 import { useAPI } from "@/providers/api.provider.jsx";
 import { useNavigate, useParams } from "react-router-dom";
-
 import { useStatus } from "@/providers/status.provider.jsx";
-
 import validate, { validators } from "@/services/validation.services.js";
-
+import { Fragment } from "react";
 import FormContext from "@/components/common/FormContext";
 import PageHeader from "@/components/common/PageHeader.jsx";
 
 //Fieldsets
 import CeremonyAddressInput from "@/views/ceremonies/fieldsets/CeremonyAddressInput.jsx";
 import CeremonyDetailsInput from "@/views/ceremonies/fieldsets/CeremonyDetailsInput.jsx";
-
-/**
- * Inherited model component
- */
 
 export default function CeremonyEdit() {
   const status = useStatus();
@@ -116,7 +110,7 @@ export default function CeremonyEdit() {
   };
 
   return (
-    <>
+    <Fragment>
       <PageHeader heading="Create Ceremony" />
       <FormContext
         loader={_loader}
@@ -130,6 +124,6 @@ export default function CeremonyEdit() {
         <CeremonyDetailsInput />
         <CeremonyAddressInput validate={fieldsetValidators.ceremonyAddress} />
       </FormContext>
-    </>
+    </Fragment>
   );
 }

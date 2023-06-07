@@ -6,7 +6,7 @@
  * MIT Licensed
  */
 
-import React, { useEffect, useState } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import { Button } from "primereact/button";
 import { InputText } from "primereact/inputtext";
 import { Dropdown } from "primereact/dropdown";
@@ -19,13 +19,11 @@ import { ceremonyStatuses as statuses } from "@/constants/statuses.constants.js"
 function AttendeesFilter({ data, confirm, cancel }) {
   const api = useAPI();
   const [loading, setLoading] = useState(false);
-
   // init filter settings
-
   const [organizations, setOrganizations] = useState([]);
   const [ceremonies, setCeremonies] = useState([]);
-  const [status, setStatus] = useState([]);
   const [filters, setFilters] = useState(data || {});
+
   const schema = {
     global: {
       label: "Global",
@@ -49,8 +47,18 @@ function AttendeesFilter({ data, confirm, cancel }) {
       label: "Ceremony",
       input: "multiselect",
       valueKey: "id",
-      labelKey: "datetime",
+      labelKey: "datetime_formatted",
       options: ceremonies,
+    },
+    guest: {
+      label: "Type",
+      input: "select",
+      valueKey: "value",
+      labelKey: "name",
+      options: [
+        { name: "Guest", value: "1" },
+        { name: "Recipient", value: "0" },
+      ],
     },
     status: {
       label: "Registration Status",
@@ -60,6 +68,9 @@ function AttendeesFilter({ data, confirm, cancel }) {
       options: Object.keys(statuses).map((k) => statuses[k]),
     },
   };
+
+  //Delete default status
+  delete statuses.default;
 
   // init filter options states
   useEffect(() => {
@@ -75,7 +86,6 @@ function AttendeesFilter({ data, confirm, cancel }) {
               `p 'on' EEEE, MMMM dd, yyyy`
             ))
         );
-        console.log(data);
         setCeremonies(data);
       })
       .catch(console.error)
@@ -88,7 +98,7 @@ function AttendeesFilter({ data, confirm, cancel }) {
   }, []);
 
   return (
-    <>
+    <Fragment>
       {Object.entries(filters).map(([key, filterValue]) => {
         const {
           label = "",
@@ -103,7 +113,7 @@ function AttendeesFilter({ data, confirm, cancel }) {
             className="w-85 flex justify-content-between px-3"
           >
             {input === "text" && (
-              <>
+              <Fragment>
                 <label className={"m-3"} htmlFor={"sortBy"}>
                   Filter By {label}
                 </label>
@@ -117,10 +127,10 @@ function AttendeesFilter({ data, confirm, cancel }) {
                   aria-describedby={`sortBy-help`}
                   placeholder={`Enter filter value`}
                 />
-              </>
+              </Fragment>
             )}
             {input === "select" && (
-              <>
+              <Fragment>
                 <label className={"w-full m-3"} htmlFor={"sortBy"}>
                   Filter By {label}
                 </label>
@@ -138,10 +148,10 @@ function AttendeesFilter({ data, confirm, cancel }) {
                   optionValue={valueKey}
                   placeholder={loading ? "Loading..." : "Select filter value"}
                 />
-              </>
+              </Fragment>
             )}
             {input === "multiselect" && (
-              <>
+              <Fragment>
                 <label className={"w-full m-3"} htmlFor={"sortBy"}>
                   Filter By {label}
                 </label>
@@ -165,10 +175,10 @@ function AttendeesFilter({ data, confirm, cancel }) {
                   }
                   className="m-3 w-full"
                 />
-              </>
+              </Fragment>
             )}
             {input === "switch" && (
-              <>
+              <Fragment>
                 <label className={"m-3"} htmlFor={"sortBy"}>
                   Filter By {label}
                 </label>
@@ -178,7 +188,7 @@ function AttendeesFilter({ data, confirm, cancel }) {
                     setFilters({ ...filters, ...{ [key]: e.value } });
                   }}
                 />
-              </>
+              </Fragment>
             )}
           </div>
         );
@@ -200,7 +210,7 @@ function AttendeesFilter({ data, confirm, cancel }) {
           onClick={cancel}
         />
       </div>
-    </>
+    </Fragment>
   );
 }
 

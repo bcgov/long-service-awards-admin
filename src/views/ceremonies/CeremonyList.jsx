@@ -201,7 +201,7 @@ export default function CeremonyList() {
 
   const header = () => {
     return (
-      <>
+      <Fragment>
         <Toolbar
           left={
             <Fragment>
@@ -241,7 +241,7 @@ export default function CeremonyList() {
             </Fragment>
           }
         />
-      </>
+      </Fragment>
     );
   };
 
@@ -250,7 +250,7 @@ export default function CeremonyList() {
    * */
 
   return (
-    <>
+    <Fragment>
       <Dialog
         visible={showDialog === "sort"}
         onHide={() => setShowDialog(null)}
@@ -366,6 +366,6 @@ export default function CeremonyList() {
           bodyStyle={{ minWidth: "7em" }}
         />
       </DataTable>
-    </>
+    </Fragment>
   );
 }

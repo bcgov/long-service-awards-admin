@@ -7,8 +7,8 @@
 
 import { Checkbox } from "primereact/checkbox";
 import { Fieldset } from "primereact/fieldset";
-import { useState, useEffect } from "react";
-import { Controller, useFormContext } from "react-hook-form";
+import { useState, useEffect, Fragment } from "react";
+import { Controller, useFormContext, useWatch } from "react-hook-form";
 import { SelectButton } from "primereact/selectbutton";
 import { useAPI } from "@/providers/api.provider.jsx";
 
@@ -21,6 +21,7 @@ export default function RSVPGuest() {
     { name: "Yes", value: true },
     { name: "No", value: false },
   ];
+  const isAttending = useWatch({ control, name: "attendance_confirmed" });
 
   useEffect(() => {
     api
@@ -37,7 +38,7 @@ export default function RSVPGuest() {
       .catch(console.error);
   }, []);
 
-  return (
+  return isAttending ? (
     <Fieldset className={"mb-3"} legend={<>Are you bringing a guest?</>}>
       <div className="container">
         <div className="grid">
@@ -157,5 +158,7 @@ export default function RSVPGuest() {
         </div>
       </div>
     </Fieldset>
+  ) : (
+    <Fragment></Fragment>
   );
 }
