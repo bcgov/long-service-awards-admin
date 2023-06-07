@@ -82,6 +82,7 @@ export default function AttendeesList() {
       .getAttendees(filter)
       .then((results) => {
         const fetchedAttendees = results || {};
+        console.log(fetchedAttendees);
         setAttendees(fetchedAttendees);
       })
       .finally(() => {
