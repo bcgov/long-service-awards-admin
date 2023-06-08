@@ -7,20 +7,11 @@
 
 import { Checkbox } from "primereact/checkbox";
 import { Fieldset } from "primereact/fieldset";
-import { Message } from "primereact/message";
-import { useEffect, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import { Controller, useFormContext, useWatch } from "react-hook-form";
 
-export default function RSVPAttendanceInput({ validate, setIsAttending }) {
-  // set local states
-  const { control, getValues } = useFormContext();
-  const [complete, setComplete] = useState(false);
-  //   const attending = useWatch({ control, name: "attendance-confirmed" });
-
-  // auto-validate fieldset
-  useEffect(() => {
-    setComplete(validate(getValues()) || false);
-  }, [useWatch({ control })]);
+export default function RSVPAttendanceInput({ setIsAttending }) {
+  const { control } = useFormContext();
 
   return (
     <Fieldset className={"mb-3"} legend={<>Attendance Confirmation</>}>
@@ -31,30 +22,39 @@ export default function RSVPAttendanceInput({ validate, setIsAttending }) {
               name="attendance_confirmed"
               control={control}
               render={({ field, fieldState: { invalid, error } }) => {
-                console.log(field.value);
                 return (
-                  <>
+                  <Fragment>
                     <div className="flex align-items-center">
                       <Checkbox
-                        id={field.name}
-                        inputId={"attendance-confirmation"}
-                        checked={field.value || false}
-                        aria-describedby={`attendance-confirmation-help`}
-                        value={field.value || false}
-                        className={"mr-1"}
+                        inputId={"attendance_declined"}
+                        value={false}
                         onChange={(e) => {
-                          field.onChange(e.checked);
-                          setIsAttending(field.value);
+                          field.onChange(false);
+                          setIsAttending(false);
                         }}
+                        checked={field.value === false}
+                        className={"mr-1"}
                       />
-                      <label
-                        className={"m-1"}
-                        htmlFor={`attendance-confirmation`}
-                      >
-                        I will be attending the ceremony
+                      <label className={"m-1"} htmlFor={"attendance_declined"}>
+                        I will NOT be attending the ceremony
                       </label>
                     </div>
-                  </>
+                    <div className="flex align-items-center">
+                      <Checkbox
+                        inputId={"attendance_accepted"}
+                        value={true}
+                        onChange={(e) => {
+                          field.onChange(true);
+                          setIsAttending(true);
+                        }}
+                        checked={field.value === true}
+                        className={"mr-1"}
+                      />
+                      <label className={"m-1"} htmlFor={"attendance_accepted"}>
+                        I WILL be attending the ceremony
+                      </label>
+                    </div>
+                  </Fragment>
                 );
               }}
             />

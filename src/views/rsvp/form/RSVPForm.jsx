@@ -65,7 +65,9 @@ export default function RSVPForm({
 
   // auto-validate form (ignore if no validation method provided)
   useEffect(() => {
-    setComplete(!validate || validate(getValues()));
+    isAttending
+      ? setComplete(!validate || validate(getValues()))
+      : setComplete(true);
   }, [useWatch({ control })]);
 
   // load form data
@@ -145,24 +147,36 @@ export default function RSVPForm({
               accept={_deleteForm}
               reject={() => setShowConfirm(false)}
             />
-
             <div className="container m-3">
               <div className={"grid"}>
-                <div className={"col-5"}>
-                  <Button
-                    disabled={!complete}
-                    className={
-                      "p-button-success w-full flex justify-content-center"
-                    }
-                    icon={"pi pi-fw pi-check"}
-                    type="submit"
-                    onClick={handleSubmit(_submitForm)}
-                  >
-                    {isAttending
-                      ? "RSVP: I WILL BE ATTENDING THE CEREMONY"
-                      : "I WILL NOT BE ATTENDING THE CEREMONY"}
-                  </Button>
-                </div>
+                {isAttending && (
+                  <div className={"col-5"}>
+                    <Button
+                      disabled={!complete}
+                      className={
+                        "p-button-success w-full flex justify-content-center"
+                      }
+                      icon={"pi pi-fw pi-check"}
+                      type="submit"
+                      onClick={handleSubmit(_submitForm)}
+                    >
+                      RSVP: I WILL BE ATTENDING THE CEREMONY
+                    </Button>
+                  </div>
+                )}
+                {!isAttending && (
+                  <div className={"col-5"}>
+                    <Button
+                      className={
+                        "p-button-danger w-full flex justify-content-center"
+                      }
+                      icon={"pi pi-fw pi-times"}
+                      onClick={handleSubmit(_submitForm)}
+                    >
+                      NO : I WILL NOT BE ATTENDING THE CEREMONY
+                    </Button>
+                  </div>
+                )}
               </div>
             </div>
           </Panel>

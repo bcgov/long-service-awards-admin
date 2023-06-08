@@ -21,7 +21,6 @@ import RSVPForm from "./form/RSVPForm";
 export default function RSVPCreate() {
   const status = useStatus();
   const api = useAPI();
-  const navigate = useNavigate();
   const { id, token } = useParams() || {};
   const [searchParams, setSearchParams] = useSearchParams();
   const [isAttending, setIsAttending] = useState(
@@ -32,50 +31,40 @@ export default function RSVPCreate() {
   const fieldsetValidators = {
     confirmation: (data) => {
       const { confirmed } = data || {};
+      console.log(data);
       return !!confirmed;
     },
   };
 
-  const _handleDelete = async (id) => {
-    try {
-      const [error, result] = await api.removeAttendee(id);
-      if (error)
-        status.setMessage({
-          message: "Error: Could Not Delete Attendees Record",
-          severity: "danger",
-        });
-      else
-        status.setMessage({
-          message: "Attendees Record Deleted!",
-          severity: "success",
-        });
-      if (!error && result) return result;
-    } catch (error) {
-      status.clear();
-      status.setMessage({
-        message: "Error: Could Not Create New Attendees Record",
-        severity: "danger",
-      });
-    }
-  };
-
   const _handleSave = async (data) => {
     let sanitizedData = { ...data };
-    //remove unchecked dietary options for recipient
-    Object.keys(sanitizedData.accommodations).forEach((key) =>
-      sanitizedData.accommodations[key] === undefined
-        ? delete sanitizedData.accommodations[key]
-        : {}
-    );
-    if (sanitizedData.guest_count) {
-      //remove unchecked dietary options for guest
-      Object.keys(sanitizedData.guest_accommodations).forEach((key) =>
-        sanitizedData.guest_accommodations[key] === undefined
-          ? delete sanitizedData.guest_accommodations[key]
+    let updatedStatusData = {};
+    //if user confirmed attendance
+    if (sanitizedData.attendance_confirmed) {
+      //remove unchecked dietary options for recipient
+      Object.keys(sanitizedData.accommodations).forEach((key) =>
+        sanitizedData.accommodations[key] === undefined
+          ? delete sanitizedData.accommodations[key]
           : {}
       );
+      if (sanitizedData.guest_count) {
+        //remove unchecked dietary options for guest
+        Object.keys(sanitizedData.guest_accommodations).forEach((key) =>
+          sanitizedData.guest_accommodations[key] === undefined
+            ? delete sanitizedData.guest_accommodations[key]
+            : {}
+        );
+      }
+      updatedStatusData = {
+        ...sanitizedData,
+        status: "Attending",
+      };
+    } else {
+      updatedStatusData = {
+        ...sanitizedData,
+        status: "Declined",
+      };
     }
-    const updatedStatusData = { ...sanitizedData, status: "Attending" };
 
     console.log("Save:", updatedStatusData);
 
@@ -109,11 +98,6 @@ export default function RSVPCreate() {
     }
   };
 
-  // cancel edits
-  const _handleCancel = async () => {
-    navigate("/attendees");
-  };
-
   // set default attendee form values
   const defaults = {
     recipients: [],
@@ -136,20 +120,17 @@ export default function RSVPCreate() {
       <RSVPForm
         loader={_loader}
         save={_handleSave}
-        remove={_handleDelete}
-        cancel={_handleCancel}
         validate={fieldsetValidators.confirmation}
         defaults={defaults}
         blocked={false}
       >
-        <RSVPAttendanceInput
-          validate={fieldsetValidators.confirmation}
-          setIsAttending={setIsAttending}
-        />
-        <RSVPInviteeDetails />
-        <RSVPOptions />
-        <RSVPGuest />
-        <RSVPConfirmationInput validate={fieldsetValidators.confirmation} />
+        <RSVPAttendanceInput setIsAttending={setIsAttending} />
+        {isAttending && <RSVPInviteeDetails />}
+        {isAttending && <RSVPOptions />}
+        {isAttending && <RSVPGuest />}
+        {isAttending && (
+          <RSVPConfirmationInput validate={fieldsetValidators.confirmation} />
+        )}
       </RSVPForm>
     </>
   );

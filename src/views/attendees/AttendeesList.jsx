@@ -262,7 +262,10 @@ export default function AttendeesList() {
         breakpoints={{ "960px": "80vw" }}
         style={{ width: "50vw" }}
       >
-        <InvitationCreate selected={selected} />
+        <InvitationCreate
+          selected={selected}
+          setShowRSVPDialog={setShowRSVPDialog}
+        />
       </Dialog>
       <Dialog
         visible={showDialog === "sort"}

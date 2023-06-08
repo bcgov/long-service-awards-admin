@@ -21,7 +21,6 @@ export default function RSVPGuest() {
     { name: "Yes", value: true },
     { name: "No", value: false },
   ];
-  const isAttending = useWatch({ control, name: "attendance_confirmed" });
 
   useEffect(() => {
     api
@@ -38,7 +37,7 @@ export default function RSVPGuest() {
       .catch(console.error);
   }, []);
 
-  return isAttending ? (
+  return (
     <Fieldset className={"mb-3"} legend={<>Are you bringing a guest?</>}>
       <div className="container">
         <div className="grid">
@@ -79,8 +78,8 @@ export default function RSVPGuest() {
                   Accessibility requirements
                 </label>
                 <p>
-                  Does your guest any accessibility requirements to attend the
-                  ceremony (e.g. accessible parking and/or seating, a sign
+                  Does your guest have any accessibility requirements to attend
+                  the ceremony (e.g. accessible parking and/or seating, a sign
                   language interpreter (ASL), service dog access etc.)?
                 </p>
                 <Controller
@@ -158,7 +157,5 @@ export default function RSVPGuest() {
         </div>
       </div>
     </Fieldset>
-  ) : (
-    <Fragment></Fragment>
   );
 }

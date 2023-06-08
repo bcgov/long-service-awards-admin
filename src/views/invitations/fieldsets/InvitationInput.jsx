@@ -23,24 +23,25 @@ export default function InvitationInput({ selected }) {
       full_name: `${a.recipient.contact.first_name} ${a.recipient.contact.last_name}`,
     })
   );
+  console.log(selected);
 
   const { control } = useFormContext();
   const api = useAPI();
   const [ceremonies, setCeremonies] = useState([]);
 
-  useEffect(() => {
-    api
-      .getCeremonies()
-      .then((results) => {
-        const { ceremonies } = results || {};
-        ceremonies.forEach(
-          (c) =>
-            (c.datetime = format(new Date(c.datetime), "EEEE, MMMM dd, yyyy"))
-        );
-        setCeremonies(ceremonies);
-      })
-      .catch(console.error);
-  }, []);
+  // useEffect(() => {
+  //   api
+  //     .getCeremonies()
+  //     .then((results) => {
+  //       const { ceremonies } = results || {};
+  //       ceremonies.forEach(
+  //         (c) =>
+  //           (c.datetime = format(new Date(c.datetime), "EEEE, MMMM dd, yyyy"))
+  //       );
+  //       setCeremonies(ceremonies);
+  //     })
+  //     .catch(console.error);
+  // }, []);
 
   return (
     <Panel className={"mb-3"} header={<> Send RSVP to selected Attendees :</>}>

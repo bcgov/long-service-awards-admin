@@ -13,9 +13,8 @@ import { Fragment } from "react";
 
 export default function RSVPInviteeDetails() {
   const { control } = useFormContext();
-  const isAttending = useWatch({ control, name: "attendance_confirmed" });
 
-  return isAttending ? (
+  return (
     <Fieldset
       toggleable={false}
       className={"mb-3"}
@@ -74,7 +73,5 @@ export default function RSVPInviteeDetails() {
         </div>
       </div>
     </Fieldset>
-  ) : (
-    <Fragment></Fragment>
   );
 }

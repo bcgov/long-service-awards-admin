@@ -20,7 +20,6 @@ export default function RSVPOptions() {
     { name: "Yes", value: true },
     { name: "No", value: false },
   ];
-  const isAttending = useWatch({ control, name: "attendance_confirmed" });
 
   useEffect(() => {
     api
@@ -37,7 +36,7 @@ export default function RSVPOptions() {
       .catch(console.error);
   }, []);
 
-  return isAttending ? (
+  return (
     accommodations && (
       <Fieldset toggleable={false} className={"mb-3"} legend={<>Options</>}>
         <div className="container">
@@ -122,7 +121,5 @@ export default function RSVPOptions() {
         </div>
       </Fieldset>
     )
-  ) : (
-    <Fragment></Fragment>
   );
 }

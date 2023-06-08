@@ -17,15 +17,12 @@ import { useEffect, useState } from "react";
  * @returns {JSX.Element},
  */
 
-export default function RSVPConfirmationInput({ validate, isAttending }) {
+export default function RSVPConfirmationInput({ validate }) {
   // set local states
   const { control, getValues } = useFormContext();
   const [complete, setComplete] = useState(false);
-  //   const fullName = useWatch({
-  //     control,
-  //     name: "recipient.contact.full_name",
-  //   });
-
+  const isAttending =
+    useWatch({ control, name: "attendance_confirmed" }) || null;
   // auto-validate fieldset
   useEffect(() => {
     setComplete(validate(getValues()) || false);
@@ -56,15 +53,16 @@ export default function RSVPConfirmationInput({ validate, isAttending }) {
             <Controller
               name="confirmed"
               control={control}
+              defaultValue={!isAttending}
               render={({ field, fieldState: { invalid, error } }) => (
                 <>
                   <div className="flex align-items-center">
                     <Checkbox
                       id={field.name}
                       inputId={"registration-confirmation"}
-                      checked={field.value || isAttending}
+                      checked={field.value}
                       aria-describedby={`service-confirmation-help`}
-                      value={field.value || false}
+                      value={field.value}
                       className={"mr-1"}
                       onChange={(e) => {
                         field.onChange(e.checked);
