@@ -59,11 +59,6 @@ export default function AttendeesList() {
    * Load attendees using applied filter
    * */
 
-  useEffect(() => {
-    loadData(pageState, filters, sort);
-    api.getAccommodations().catch(console.error);
-  }, [pageState, filters, sort]);
-
   const loadData = () => {
     setLoading(true);
     const { orderBy, order } = sort || {};
@@ -76,14 +71,13 @@ export default function AttendeesList() {
       offset: first || 0,
       ...filters,
     };
-
+    if (filter.status)
+      filter.status = filter.status.map((s) => s.toLowerCase());
     // apply filters to ceremony data request
     api
       .getAttendees(filter)
-      .then((results) => {
-        const fetchedAttendees = results || {};
-        console.log(fetchedAttendees);
-        setAttendees(fetchedAttendees);
+      .then((res) => {
+        setAttendees(res);
       })
       .finally(() => {
         setLoading(false);
@@ -185,7 +179,7 @@ export default function AttendeesList() {
 
   const statusTemplate = (rowData) => {
     const { status } = rowData || {};
-    const statusIndicator = statuses[status.toLowerCase().replace(/\s/g, "")];
+    const statusIndicator = statuses[status.replace(/\s/g, "")];
     return (
       <Tag
         tooltip={statusIndicator.description}
@@ -194,6 +188,11 @@ export default function AttendeesList() {
       />
     );
   };
+
+  useEffect(() => {
+    loadData(pageState, filters, sort);
+    // api.getAccommodations().catch(console.error);
+  }, [pageState, filters, sort]);
 
   /**
    * Render data table header component
@@ -312,7 +311,7 @@ export default function AttendeesList() {
             className={"m-1 p-button-success"}
             disabled={
               !selected.length ||
-              !selected.every((r) => r.status !== "Attending")
+              !selected.every((r) => r.status !== "attending")
             }
             type="button"
             icon="pi pi-user-plus"

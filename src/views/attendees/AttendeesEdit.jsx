@@ -45,10 +45,11 @@ export default function AttendeesEdit({ isEditing, selectedRecipients }) {
   };
 
   const _handleSave = async (data) => {
-    console.log("Save:", data);
+    const updatedStatusData = { ...data, status: data.status.toLowerCase() };
+    console.log("Save:", updatedStatusData);
     try {
       status.setMessage("save");
-      const [error, result] = await api.saveAttendee(data);
+      const [error, result] = await api.saveAttendee(updatedStatusData);
       console.log("Saved:", result);
       if (error) status.setMessage("saveError");
       else status.setMessage("saveSuccess");

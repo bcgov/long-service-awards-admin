@@ -246,16 +246,16 @@ function APIProvider(props) {
     return result;
   };
 
-    /**
+  /**
    * Get accommodations (Admin)
    *
    */
 
-    const getAccommodations = async () => {
-      const [_, res] = await api.get(`/accommodations/list`);
-      const result = res || {};
-      return result;
-    };
+  const getAccommodations = async () => {
+    const [_, res] = await api.get(`/accommodations/list`);
+    const result = res || {};
+    return result;
+  };
 
   /**
    * Get ceremonies

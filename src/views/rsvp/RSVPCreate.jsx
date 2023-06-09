@@ -57,12 +57,12 @@ export default function RSVPCreate() {
       }
       updatedStatusData = {
         ...sanitizedData,
-        status: "Attending",
+        status: "attending",
       };
     } else {
       updatedStatusData = {
         ...sanitizedData,
-        status: "Declined",
+        status: "declined",
       };
     }
 

@@ -10,6 +10,7 @@ import PageHeader from "@/components/common/PageHeader.jsx";
 import { useAPI } from "@/providers/api.provider.jsx";
 import { useStatus } from "@/providers/status.provider.jsx";
 import { useNavigate } from "react-router-dom";
+import { format } from "date-fns";
 
 //Fieldsets
 import InvitationInput from "@/views/invitations/fieldsets/InvitationInput";
@@ -44,10 +45,19 @@ export default function InvitationCreate({ selected, setShowRSVPDialog }) {
 
   // save registration data
   const _handleSave = async (data) => {
-    const updatedStatusData = data.recipients.map((a) => ({
-      ...a,
-      status: "Invited",
-    }));
+    const updatedStatusData = data.recipients.map((rec) => {
+      const recipient = { ...rec, status: "invited" };
+      Object.assign(d.ceremony, {
+        ...a.ceremony,
+        datetime_formatted: `${format(
+          new Date(a.ceremony.datetime),
+          `p 'on' EEEE, MMMM dd, yyyy`
+        )}`,
+      });
+
+      return recipient;
+    });
+
     try {
       updatedStatusData.forEach(async (a) => {
         status.setMessage("save");

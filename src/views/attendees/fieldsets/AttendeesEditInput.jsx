@@ -5,7 +5,7 @@
  * MIT Licensed
  */
 
-import { ceremonyStatuses as statuses } from "@/constants/statuses.constants.js";
+import { ceremonyStatuses } from "@/constants/statuses.constants.js";
 import { useAPI } from "@/providers/api.provider.jsx";
 import classNames from "classnames";
 import { format } from "date-fns";
@@ -60,7 +60,11 @@ export default function AttendeesEditInput({ isEditing, selectedRecipients }) {
   };
 
   //Remove Default status from the list
-  delete statuses.default;
+  delete ceremonyStatuses.default;
+
+  const statuses = Object.keys(ceremonyStatuses).map(
+    (k) => ceremonyStatuses[k]
+  );
 
   useEffect(() => {
     api
@@ -173,22 +177,23 @@ export default function AttendeesEditInput({ isEditing, selectedRecipients }) {
                     Note: Changing the status may have unintended consequences.
                   </label>
                   <Controller
-                    name={`status`}
+                    name={"status"}
                     control={control}
                     rules={{
                       required: "Status is required.",
                     }}
-                    render={({ field, fieldState: { invalid, error } }) => {
-                      return (
+                    render={({ field, fieldState: { invalid, error } }) =>
+                      field.value && (
                         <Fragment>
                           <Dropdown
                             className={classNames({ "p-invalid": error })}
                             id={field.value}
                             optionLabel="label"
-                            value={field.value || ""}
-                            options={Object.keys(statuses).map(
-                              (k) => statuses[k]
-                            )}
+                            value={
+                              field.value.charAt(0).toUpperCase() +
+                                field.value.slice(1) || ""
+                            }
+                            options={statuses}
                             optionValue="label"
                             onChange={(e) => {
                               field.onChange(e.value);
@@ -200,8 +205,8 @@ export default function AttendeesEditInput({ isEditing, selectedRecipients }) {
                           />
                           {invalid && <p className="error">{error.message}</p>}
                         </Fragment>
-                      );
-                    }}
+                      )
+                    }
                   />
                 </div>
               </div>
