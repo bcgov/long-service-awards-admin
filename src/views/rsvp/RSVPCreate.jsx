@@ -31,7 +31,6 @@ export default function RSVPCreate() {
   const fieldsetValidators = {
     confirmation: (data) => {
       const { confirmed } = data || {};
-      console.log(data);
       return !!confirmed;
     },
   };

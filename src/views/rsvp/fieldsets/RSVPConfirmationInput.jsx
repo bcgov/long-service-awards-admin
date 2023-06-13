@@ -53,7 +53,7 @@ export default function RSVPConfirmationInput({ validate }) {
             <Controller
               name="confirmed"
               control={control}
-              defaultValue={!isAttending}
+              defaultValue={isAttending}
               render={({ field, fieldState: { invalid, error } }) => (
                 <>
                   <div className="flex align-items-center">

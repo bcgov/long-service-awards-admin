@@ -77,7 +77,13 @@ export default function RSVPOptions() {
                           className={"ml-2"}
                           htmlFor={`accommodations.accessibility`}
                         >
-                          (Selected: No)
+                          (Selected:{" "}
+                          {
+                            accessibilityRequirements.find(
+                              (a) => a.value === field.value
+                            ).name
+                          }
+                          )
                         </label>
                       </div>
                       <small>

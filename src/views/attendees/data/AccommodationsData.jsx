@@ -7,6 +7,8 @@
 
 import { format } from "date-fns";
 import { Panel } from "primereact/panel";
+import { useState, useEffect } from "react";
+import { useAPI } from "@/providers/api.provider.jsx";
 
 /**
  * Model data display component
@@ -14,22 +16,31 @@ import { Panel } from "primereact/panel";
 
 export default function AccommodationsData({ data }) {
   const { address, datetime, venue } = data || {};
+  const api = useAPI();
+
+  const [accommodations, setAccommodations] = useState([]);
+
+  useEffect(() => {
+    api
+      .getAccommodations()
+      .then((results) => {
+        setAccommodations(results);
+        console.log(results);
+      })
+      .catch(console.error);
+  }, []);
 
   return (
-    <Panel className={"mb-2 mt-2"} header={"Ceremony Info"} toggleable>
+    <Panel className={"mb-2 mt-2"} header={"Accommodations Info"} toggleable>
       <div className={"container"}>
         <div className={"grid"}>
-          <div className={"col-6"}>Date</div>
           <div className={"col-6"}>
-            {format(new Date(datetime), `p 'on' EEEE, MMMM dd, yyyy`) || "-"}
-          </div>
-          <div className={"col-6"}>Venue</div>
-          <div className={"col-6"}>{venue || "-"}</div>
-          <div className={"col-6"}>Address</div>
-          <div className={"col-6"}>
-            {address.street1} {address.street2} {address.community}{" "}
-            {address.province} {address.country} {address.postal_code}{" "}
-            {address.pobox}
+            {accommodations.map((a, index) => (
+              <span key={a.name}>
+                {a.label}
+                {index < accommodations.length - 1 ? ", " : ""}
+              </span>
+            ))}
           </div>
         </div>
       </div>

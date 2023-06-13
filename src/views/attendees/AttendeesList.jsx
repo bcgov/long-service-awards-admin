@@ -77,6 +77,7 @@ export default function AttendeesList() {
     api
       .getAttendees(filter)
       .then((res) => {
+        console.log(res);
         setAttendees(res);
       })
       .finally(() => {
