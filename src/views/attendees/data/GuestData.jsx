@@ -10,12 +10,12 @@ import { Panel } from "primereact/panel";
 
 import React from "react";
 
-export default function GuestData(data) {
+export default function GuestData({ data }) {
   const { guest } = data || {};
   const isGuest = guest === 1;
 
   return (
-    <Panel className={"mb-2 mt-2"} header={"Guest Info"} toggleable>
+    <Panel className={"mb-2 mt-2"} header={"Attendee Type"} toggleable>
       <div className={"container"}>
         <div className={"grid"}>
           <div className={"col-6"}>Type</div>

@@ -135,6 +135,7 @@ export default function RecipientList() {
       .getRecipients(filter)
       .then((results) => {
         const { total_filtered_records, recipients } = results || {};
+        console.log(recipients);
         setRecipients(recipients);
         setTotalFilteredRecords(total_filtered_records);
       })

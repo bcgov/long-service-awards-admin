@@ -22,7 +22,7 @@ export default function AttendeeView({ data }) {
       <ProfileData data={recipient} />
       <GuestData data={data} />
       <CeremonyData data={ceremony} />
-      <AccommodationsData data={ceremony} />
+      <AccommodationsData data={data} />
     </div>
   );
 }

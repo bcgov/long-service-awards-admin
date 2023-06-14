@@ -212,46 +212,6 @@ export default function AttendeesEditInput({ isEditing, selectedRecipients }) {
               </div>
             </div>
           </Panel>
-          <Panel className={"mb-3"} header={<>Guest</>}>
-            <div className="container">
-              <div className="grid">
-                <div className={"col-12 form-field-container"}>
-                  <label htmlFor={"guest"} className={"font-bold"}>
-                    Note: Changing the guest value may have unintended
-                    consequences.
-                  </label>
-                  <Controller
-                    name="guest"
-                    control={control}
-                    render={({ field, fieldState: { invalid, error } }) => {
-                      return (
-                        <div className="flex align-items-center">
-                          <Checkbox
-                            id={field.name}
-                            inputId={field.name}
-                            checked={!!field.value}
-                            aria-describedby={`active-help`}
-                            value={field.value}
-                            onChange={(e) => {
-                              field.onChange(
-                                e.target.checked
-                                  ? (field.value = 1)
-                                  : (field.value = 0)
-                              );
-                            }}
-                          />
-                          {invalid && <p className="error">{error.message}</p>}
-                          <label className={"m-1"} htmlFor={`active`}>
-                            I would like to bring a guest
-                          </label>
-                        </div>
-                      );
-                    }}
-                  />
-                </div>
-              </div>
-            </div>
-          </Panel>
         </Fragment>
       )}
     </Fragment>

@@ -77,7 +77,6 @@ export default function AttendeesList() {
     api
       .getAttendees(filter)
       .then((res) => {
-        console.log(res);
         setAttendees(res);
       })
       .finally(() => {
@@ -103,7 +102,6 @@ export default function AttendeesList() {
   const applySort = (sortData) => {
     if (sortData) setSort(sortData);
     setShowDialog(null);
-    console.log(sort);
   };
 
   /**
@@ -312,7 +310,7 @@ export default function AttendeesList() {
             className={"m-1 p-button-success"}
             disabled={
               !selected.length ||
-              !selected.every((r) => r.status !== "attending")
+              !selected.every((r) => r.status !== "attending" && r.guest !== 1)
             }
             type="button"
             icon="pi pi-user-plus"

@@ -15,29 +15,17 @@ import { useAPI } from "@/providers/api.provider.jsx";
  */
 
 export default function AccommodationsData({ data }) {
-  const { address, datetime, venue } = data || {};
-  const api = useAPI();
+  const { accommodations } = data || {};
 
-  const [accommodations, setAccommodations] = useState([]);
-
-  useEffect(() => {
-    api
-      .getAccommodations()
-      .then((results) => {
-        setAccommodations(results);
-        console.log(results);
-      })
-      .catch(console.error);
-  }, []);
-
-  return (
-    <Panel className={"mb-2 mt-2"} header={"Accommodations Info"} toggleable>
+  return accommodations.length ? (
+    <Panel className={"mb-2 mt-2"} header={"Accommodations"} toggleable>
       <div className={"container"}>
         <div className={"grid"}>
           <div className={"col-6"}>
             {accommodations.map((a, index) => (
-              <span key={a.name}>
-                {a.label}
+              <span key={a.accommodation}>
+                {a.accommodation.charAt(0).toUpperCase() +
+                  a.accommodation.slice(1).replace("_", " ") || ""}
                 {index < accommodations.length - 1 ? ", " : ""}
               </span>
             ))}
@@ -45,5 +33,7 @@ export default function AccommodationsData({ data }) {
         </div>
       </div>
     </Panel>
+  ) : (
+    ""
   );
 }
