@@ -43,7 +43,7 @@ export default function RSVPOptions() {
           <div className="grid">
             <div className={"col-12 form-field-container"}>
               <label
-                htmlFor={`accommodations.accessibility`}
+                htmlFor={`recipient_accommodations.accessibility`}
                 className="font-bold"
               >
                 Accessibility requirements
@@ -54,7 +54,7 @@ export default function RSVPOptions() {
                 language interpreter (ASL), service dog access etc.)?
               </p>
               <Controller
-                name="accommodations.accessibility"
+                name="recipient_accommodations.accessibility"
                 control={control}
                 defaultValue={false}
                 render={({ field }) => {
@@ -66,7 +66,7 @@ export default function RSVPOptions() {
                           value={field.value}
                           onChange={(e) => {
                             setValue(
-                              "accommodations.accessibility",
+                              "recipient_accommodations.accessibility",
                               e.value === true
                             );
                           }}
@@ -75,7 +75,7 @@ export default function RSVPOptions() {
                         />
                         <label
                           className={"ml-2"}
-                          htmlFor={`accommodations.accessibility`}
+                          htmlFor={`recipient_accommodations.accessibility`}
                         >
                           (Selected:{" "}
                           {
@@ -101,7 +101,7 @@ export default function RSVPOptions() {
               </label>
               {accommodations.map((o, i) => (
                 <Controller
-                  name={`accommodations.` + `${o.name}`}
+                  name={`recipient_accommodations.` + `${o.name}`}
                   control={control}
                   key={i}
                   render={({ field }) => {
@@ -114,7 +114,9 @@ export default function RSVPOptions() {
                           onChange={(e) => field.onChange(e.checked)}
                           checked={field.value}
                         />
-                        <label htmlFor={`accommodations.` + `${o.name}`}>
+                        <label
+                          htmlFor={`recipient_accommodations.` + `${o.name}`}
+                        >
                           {o.label}
                         </label>
                       </div>

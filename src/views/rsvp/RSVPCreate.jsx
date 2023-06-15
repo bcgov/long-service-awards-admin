@@ -36,51 +36,52 @@ export default function RSVPCreate() {
   };
 
   const _handleSave = async (data) => {
-    let sanitizedData = { ...data };
-    let updatedStatusData = {};
-    //if user confirmed attendance
-    if (sanitizedData.attendance_confirmed) {
-      //remove unchecked dietary options for recipient
-      Object.keys(sanitizedData.accommodations).forEach((key) =>
-        sanitizedData.accommodations[key] === undefined
-          ? delete sanitizedData.accommodations[key]
-          : {}
-      );
-      if (sanitizedData.guest_count) {
-        //remove unchecked dietary options for guest
-        Object.keys(sanitizedData.guest_accommodations).forEach((key) =>
-          sanitizedData.guest_accommodations[key] === undefined
-            ? delete sanitizedData.guest_accommodations[key]
-            : {}
-        );
-      }
-      updatedStatusData = {
-        ...sanitizedData,
-        status: "attending",
-      };
-    } else {
-      updatedStatusData = {
-        ...sanitizedData,
-        status: "declined",
-      };
-    }
+    console.log(data);
+    // let sanitizedData = { ...data };
+    // let updatedStatusData = {};
+    // //if user confirmed attendance
+    // if (sanitizedData.attendance_confirmed) {
+    //   //remove unchecked dietary options for recipient
+    //   Object.keys(sanitizedData.accommodations).forEach((key) =>
+    //     sanitizedData.accommodations[key] === undefined
+    //       ? delete sanitizedData.accommodations[key]
+    //       : {}
+    //   );
+    //   if (sanitizedData.guest_count) {
+    //     //remove unchecked dietary options for guest
+    //     Object.keys(sanitizedData.guest_accommodations).forEach((key) =>
+    //       sanitizedData.guest_accommodations[key] === undefined
+    //         ? delete sanitizedData.guest_accommodations[key]
+    //         : {}
+    //     );
+    //   }
+    //   updatedStatusData = {
+    //     ...sanitizedData,
+    //     status: "attending",
+    //   };
+    // } else {
+    //   updatedStatusData = {
+    //     ...sanitizedData,
+    //     status: "declined",
+    //   };
+    // }
 
-    console.log("Save:", updatedStatusData);
+    // console.log("Save:", updatedStatusData);
 
-    try {
-      status.setMessage("save");
+    // try {
+    //   status.setMessage("save");
 
-      const [error, result] = await api.saveRSVP(updatedStatusData, id, token);
+    //   const [error, result] = await api.saveRSVP(updatedStatusData, id, token);
 
-      if (error) status.setMessage("saveError");
-      else status.setMessage("saveSuccess");
+    //   if (error) status.setMessage("saveError");
+    //   else status.setMessage("saveSuccess");
 
-      if (!error && result) {
-        return result;
-      }
-    } catch (error) {
-      status.setMessage("saveError");
-    }
+    //   if (!error && result) {
+    //     return result;
+    //   }
+    // } catch (error) {
+    //   status.setMessage("saveError");
+    // }
   };
 
   // set default attendee form values
