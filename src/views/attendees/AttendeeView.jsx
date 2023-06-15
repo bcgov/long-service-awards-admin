@@ -7,6 +7,8 @@
 
 import ProfileData from "@/views/recipients/data/ProfileData.jsx";
 import CeremonyData from "@/views/attendees/data/CeremonyData";
+import AccommodationsData from "@/views/attendees/data/AccommodationsData";
+import GuestData from "@/views/attendees/data/GuestData";
 
 /**
  * Inherited model component
@@ -18,7 +20,9 @@ export default function AttendeeView({ data }) {
   return (
     <div>
       <ProfileData data={recipient} />
+      <GuestData data={data} />
       <CeremonyData data={ceremony} />
+      <AccommodationsData data={data} />
     </div>
   );
 }

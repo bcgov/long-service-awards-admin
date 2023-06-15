@@ -135,6 +135,7 @@ export default function RecipientList() {
       .getRecipients(filter)
       .then((results) => {
         const { total_filtered_records, recipients } = results || {};
+        console.log(recipients);
         setRecipients(recipients);
         setTotalFilteredRecords(total_filtered_records);
       })
@@ -201,7 +202,6 @@ export default function RecipientList() {
   const applySort = (sortData) => {
     if (sortData) setSort(sortData);
     setShowDialog(null);
-    console.log(sort);
   };
 
   /**
@@ -223,8 +223,6 @@ export default function RecipientList() {
     if (attendee)
       statusIndicator =
         ceremonyStatuses[attendee.status.toLowerCase().replace(/\s/g, "")];
-
-    console.log(statusIndicator);
 
     return (
       <>
@@ -423,16 +421,6 @@ export default function RecipientList() {
                 icon="pi pi-ticket"
                 label="Assign to Ceremony"
                 onClick={() => setShowCeremonyAssignDialog(true)}
-                disabled={
-                  !selected.length ||
-                  !selected.every(
-                    (r) => r.services.find((s) => s.ceremony_opt_out === false)
-                    // &&
-                    // attendees.find((a) => a.recipient.id === r.id) &&
-                    // attendees.find((a) => a.recipient.id === r.id).status !==
-                    //   "Assigned"
-                  )
-                }
               />
               <Button
                 className={"m-1 p-button-success"}

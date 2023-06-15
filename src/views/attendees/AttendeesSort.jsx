@@ -6,7 +6,7 @@
  * MIT Licensed
  */
 
-import { useEffect, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import { Button } from "primereact/button";
 import { Dropdown } from "primereact/dropdown";
 
@@ -14,8 +14,6 @@ function AttendeesSort({ data, confirm, cancel }) {
   const { orderBy, order } = data || {};
   const [selectedSortField, setSelectedSortField] = useState(orderBy);
   const [selectedSortOrder, setSelectedSortOrder] = useState(order);
-
-  console.log(data);
 
   // init sort options states
   useEffect(() => {
@@ -55,7 +53,7 @@ function AttendeesSort({ data, confirm, cancel }) {
   ];
 
   return (
-    <>
+    <Fragment>
       <div className="flex align-items-center flex-column pt-6 px-3">
         <div className={"m-2"}>
           <label className={"mr-2"} htmlFor={""}>
@@ -105,7 +103,7 @@ function AttendeesSort({ data, confirm, cancel }) {
           onClick={cancel}
         />
       </div>
-    </>
+    </Fragment>
   );
 }
 

@@ -9,13 +9,13 @@ import FormContext from "@/components/common/FormContext";
 import PageHeader from "@/components/common/PageHeader.jsx";
 import { useAPI } from "@/providers/api.provider.jsx";
 import { useStatus } from "@/providers/status.provider.jsx";
-import { useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import { format } from "date-fns";
 
 //Fieldsets
 import InvitationInput from "@/views/invitations/fieldsets/InvitationInput";
 
-export default function InvitationCreate({ selected }) {
+export default function InvitationCreate({ selected, setShowRSVPDialog }) {
   const status = useStatus();
   const api = useAPI();
   const navigate = useNavigate();
@@ -45,20 +45,30 @@ export default function InvitationCreate({ selected }) {
 
   // save registration data
   const _handleSave = async (data) => {
-    const updatedStatusData = data.recipients.map((a) => ({
-      ...a,
-      status: "Invited",
-    }));
+    const updatedStatusData = data.recipients.map((rec) => {
+      const recipient = { ...rec, status: "invited" };
+      Object.assign(recipient.ceremony, {
+        ...recipient.ceremony,
+        datetime_formatted: `${format(
+          new Date(recipient.ceremony.datetime),
+          `p 'on' EEEE, MMMM dd, yyyy`
+        )}`,
+      });
+
+      return recipient;
+    });
+
     try {
       updatedStatusData.forEach(async (a) => {
         status.setMessage("save");
         const [error, result] = await api.saveAttendee(a);
-        const [sendError, sendResult] = await api.sendRSVP(a);
+        const sendResult = await api.sendRSVP(a);
         if (error) status.setMessage("saveError");
-        else if (sendError) status.setMessage("mailError")
-        else status.setMessage("mailSuccess");
-        if (!error && !sendError && result && sendResult) {
-          setSubmitted(true);
+        else if (sendResult.message !== "success")
+          status.setMessage("mailError");
+        if (!error && result && sendResult) {
+          setShowRSVPDialog(false);
+          status.setMessage("mailSuccess");
           return result;
         }
       });

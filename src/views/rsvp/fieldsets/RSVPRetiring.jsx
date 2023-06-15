@@ -23,7 +23,7 @@ import { format } from "date-fns";
 
 export default function RSVPRetiring() {
   const api = useAPI();
-  const { control, setValue, getValues } = useFormContext();
+  const { control } = useFormContext();
 
   return (
     <Fieldset

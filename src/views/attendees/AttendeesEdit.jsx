@@ -1,5 +1,5 @@
 /*!
- * Edit Attendees Record
+ * Edit / Create Attendees Record
  * File: AttendeesEdit.js
  * Copyright(c) 2023 BC Gov
  * MIT Licensed
@@ -10,9 +10,10 @@ import PageHeader from "@/components/common/PageHeader.jsx";
 import { useAPI } from "@/providers/api.provider.jsx";
 import { useStatus } from "@/providers/status.provider.jsx";
 import { useNavigate, useParams } from "react-router-dom";
+import { Fragment } from "react";
 
 //Fieldsets
-import AttendeesEditInput from "./fieldsets/AttendeesEditInput";
+import AttendeesEditInput from "@/views/attendees/fieldsets/AttendeesEditInput";
 
 export default function AttendeesEdit({ isEditing, selectedRecipients }) {
   const status = useStatus();
@@ -44,10 +45,11 @@ export default function AttendeesEdit({ isEditing, selectedRecipients }) {
   };
 
   const _handleSave = async (data) => {
-    console.log("Save:", data);
+    const updatedStatusData = { ...data, status: data.status.toLowerCase() };
+    console.log("Save:", updatedStatusData);
     try {
       status.setMessage("save");
-      const [error, result] = await api.saveAttendee(data);
+      const [error, result] = await api.saveAttendee(updatedStatusData);
       console.log("Saved:", result);
       if (error) status.setMessage("saveError");
       else status.setMessage("saveSuccess");
@@ -55,7 +57,7 @@ export default function AttendeesEdit({ isEditing, selectedRecipients }) {
         return result;
       }
     } catch (error) {
-      // status.setMessage("saveError");
+      status.setMessage("saveError");
       console.log(error);
     }
   };
@@ -80,7 +82,7 @@ export default function AttendeesEdit({ isEditing, selectedRecipients }) {
   };
 
   return (
-    <>
+    <Fragment>
       <PageHeader
         heading={isEditing ? "Editing Attendee" : "Create Attendees"}
       />
@@ -98,6 +100,6 @@ export default function AttendeesEdit({ isEditing, selectedRecipients }) {
           selectedRecipients={selectedRecipients}
         />
       </FormContext>
-    </>
+    </Fragment>
   );
 }

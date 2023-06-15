@@ -169,7 +169,9 @@ function APIProvider(props) {
    */
 
   const getAttendees = async (params) => {
-    const [_, res] = await api.get(`/attendees/list?${formatQueryParams(params)}`);
+    const [_, res] = await api.get(
+      `/attendees/list?${formatQueryParams(params)}`
+    );
     const result = res || [];
     return result;
   };
@@ -225,12 +227,12 @@ function APIProvider(props) {
    * Get RSVP
    */
   const getRSVP = async (id, token) => {
-    const [_, result] = await api.get(`/RSVP/${id}/${token}`);
+    const [_, result] = await api.get(`/rsvp/${id}/${token}`);
     return result;
   };
 
   const saveRSVP = async (data, id, token) => {
-    return await api.post(`/RSVP/${id}/${token}`, data);
+    return await api.post(`/rsvp/${id}/${token}`, data);
   };
 
   /**
@@ -238,19 +240,21 @@ function APIProvider(props) {
    *
    */
 
-  const getAccommodations = async () => {
-    const [_, res] = await api.get(`/RSVP/get/accommodations`);
+  const getRSVPAccommodations = async () => {
+    const [_, res] = await api.get(`/rsvp/accommodations/list`);
     const result = res || {};
     return result;
   };
 
   /**
-   * Create accommodation selection
+   * Get accommodations (Admin)
    *
    */
 
-  const createSelection = async (data, id, token) => {
-    return await api.post(`/RSVP/create/${id}/${token}`, data);
+  const getAccommodations = async () => {
+    const [_, res] = await api.get(`/accommodations/list`);
+    const result = res || {};
+    return result;
   };
 
   /**
@@ -581,8 +585,8 @@ function APIProvider(props) {
           createAward,
           saveAward,
           removeAward,
-          createSelection,
           getAccommodations,
+          getRSVPAccommodations,
           getPecsfCharities,
           getPecsfCharity,
           getPecsfRegions,

@@ -6,24 +6,23 @@
  * MIT Licensed
  */
 
-import * as React from 'react'
-import {useRef} from 'react'
-import {Toast} from "primereact/toast";
-import {ProgressSpinner} from 'primereact/progressspinner';
-import {BlockUI} from 'primereact/blockui';
-import schema from "@/services/settings.services.js"
+import * as React from "react";
+import { useRef } from "react";
+import { Toast } from "primereact/toast";
+import { ProgressSpinner } from "primereact/progressspinner";
+import { BlockUI } from "primereact/blockui";
+import schema from "@/services/settings.services.js";
 
 const StatusContext = React.createContext({});
 
 function StatusProvider(props) {
+  // status states
+  const [loading, setLoading] = React.useState(false);
 
-    // status states
-    const [loading, setLoading] = React.useState(false);
+  // Toast messaging DOM reference
+  const toast = useRef(null);
 
-    // Toast messaging DOM reference
-    const toast = useRef(null);
-
-    /**
+  /**
      * Preset messages (configured for Toast library)
          - severity	    string	        null	Severity of the message.
          - summary	    element/string	null	Summary content of the message.
@@ -35,51 +34,56 @@ function StatusProvider(props) {
          - life         number	        3000	Delay in milliseconds to close the message automatically.
      */
 
-    /**
-     * Post Toast message
-     */
+  /**
+   * Post Toast message
+   */
 
-    const message = (message) => {
-        const msgValue = (typeof message === 'string') ? schema.lookup('messages', message) : message;
-        toast.current.replace(msgValue);
-    }
+  const message = (message) => {
+    const msgValue =
+      typeof message === "string"
+        ? schema.lookup("messages", message)
+        : message;
+    toast.current.replace(msgValue);
+  };
 
-    /**
-     * Clear Toast messages
-     */
+  /**
+   * Clear Toast messages
+   */
 
-    const clear = () => {
-        toast.current.clear();
-        toast.current.replace([]);
-    }
+  const clear = () => {
+    toast.current.clear();
+    toast.current.replace([]);
+  };
 
-    /**
-     * Loading block panel
-     */
+  /**
+   * Loading block panel
+   */
 
-    const setOverlay = (setValue) => {
-        setLoading(setValue);
-    }
+  const setOverlay = (setValue) => {
+    setLoading(setValue);
+  };
 
-    return (
-        <>
-            <Toast baseZIndex={999999} style={{zIndex: 99999}} ref={toast} />
-            <BlockUI style={{zIndex: 9999}} blocked={loading} fullScreen>
-            {
-                loading && <div className={'progress-spinner'}><ProgressSpinner/></div>
-            }
-            </BlockUI>
-            <StatusContext.Provider value={
-                {
-                    setMessage: message,
-                    clear,
-                    loading,
-                    setLoading: setOverlay,
-                }
-            } {...props} />
-        </>
-    )
-
+  return (
+    <>
+      <Toast baseZIndex={999999} style={{ zIndex: 99999 }} ref={toast} />
+      <BlockUI style={{ zIndex: 9999 }} blocked={loading} fullScreen>
+        {loading && (
+          <div className={"progress-spinner"}>
+            <ProgressSpinner />
+          </div>
+        )}
+      </BlockUI>
+      <StatusContext.Provider
+        value={{
+          setMessage: message,
+          clear,
+          loading,
+          setLoading: setOverlay,
+        }}
+        {...props}
+      />
+    </>
+  );
 }
 
 const useStatus = () => React.useContext(StatusContext);

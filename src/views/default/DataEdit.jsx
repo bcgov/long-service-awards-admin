@@ -56,17 +56,15 @@ export default function DataEdit({
   };
 
   return (
-    <>
-      <FormContext
-        defaults={defaults}
-        loader={_loader}
-        save={_handleSave}
-        remove={remove ? _handleDelete : null}
-        buttonText={buttonText}
-        header={header}
-      >
-        {children}
-      </FormContext>
-    </>
+    <FormContext
+      defaults={defaults}
+      loader={_loader}
+      save={_handleSave}
+      remove={remove ? _handleDelete : null}
+      buttonText={buttonText}
+      header={header}
+    >
+      {children}
+    </FormContext>
   );
 }

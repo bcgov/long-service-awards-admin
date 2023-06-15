@@ -8,7 +8,8 @@
 import { format } from "date-fns";
 import { Chip } from "primereact/chip";
 import { Fieldset } from "primereact/fieldset";
-import { Controller, useFormContext } from "react-hook-form";
+import { Controller, useFormContext, useWatch } from "react-hook-form";
+import { Fragment } from "react";
 
 export default function RSVPInviteeDetails() {
   const { control } = useFormContext();

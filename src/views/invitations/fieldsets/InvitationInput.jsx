@@ -6,10 +6,9 @@
  */
 
 import { useAPI } from "@/providers/api.provider.jsx";
-import { format } from "date-fns";
 import { Chip } from "primereact/chip";
 import { Panel } from "primereact/panel";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Controller, useFormContext } from "react-hook-form";
 
 /**
@@ -23,24 +22,7 @@ export default function InvitationInput({ selected }) {
       full_name: `${a.recipient.contact.first_name} ${a.recipient.contact.last_name}`,
     })
   );
-
   const { control } = useFormContext();
-  const api = useAPI();
-  const [ceremonies, setCeremonies] = useState([]);
-
-  useEffect(() => {
-    api
-      .getCeremonies()
-      .then((results) => {
-        const { ceremonies } = results || {};
-        ceremonies.forEach(
-          (c) =>
-            (c.datetime = format(new Date(c.datetime), "EEEE, MMMM dd, yyyy"))
-        );
-        setCeremonies(ceremonies);
-      })
-      .catch(console.error);
-  }, []);
 
   return (
     <Panel className={"mb-3"} header={<> Send RSVP to selected Attendees :</>}>

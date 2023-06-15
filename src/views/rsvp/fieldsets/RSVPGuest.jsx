@@ -7,8 +7,8 @@
 
 import { Checkbox } from "primereact/checkbox";
 import { Fieldset } from "primereact/fieldset";
-import { useState, useEffect } from "react";
-import { Controller, useFormContext } from "react-hook-form";
+import { useState, useEffect, Fragment } from "react";
+import { Controller, useFormContext, useWatch } from "react-hook-form";
 import { SelectButton } from "primereact/selectbutton";
 import { useAPI } from "@/providers/api.provider.jsx";
 
@@ -78,8 +78,8 @@ export default function RSVPGuest() {
                   Accessibility requirements
                 </label>
                 <p>
-                  Does your guest any accessibility requirements to attend the
-                  ceremony (e.g. accessible parking and/or seating, a sign
+                  Does your guest have any accessibility requirements to attend
+                  the ceremony (e.g. accessible parking and/or seating, a sign
                   language interpreter (ASL), service dog access etc.)?
                 </p>
                 <Controller
@@ -106,7 +106,13 @@ export default function RSVPGuest() {
                             className={"ml-2"}
                             htmlFor={`guest_accommodations.accessibility`}
                           >
-                            (Selected: No)
+                            (Selected:{" "}
+                            {
+                              accessibilityRequirements.find(
+                                (a) => a.value === field.value
+                              ).name
+                            }
+                            )
                           </label>
                         </div>
                         <small>

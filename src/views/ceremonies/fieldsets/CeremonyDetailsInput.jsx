@@ -1,31 +1,20 @@
 /*!
- * Address fieldset component
+ * Ceremony Details fieldset component
  * File: CeremonyInput.js
  * Copyright(c) 2023 BC Gov
  * MIT Licensed
  */
 
-import { useEffect, useState } from "react";
-import { useFormContext, Controller } from "react-hook-form";
-import { InputText } from "primereact/inputtext";
-import { Calendar } from "primereact/calendar";
-import classNames from "classnames";
-import { matchers } from "@/services/validation.services.js";
-import { Dropdown } from "primereact/dropdown";
-import { InputMask } from "primereact/inputmask";
-import { BlockUI } from "primereact/blockui";
-import { AutoComplete } from "primereact/autocomplete";
-import { useAPI } from "@/providers/api.provider.jsx";
-import { Fieldset } from "primereact/fieldset";
 import { convertDate } from "@/services/validation.services.js";
-
-/**
- * Address Input reusable component. Conditional PO Box requirement for Victoria addresses.
- * @returns address line 1, address line 2, city/community, province/state, country, postal code, po box
- */
+import classNames from "classnames";
+import { Calendar } from "primereact/calendar";
+import { Fieldset } from "primereact/fieldset";
+import { InputText } from "primereact/inputtext";
+import { Controller, useFormContext } from "react-hook-form";
+import { Fragment } from "react";
 
 export default function CeremonyDetailsInput({ id, label }) {
-  const { control, setValue, getValues } = useFormContext();
+  const { control } = useFormContext();
 
   return (
     <Fieldset
@@ -42,7 +31,7 @@ export default function CeremonyDetailsInput({ id, label }) {
               control={control}
               rules={{ required: "Venue name is required." }}
               render={({ field, fieldState: { invalid, error } }) => (
-                <>
+                <Fragment>
                   <InputText
                     id={field.venue}
                     value={field.value || ""}
@@ -53,7 +42,7 @@ export default function CeremonyDetailsInput({ id, label }) {
                     placeholder="Venue Name"
                   />
                   {invalid && <p className="error">{error.message}</p>}
-                </>
+                </Fragment>
               )}
             />
           </div>
@@ -80,13 +69,13 @@ export default function CeremonyDetailsInput({ id, label }) {
                     showTime
                     hourFormat="12"
                     showIcon
-                    placeholder="Select ceremony date"
+                    placeholder="Select ceremony date and time"
                   />
                   {invalid && <p className="error">{error.message}</p>}
                 </>
               )}
             />
-            <small>Select the ceremony date.</small>
+            <small>Select the ceremony date and time.</small>
           </div>
         </div>
       </div>
