@@ -227,8 +227,7 @@ function APIProvider(props) {
    * Get RSVP
    */
   const getRSVP = async (id, token) => {
-    const [_, result] = await api.get(`/rsvp/${id}/${token}`);
-    return result;
+    return await api.get(`/rsvp/${id}/${token}`);
   };
 
   const saveRSVP = async (data, id, token) => {

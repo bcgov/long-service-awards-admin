@@ -104,13 +104,14 @@ export default function RSVPCreate() {
     const [error, result] = (await api.getRSVP(id, token)) || {};
     if (error) {
       setIsExpired(true);
-    } else {
-      Object.assign(result.recipient.contact, {
-        full_name: `${result.recipient.contact.first_name} ${result.recipient.contact.last_name}`,
-      });
-      result.attendance_confirmed = isAttending;
-      return result;
+      return;
     }
+
+    Object.assign(result.recipient.contact, {
+      full_name: `${result.recipient.contact.first_name} ${result.recipient.contact.last_name}`,
+    });
+    result.attendance_confirmed = isAttending;
+    return result;
   };
 
   return (
