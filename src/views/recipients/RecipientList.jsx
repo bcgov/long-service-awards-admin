@@ -101,7 +101,7 @@ export default function RecipientList() {
     // get attendees records
     api
       .getAttendees()
-      .then((results) => setAttendees(results))
+      .then(({ attendees }) => setAttendees(attendees))
       .catch(console.error);
 
     // get current cycle
