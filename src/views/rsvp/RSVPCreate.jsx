@@ -91,11 +91,17 @@ export default function RSVPCreate() {
 
   // loader for Attendees record data
   const _loader = async () => {
-    const result = (await api.getRSVP(id, token)) || {};
+    const [error, result] = (await api.getRSVP(id, token)) || {};
+    if (error) 
+    {
+      status.setMessage('loginError');
+      return undefined;
+    }
     Object.assign(result.recipient.contact, {
       full_name: `${result.recipient.contact.first_name} ${result.recipient.contact.last_name}`,
     });
     result.attendance_confirmed = isAttending;
+
     return result;
   };
 
