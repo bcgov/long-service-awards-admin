@@ -232,6 +232,7 @@ function APIProvider(props) {
   };
 
   const saveRSVP = async (data, id, token) => {
+    console.log(data);
     return await api.post(`/rsvp/${id}/${token}`, data);
   };
 
