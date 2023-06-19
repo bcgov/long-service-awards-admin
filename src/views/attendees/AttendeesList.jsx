@@ -41,6 +41,7 @@ export default function AttendeesList() {
   const [loading, setLoading] = useState(false);
   const [showDialog, setShowDialog] = useState(null);
   const [attendees, setAttendees] = useState([]);
+  const [totalFilteredRecords, setTotalFilteredRecords] = useState(0);
   const [showRSVPDialog, setShowRSVPDialog] = useState(false);
   const [selected, setSelected] = useState([]);
   const [selectAll, setSelectAll] = useState(false);
@@ -59,7 +60,7 @@ export default function AttendeesList() {
    * Load attendees using applied filter
    * */
 
-  const loadData = () => {
+  const loadData = (pageState, filters, sort) => {
     setLoading(true);
     const { orderBy, order } = sort || {};
     const { first, rows } = pageState || {};
@@ -73,11 +74,14 @@ export default function AttendeesList() {
     };
     if (filter.status)
       filter.status = filter.status.map((s) => s.toLowerCase());
+
     // apply filters to ceremony data request
     api
       .getAttendees(filter)
       .then((res) => {
-        setAttendees(res);
+        const { total_filtered_records, attendees } = res || {};
+        setAttendees(attendees);
+        setTotalFilteredRecords(total_filtered_records);
       })
       .finally(() => {
         setLoading(false);
@@ -130,7 +134,7 @@ export default function AttendeesList() {
       .removeAttendee(id)
       .then(() => {
         status.setMessage("delete");
-        loadData();
+        loadData(pageState, filters, sort);
       })
       .catch((e) => {
         console.error(e);
@@ -190,7 +194,6 @@ export default function AttendeesList() {
 
   useEffect(() => {
     loadData(pageState, filters, sort);
-    // api.getAccommodations().catch(console.error);
   }, [pageState, filters, sort]);
 
   /**
@@ -234,7 +237,7 @@ export default function AttendeesList() {
                 type="button"
                 icon="pi pi-sync"
                 label="Refresh"
-                onClick={loadData}
+                onClick={() => loadData(pageState, filters, sort)}
               />
             </Fragment>
           }
@@ -322,6 +325,7 @@ export default function AttendeesList() {
         stripedRows
         rows={pageState.rows}
         rowsPerPageOptions={[10, 25, 50]}
+        totalRecords={totalFilteredRecords}
         onPage={onPage}
         first={pageState.first}
         sortField={sort.orderBy}

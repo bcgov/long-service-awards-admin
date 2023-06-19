@@ -64,7 +64,7 @@ export default function InvitationCreate({ selected, setShowRSVPDialog }) {
         const [error, result] = await api.saveAttendee(a);
         const sendResult = await api.sendRSVP(a);
         if (error) status.setMessage("saveError");
-        else if (sendResult.message !== "success")
+        else if (!sendResult || sendResult.message !== "success")
           status.setMessage("mailError");
         if (!error && result && sendResult) {
           setShowRSVPDialog(false);
