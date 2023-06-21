@@ -166,10 +166,12 @@ export default function RSVPCreate() {
               style={{
                 color: "#e97984",
                 fontSize: "1.5rem",
-                marginRight: "1rem",
+                marginRight: "2rem",
               }}
             ></i>
-            <h2>Your invitation has expired. Please contact the support.</h2>
+            <div className="flex-column">
+            <h2>Your invitation has expired. </h2>
+            <p>Please contact the Long Service Awards team for assistance: <a href="mailto:longserviceawards@gov.bc.ca?subject=Expired RSVP">longserviceawards@gov.bc.ca</a></p></div>
           </div>
         </div>
       </Dialog>
