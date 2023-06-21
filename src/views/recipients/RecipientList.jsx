@@ -104,7 +104,7 @@ export default function RecipientList() {
       .then(({ attendees }) => setAttendees(attendees))
       .catch(console.error);
 
-    // get current cycle
+    // get current cycle›
     api
       .getQualifyingYears()
       .then((years) => {
@@ -135,7 +135,6 @@ export default function RecipientList() {
       .getRecipients(filter)
       .then((results) => {
         const { total_filtered_records, recipients } = results || {};
-        console.log(recipients);
         setRecipients(recipients);
         setTotalFilteredRecords(total_filtered_records);
       })

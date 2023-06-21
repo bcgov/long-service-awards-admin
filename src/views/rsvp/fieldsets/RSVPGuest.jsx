@@ -32,6 +32,15 @@ export default function RSVPGuest() {
           accommodations.findIndex(({ name }) => name == "accessibility"),
           1
         );
+        //sort alphabetically
+        accommodations.sort((a, b) => a.name.localeCompare(b.name));
+        //move "Other" to the end
+        accommodations.push(
+          ...accommodations.splice(
+            accommodations.findIndex((v) => v.name === "other"),
+            1
+          )
+        );
         setAccommodations(accommodations);
       })
       .catch(console.error);
@@ -149,6 +158,9 @@ export default function RSVPGuest() {
                           />
                           <label
                             htmlFor={`guest_accommodations.` + `${o.name}`}
+                            style={{
+                              color: o.name === "other" ? "red" : "inherited",
+                            }}
                           >
                             {o.label}
                           </label>
