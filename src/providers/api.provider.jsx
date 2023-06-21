@@ -219,7 +219,7 @@ function APIProvider(props) {
    * Send RSVP
    */
   const sendRSVP = async (recipient) => {
-    const [_, result] = await api.post("/rsvp/send", recipient);
+    const [_, result] = await api.post("/attendees/send", recipient);
     return result;
   };
 
