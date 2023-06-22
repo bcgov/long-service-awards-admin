@@ -18,8 +18,6 @@ function UserFilter({ data, confirm, cancel }) {
   const api = useAPI();
   const [loading, setLoading] = useState(false);
 
-  console.log(data);
-
   // init filter settings
   const [organizations, setOrganizations] = useState([]);
   const [milestones, setMilestones] = useState([]);

@@ -194,7 +194,7 @@ export default function AttendeesList() {
 
   useEffect(() => {
     loadData(pageState, filters, sort);
-  }, [pageState, filters, sort]);
+  }, [pageState, filters, sort, showRSVPDialog]);
 
   /**
    * Render data table header component
