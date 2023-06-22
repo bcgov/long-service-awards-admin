@@ -97,6 +97,7 @@ export default function AttendeesList() {
   };
   const applyFilter = (filterData) => {
     if (filterData) setFilters(filterData);
+    setSelected([]);
     setShowDialog(null);
   };
 
