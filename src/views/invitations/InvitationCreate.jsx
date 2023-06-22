@@ -15,7 +15,11 @@ import { format } from "date-fns";
 //Fieldsets
 import InvitationInput from "@/views/invitations/fieldsets/InvitationInput";
 
-export default function InvitationCreate({ selected, setShowRSVPDialog }) {
+export default function InvitationCreate({
+  selected,
+  setShowRSVPDialog,
+  callback,
+}) {
   const status = useStatus();
   const api = useAPI();
   const navigate = useNavigate();
@@ -33,7 +37,9 @@ export default function InvitationCreate({ selected, setShowRSVPDialog }) {
           message: "Attendees Record Deleted!",
           severity: "success",
         });
-      if (!error && result) return result;
+      if (!error && result) {
+        return result;
+      }
     } catch (error) {
       status.clear();
       status.setMessage({
@@ -63,12 +69,14 @@ export default function InvitationCreate({ selected, setShowRSVPDialog }) {
         status.setMessage("save");
         const [error, result] = await api.saveAttendee(a);
         const sendResult = await api.sendRSVP(a);
-        if (error) status.setMessage("saveError");
-        else if (!sendResult || sendResult.message !== "success")
+        if (error) {
+          status.setMessage("saveError");
+        } else if (!sendResult || sendResult.message !== "success")
           status.setMessage("mailError");
         if (!error && result && sendResult) {
           setShowRSVPDialog(false);
           status.setMessage("mailSuccess");
+          callback([]);
           return result;
         }
       });

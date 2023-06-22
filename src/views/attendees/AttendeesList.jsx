@@ -150,9 +150,10 @@ export default function AttendeesList() {
   const onSelectionChange = (event) => {
     const value = event.value;
     setSelected(value);
+    setSelectAll(value.length === totalFilteredRecords);
   };
 
-  const onSelectAllChange = () => {};
+  const onSelectAllChange = (event) => {};
 
   const guestTemplate = (rowData) => {
     const { guest } = rowData || {};
@@ -267,6 +268,7 @@ export default function AttendeesList() {
         <InvitationCreate
           selected={selected}
           setShowRSVPDialog={setShowRSVPDialog}
+          callback={setSelected}
         />
       </Dialog>
       <Dialog
@@ -312,10 +314,10 @@ export default function AttendeesList() {
         paginatorRight={
           <Button
             className={"m-1 p-button-success"}
-            disabled={
-              !selected.length ||
-              !selected.every((r) => r.status !== "attending" && r.guest !== 1)
-            }
+            // disabled={
+            //   !selected.length ||
+            //   !selected.every((r) => r.status !== "attending" && r.guest !== 1)
+            // }
             type="button"
             icon="pi pi-user-plus"
             label="Send RSVP Invite"
@@ -335,7 +337,7 @@ export default function AttendeesList() {
         selection={selected}
         onSelectionChange={onSelectionChange}
         selectAll={selectAll}
-        onSelectAllChange={onSelectAllChange}
+        // onSelectAllChange={onSelectAllChange}
         tableStyle={{ minHeight: "70vh" }}
         header={header}
         scrollable
