@@ -58,6 +58,15 @@ export default function RSVPCreate() {
             : {}
         );
       }
+      //format ceremony date for email
+      Object.assign(sanitizedData.ceremony, {
+        ...sanitizedData.ceremony,
+        datetime_formatted: `${format(
+          new Date(sanitizedData.ceremony.datetime),
+          `EEEE, MMMM dd, yyyy`
+        )}`,
+      });
+
       updatedStatusData = {
         ...sanitizedData,
         status: "attending",
@@ -170,8 +179,14 @@ export default function RSVPCreate() {
               }}
             ></i>
             <div className="flex-column">
-            <h2>Your invitation has expired. </h2>
-            <p>Please contact the Long Service Awards team for assistance: <a href="mailto:longserviceawards@gov.bc.ca?subject=Expired RSVP">longserviceawards@gov.bc.ca</a></p></div>
+              <h2>Your invitation has expired. </h2>
+              <p>
+                Please contact the Long Service Awards team for assistance:{" "}
+                <a href="mailto:longserviceawards@gov.bc.ca?subject=Expired RSVP">
+                  longserviceawards@gov.bc.ca
+                </a>
+              </p>
+            </div>
           </div>
         </div>
       </Dialog>
