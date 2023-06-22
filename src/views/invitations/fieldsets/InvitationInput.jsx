@@ -37,7 +37,7 @@ export default function InvitationInput({ selected }) {
               }}
               render={({ field, fieldState: { invalid, error } }) => (
                 <>
-                  <div className="flex">
+                  <div className="flex flex-wrap">
                     {selected.map((a) => (
                       <Chip
                         label={a.recipient.contact.full_name}
