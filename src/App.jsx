@@ -24,13 +24,11 @@ export default function App() {
   return (
     // Do not display header on RSVP registration
     <>
-      {!location.pathname.includes("/rsvp/") && (
-        <header>
-          <BlockUI blocked={loading}>
-            <MenuBar />
-          </BlockUI>
-        </header>
-      )}
+      <header>
+        <BlockUI blocked={loading}>
+          <MenuBar />
+        </BlockUI>
+      </header>
       <main>
         <div className={"fluid m-2"}>
           {loading ? <p>Loading...</p> : <Outlet />}
