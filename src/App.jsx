@@ -10,6 +10,7 @@ import { Outlet } from "react-router-dom";
 import { useStatus } from "@/providers/status.provider.jsx";
 import MenuBar from "@/components/common/MenuBar.jsx";
 import { BlockUI } from "primereact/blockui";
+import { useLocation } from "react-router-dom";
 
 /**
  * Global Router provider.
@@ -19,13 +20,17 @@ import { BlockUI } from "primereact/blockui";
 
 export default function App() {
   const { loading } = useStatus();
+  const location = useLocation();
   return (
+    // Do not display header on RSVP registration
     <>
-      <header>
-        <BlockUI blocked={loading}>
-          <MenuBar />
-        </BlockUI>
-      </header>
+      {!location.pathname.includes("/rsvp/") && (
+        <header>
+          <BlockUI blocked={loading}>
+            <MenuBar />
+          </BlockUI>
+        </header>
+      )}
       <main>
         <div className={"fluid m-2"}>
           {loading ? <p>Loading...</p> : <Outlet />}

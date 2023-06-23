@@ -57,7 +57,7 @@ export default function InvitationCreate({
         ...recipient.ceremony,
         datetime_formatted: `${format(
           new Date(recipient.ceremony.datetime),
-          `p 'on' EEEE, MMMM dd, yyyy`
+          `EEEE, MMMM dd, yyyy`
         )}`,
       });
 

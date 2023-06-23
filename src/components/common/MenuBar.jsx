@@ -65,24 +65,19 @@ function MenuBar() {
   // unauthenticated menu items
   let items = [];
   let path = useLocation().pathname;
-  if (!path.match('^\/(rsvp)\/[^\/]+\/[^\/]+$'))
-  {
-    items.push
-    (
-      {
-        label: "Long Service Awards",
-        icon: "pi pi-fw pi-home",
-        url: import.meta.env.LSA_APPS_ADMIN_URL,
-      },
-    );
+  if (!path.match("^/(rsvp)/[^/]+/[^/]+$")) {
+    items.push({
+      label: "Long Service Awards",
+      icon: "pi pi-fw pi-home",
+      url: import.meta.env.LSA_APPS_ADMIN_URL,
+    });
   }
-  items.push(
-    {
-      label: "About",
-      icon: "pi pi-fw pi-info-circle",
-      url: import.meta.env.LSA_APPS_MAIN_SITE_URL,
-    },);
-  
+  items.push({
+    label: "About",
+    icon: "pi pi-fw pi-info-circle",
+    url: import.meta.env.LSA_APPS_MAIN_SITE_URL,
+  });
+
   // authorized menu items
   let protectedItems = [];
 
