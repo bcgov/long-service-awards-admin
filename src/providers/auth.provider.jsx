@@ -39,13 +39,13 @@ function AuthProvider(props) {
    */
 
   useEffect(() => {
+    console.log(window.location.href);
     api
       .get("/auth/user")
       .then(([error, res]) => {
         const { result } = res || {};
-        console.log(res);
-        console.log(error);
-        if (error) status.setMessage("authenticate");
+        if (error && !window.location.href.includes("/rsvp"))
+          status.setMessage("authenticate");
         setData(result);
       })
       .finally(() => {});
