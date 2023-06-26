@@ -1,33 +1,32 @@
 /*!
- * LSA.Admin.Components.RecipientsSFiule
- * File: RecipientsSort.jsx
+ * LSA.Admin.Components.Attendees.Filter
+ * File: AttendeesFilter.jsx
  * Copyright(c) 2023 Government of British Columbia
  * Version 2.0
  * MIT Licensed
  */
 
-import React, { useEffect, useState } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import { Button } from "primereact/button";
 import { InputText } from "primereact/inputtext";
 import { Dropdown } from "primereact/dropdown";
 import { MultiSelect } from "primereact/multiselect";
 import { useAPI } from "@/providers/api.provider.jsx";
 import { InputSwitch } from "primereact/inputswitch";
+import { format } from "date-fns";
+import { ceremonyStatuses as statuses } from "@/constants/statuses.constants.js";
 
-function UserFilter({ data, confirm, cancel }) {
+function AttendeesFilter({ data, confirm, cancel }) {
   const api = useAPI();
   const [loading, setLoading] = useState(false);
-
   // init filter settings
   const [organizations, setOrganizations] = useState([]);
-  const [milestones, setMilestones] = useState([]);
+  const [ceremonies, setCeremonies] = useState([]);
   const [filters, setFilters] = useState(data || {});
+
   const schema = {
     global: {
       label: "Global",
-    },
-    status: {
-      label: "Status",
     },
     first_name: {
       label: "First Name",
@@ -37,10 +36,6 @@ function UserFilter({ data, confirm, cancel }) {
       label: "Last Name",
       input: "text",
     },
-    employee_number: {
-      label: "Employee Number",
-      input: "text",
-    },
     organization: {
       label: "Organizations",
       input: "multiselect",
@@ -48,52 +43,62 @@ function UserFilter({ data, confirm, cancel }) {
       labelKey: "name",
       options: organizations,
     },
-    cycle: {
-      label: "LSA Cycle",
-    },
-    milestones: {
-      label: "Milestones",
-      input: "multiselect",
-      valueKey: "name",
-      labelKey: "label",
-      options: milestones,
-    },
-    qualifying_year: {
-      label: "Qualifying Year",
-    },
     ceremony: {
       label: "Ceremony",
+      input: "multiselect",
+      valueKey: "id",
+      labelKey: "datetime_formatted",
+      options: ceremonies,
     },
-    confirmed: {
-      label: "Confirmed",
-      input: "switch",
+    guest: {
+      label: "Type",
+      input: "select",
+      valueKey: "value",
+      labelKey: "name",
+      options: [
+        { name: "Guest", value: "1" },
+        { name: "Recipient", value: "0" },
+      ],
     },
-    updated_at: {
-      label: "Last Updated Date",
-    },
-    created_at: {
-      label: "Created Date",
+    status: {
+      label: "Registration Status",
+      input: "multiselect",
+      valueKey: "label",
+      labelKey: "label",
+      options: Object.keys(statuses).map((k) => statuses[k]),
     },
   };
 
-  // init filters data
+  //Delete default status
+  delete statuses.default;
+
+  // init filter options states
   useEffect(() => {
     setFilters(data);
     setLoading(true);
+    api
+      .getCeremonies()
+      .then((data) => {
+        data.forEach(
+          (d) =>
+            (d.datetime_formatted = format(
+              new Date(d.datetime),
+              `p 'on' EEEE, MMMM dd, yyyy`
+            ))
+        );
+        setCeremonies(data);
+      })
+      .catch(console.error)
+      .finally(() => setLoading(false));
     api
       .getOrganizations()
       .then(setOrganizations)
       .catch(console.error)
       .finally(() => setLoading(false));
-    api
-      .getMilestones()
-      .then(setMilestones)
-      .catch(console.error)
-      .finally(() => setLoading(false));
   }, []);
 
   return (
-    <>
+    <Fragment>
       {Object.entries(filters).map(([key, filterValue]) => {
         const {
           label = "",
@@ -104,11 +109,11 @@ function UserFilter({ data, confirm, cancel }) {
         } = schema.hasOwnProperty(key) ? schema[key] : {};
         return (
           <div
-            key={`recipient-filter-${key}`}
+            key={`attendee-filter-${key}`}
             className="w-85 flex justify-content-between px-3"
           >
             {input === "text" && (
-              <>
+              <Fragment>
                 <label className={"m-3"} htmlFor={"sortBy"}>
                   Filter By {label}
                 </label>
@@ -122,11 +127,11 @@ function UserFilter({ data, confirm, cancel }) {
                   aria-describedby={`sortBy-help`}
                   placeholder={`Enter filter value`}
                 />
-              </>
+              </Fragment>
             )}
             {input === "select" && (
-              <>
-                <label className={"m-3"} htmlFor={"sortBy"}>
+              <Fragment>
+                <label className={"w-full m-3"} htmlFor={"sortBy"}>
                   Filter By {label}
                 </label>
                 <Dropdown
@@ -138,16 +143,16 @@ function UserFilter({ data, confirm, cancel }) {
                     setFilters({ ...filters, ...{ [key]: e.target.value } });
                   }}
                   aria-describedby={`organization-help`}
-                  options={organizations || []}
+                  options={options || []}
                   optionLabel={labelKey}
                   optionValue={valueKey}
                   placeholder={loading ? "Loading..." : "Select filter value"}
                 />
-              </>
+              </Fragment>
             )}
             {input === "multiselect" && (
-              <>
-                <label className={"m-3"} htmlFor={"sortBy"}>
+              <Fragment>
+                <label className={"w-full m-3"} htmlFor={"sortBy"}>
                   Filter By {label}
                 </label>
                 <MultiSelect
@@ -170,10 +175,10 @@ function UserFilter({ data, confirm, cancel }) {
                   }
                   className="m-3 w-full"
                 />
-              </>
+              </Fragment>
             )}
             {input === "switch" && (
-              <>
+              <Fragment>
                 <label className={"m-3"} htmlFor={"sortBy"}>
                   Filter By {label}
                 </label>
@@ -183,7 +188,7 @@ function UserFilter({ data, confirm, cancel }) {
                     setFilters({ ...filters, ...{ [key]: e.value } });
                   }}
                 />
-              </>
+              </Fragment>
             )}
           </div>
         );
@@ -205,8 +210,8 @@ function UserFilter({ data, confirm, cancel }) {
           onClick={cancel}
         />
       </div>
-    </>
+    </Fragment>
   );
 }
 
-export default UserFilter;
+export default AttendeesFilter;

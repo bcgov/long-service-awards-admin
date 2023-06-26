@@ -1,18 +1,19 @@
 /*!
- * Form context provider component
+ * RSVP Form provider component
  * File: FormContext.js
  * Copyright(c) 2023 BC Gov
  * MIT Licensed
  */
 
-import { useStatus } from "@/providers/status.provider.jsx";
+import { useEffect, useMemo, useState } from "react";
+import { FormProvider, useForm, useFormState, useWatch } from "react-hook-form";
 import { BlockUI } from "primereact/blockui";
 import { Button } from "primereact/button";
 import { ConfirmDialog } from "primereact/confirmdialog";
-import { Message } from "primereact/message";
 import { Panel } from "primereact/panel";
-import { useEffect, useMemo, useState } from "react";
-import { FormProvider, useForm, useFormState, useWatch } from "react-hook-form";
+import { useStatus } from "@/providers/status.provider.jsx";
+import { Message } from "primereact/message";
+import { useAPI } from "@/providers/api.provider.jsx";
 /**
  * FormContext component
  * @param loader
@@ -27,7 +28,7 @@ import { FormProvider, useForm, useFormState, useWatch } from "react-hook-form";
  * @returns {JSX.Element}
  */
 
-export default function FormContext({
+export default function RSVPForm({
   loader,
   save,
   remove,
@@ -36,8 +37,6 @@ export default function FormContext({
   blocked,
   validate,
   children,
-  header,
-  buttonText,
 }) {
   // get context / hooks
   const status = useStatus();
@@ -45,6 +44,7 @@ export default function FormContext({
   const [showConfirm, setShowConfirm] = useState(false);
   const [complete, setComplete] = useState(false);
   const [formData, setFormData] = useState();
+  const api = useAPI();
 
   // initialize form (react hook form)
   const methods = useForm({
@@ -56,13 +56,18 @@ export default function FormContext({
 
   const { control, handleSubmit, getValues, reset } = methods;
 
+  const isAttending =
+    useWatch({ control, name: "attendance_confirmed" }) || null;
+
   const { errors } = useFormState({
     control,
   });
 
   // auto-validate form (ignore if no validation method provided)
   useEffect(() => {
-    setComplete(!validate || validate(getValues()));
+    isAttending
+      ? setComplete(!validate || validate(getValues()))
+      : setComplete(true);
   }, [useWatch({ control })]);
 
   // load form data
@@ -120,7 +125,7 @@ export default function FormContext({
   return (
     <FormProvider {...methods}>
       <form>
-        <BlockUI blocked={loading || blocked} template={blockTemplate}>
+        <BlockUI blocked={loading || blocked} template={blockTemplate} fullScreen>
           {children}
           {Object.keys(errors).length > 0 && (
             <Message
@@ -131,7 +136,7 @@ export default function FormContext({
           )}
           <Panel
             icons={<i className={"pi pi-save"} />}
-            header={header ?? "Save Form"}
+            header={"Confirm attendance"}
           >
             <ConfirmDialog
               header="Confirmation"
@@ -144,45 +149,34 @@ export default function FormContext({
             />
             <div className="container m-3">
               <div className={"grid"}>
-                <div className={"col-5"}>
-                  <Button
-                    disabled={!complete}
-                    className={
-                      "p-button-success w-full flex justify-content-center"
-                    }
-                    icon={"pi pi-fw pi-check"}
-                    type="submit"
-                    onClick={handleSubmit(_submitForm)}
-                  >
-                    {buttonText ? buttonText : "Save"}
-                  </Button>
-                </div>
-
-                <div className={"col-5"}>
-                  <Button
-                    className={
-                      "p-button-secondary w-full flex justify-content-center"
-                    }
-                    icon={"pi pi-fw pi-times"}
-                    onClick={_cancelForm}
-                  >
-                    Cancel
-                  </Button>
-                </div>
-                <div className={"col-2"}>
-                  <Button
-                    disabled={!remove}
-                    type={"button"}
-                    className={
-                      "p-button-danger w-full flex justify-content-center"
-                    }
-                    icon={"pi pi-fw pi-trash"}
-                    onClick={(e) => {
-                      e.preventDefault();
-                      setShowConfirm(true);
-                    }}
-                  ></Button>
-                </div>
+                {isAttending && (
+                  <div className={"col-5"}>
+                    <Button
+                      disabled={!complete}
+                      className={
+                        "p-button-success w-full flex justify-content-center"
+                      }
+                      icon={"pi pi-fw pi-check"}
+                      type="submit"
+                      onClick={handleSubmit(_submitForm)}
+                    >
+                      RSVP: I WILL BE ATTENDING THE CEREMONY
+                    </Button>
+                  </div>
+                )}
+                {!isAttending && (
+                  <div className={"col-5"}>
+                    <Button
+                      className={
+                        "p-button-danger w-full flex justify-content-center"
+                      }
+                      icon={"pi pi-fw pi-times"}
+                      onClick={handleSubmit(_submitForm)}
+                    >
+                      NO : I WILL NOT BE ATTENDING THE CEREMONY
+                    </Button>
+                  </div>
+                )}
               </div>
             </div>
           </Panel>

@@ -12,17 +12,19 @@
 export const matchers = {
   employeeNumber: /^\d{6}$/i,
   govEmail: /^[A-Z0-9._%+-]+@(?:[A-Z0-9-]+\.)+[A-Z]{2,4}$/i,
-  email: /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
-  phone: /^(?:\+?1\s*(?:[.-]\s*)?)?(?:\(\s*([2-9]1[02-9]|[2-9][02-8]1|[2-9][02-8][02-9])\s*\)|([2-9]1[02-9]|[2-9][02-8]1|[2-9][02-8][02-9]))\s*(?:[.-]\s*)?([2-9]1[02-9]|[2-9][02-9]1|[2-9][02-9]{2})\s*(?:[.-]\s*)?([0-9]{4})(?:\s*(?:#|x\.?|ext\.?|extension)\s*(\d+))?$/,
-  postal_code: /^[ABCEGHJ-NPRSTVXY]\d[ABCEGHJ-NPRSTV-Z][ -]?\d[ABCEGHJ-NPRSTV-Z]\d$/i,
+  email:
+    /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
+  phone:
+    /^(?:\+?1\s*(?:[.-]\s*)?)?(?:\(\s*([2-9]1[02-9]|[2-9][02-8]1|[2-9][02-8][02-9])\s*\)|([2-9]1[02-9]|[2-9][02-8]1|[2-9][02-8][02-9]))\s*(?:[.-]\s*)?([2-9]1[02-9]|[2-9][02-9]1|[2-9][02-9]{2})\s*(?:[.-]\s*)?([0-9]{4})(?:\s*(?:#|x\.?|ext\.?|extension)\s*(\d+))?$/,
+  postal_code:
+    /^[ABCEGHJ-NPRSTVXY]\d[ABCEGHJ-NPRSTV-Z][ -]?\d[ABCEGHJ-NPRSTV-Z]\d$/i,
   guid: /^[0-9a-fA-F]{8}[0-9a-fA-F]{4}[0-9a-fA-F]{4}[0-9a-fA-F]{4}[0-9a-fA-F]{12}$/,
   alphanumeric: /^[a-z0-9]+$/i,
-  password: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@^$!%*#?&])[A-Za-z\d@^$!%*#?&]{10,}$/
-}
-
+  password:
+    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@^$!%*#?&])[A-Za-z\d@^$!%*#?&]{10,}$/,
+};
 
 export const validators = {
-
   /**
    * Validate required data
    * **/
@@ -36,8 +38,7 @@ export const validators = {
    * **/
 
   employeeNumber: (data) => {
-    return !data || !!String(data)
-        .match(matchers.employeeNumber);
+    return !data || !!String(data).match(matchers.employeeNumber);
   },
 
   /**
@@ -46,9 +47,7 @@ export const validators = {
    * **/
 
   email: (data) => {
-    return !data || !!String(data)
-        .toLowerCase()
-        .match(matchers.email);
+    return !data || !!String(data).toLowerCase().match(matchers.email);
   },
 
   /**
@@ -65,9 +64,7 @@ export const validators = {
    * **/
 
   phone: (data) => {
-    return !data || !!String(data)
-        .toLowerCase()
-        .match(matchers.phone)
+    return !data || !!String(data).toLowerCase().match(matchers.phone);
   },
 
   /**
@@ -77,9 +74,7 @@ export const validators = {
    * **/
 
   postal_code: (data) => {
-    return !data || !!String(data)
-        .toLowerCase()
-        .match(matchers.postal_code);
+    return !data || !!String(data).toLowerCase().match(matchers.postal_code);
   },
 
   /**
@@ -89,24 +84,28 @@ export const validators = {
 
   password: (password) => {
     return password.match(matchers.password);
-  }
-
-}
+  },
+};
 
 /**
  * validate input data against schema
  * **/
 
 const validate = function validate(fields, data) {
-  return data && (fields || [])
-      .filter(field => field.hasOwnProperty('validators'))
-      .every(field => field.validators.every(validator => {
-            // apply all associated field validators (defined in schema) to each field value
-            const value = data && data.hasOwnProperty(field.key) ? data[field.key] : null;
-            return validator(value);
-          })
-      );
-}
+  return (
+    data &&
+    (fields || [])
+      .filter((field) => field.hasOwnProperty("validators"))
+      .every((field) =>
+        field.validators.every((validator) => {
+          // apply all associated field validators (defined in schema) to each field value
+          const value =
+            data && data.hasOwnProperty(field.key) ? data[field.key] : null;
+          return validator(value);
+        })
+      )
+  );
+};
 
 /**
  * Utility to remove null property values from objects
@@ -114,17 +113,16 @@ const validate = function validate(fields, data) {
  * - note recursion
  * **/
 
-export const removeNull = (obj, ignore=[]) => {
+export const removeNull = (obj, ignore = []) => {
   // ignore non-objects and arrays
-  if (Array.isArray(obj) || typeof obj !== 'object') return obj;
+  if (Array.isArray(obj) || typeof obj !== "object") return obj;
   // remove null values from nested objects
-  return Object.keys(obj || {})
-      .reduce((o, key) => {
-        // console.log(key, obj[key], obj[key] === {})
-        if (obj[key] !== null && obj[key] !== undefined && obj[key] !== {})
-          o[key] = removeNull(obj[key]);
-        return o;
-      }, {});
+  return Object.keys(obj || {}).reduce((o, key) => {
+    // console.log(key, obj[key], obj[key] === {})
+    if (obj[key] !== null && obj[key] !== undefined && obj[key] !== {})
+      o[key] = removeNull(obj[key]);
+    return o;
+  }, {});
 };
 
 /**
@@ -137,9 +135,7 @@ export const removeNull = (obj, ignore=[]) => {
 export const convertDate = (date) => {
   if (date instanceof Date) return date;
   // parse single date stored in UTC needed on frontend
-  return date ? new Date(date.replace(' ', 'T')) : null;
-}
+  return date ? new Date(date.replace(" ", "T")) : null;
+};
 
 export default validate;
-
-
