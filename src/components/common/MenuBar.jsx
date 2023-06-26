@@ -19,7 +19,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 function MenuBar() {
   const user = useUser();
   let path = useLocation().pathname;
-  const auth = undefined;
+  let auth = undefined;
   if (!path.match("^/(rsvp)/[^/]+/[^/]+$")) auth = useAuth();
   const navigate = useNavigate();
   const {
