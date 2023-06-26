@@ -20,9 +20,12 @@ function MenuBar() {
   const user = useUser();
   let path = useLocation().pathname;
   let auth = undefined;
-  if (!path.match("^/(rsvp)/[^/]+/[^/]+$") ||
-    !path.match("^/(lsa/admin/rsvp)/[^/]+/[^/]+$") || 
-    !path.match("^/(admin/rsvp)/[^/]+/[^/]+$")) auth = useAuth();
+  if (
+    !path.match("^/(rsvp)/[^/]+/[^/]+$") ||
+    !path.match("^/(lsa/admin/rsvp)/[^/]+/[^/]+$") ||
+    !path.match("^/(admin/rsvp)/[^/]+/[^/]+$")
+  )
+    auth = useAuth();
   const navigate = useNavigate();
   const {
     authenticated,
