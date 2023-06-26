@@ -125,7 +125,7 @@ export default function RSVPForm({
   return (
     <FormProvider {...methods}>
       <form>
-        <BlockUI blocked={loading || blocked} template={blockTemplate}>
+        <BlockUI blocked={loading || blocked} template={blockTemplate} fullScreen>
           {children}
           {Object.keys(errors).length > 0 && (
             <Message
