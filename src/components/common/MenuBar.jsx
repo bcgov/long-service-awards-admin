@@ -18,7 +18,11 @@ import { useNavigate, useLocation } from "react-router-dom";
 
 function MenuBar() {
   const user = useUser();
-  const auth = useAuth();
+  let path = useLocation().pathname;
+  let auth = undefined;
+  if (!path.match("^/(rsvp)/[^/]+/[^/]+$") ||
+    !path.match("^/(lsa/admin/rsvp)/[^/]+/[^/]+$") || 
+    !path.match("^/(admin/rsvp)/[^/]+/[^/]+$")) auth = useAuth();
   const navigate = useNavigate();
   const {
     authenticated,
@@ -64,7 +68,6 @@ function MenuBar() {
 
   // unauthenticated menu items
   let items = [];
-  let path = useLocation().pathname;
   if (!path.match("^/(rsvp)/[^/]+/[^/]+$")) {
     items.push({
       label: "Long Service Awards",
@@ -160,7 +163,7 @@ function MenuBar() {
   }
 
   // add logout for authenticated users
-  if (authenticated) {
+  if (auth && authenticated) {
     items.push.apply(items, [
       {
         label: "Logout",
