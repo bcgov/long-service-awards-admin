@@ -52,7 +52,7 @@ export default function AttendeesList() {
   });
   const [pageState, setPageState] = useState({
     first: 0,
-    rows: 10,
+    rows: 50,
     page: 1,
   });
 
