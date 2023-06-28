@@ -16,8 +16,8 @@ import { useAPI } from "@/providers/api.provider.jsx";
 
 export default function AccommodationsData({ data }) {
   const { accommodations } = data || {};
-
-  return accommodations.length ? (
+  //accommodations can be null if none exist
+  return !!accommodations && accommodations.length ? (
     <Panel className={"mb-2 mt-2"} header={"Accommodations"} toggleable>
       <div className={"container"}>
         <div className={"grid"}>
