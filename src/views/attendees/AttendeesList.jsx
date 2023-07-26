@@ -47,7 +47,7 @@ export default function AttendeesList() {
   const [selectAll, setSelectAll] = useState(false);
   const [filters, setFilters] = useState(initFilters);
   const [sort, setSort] = useState({
-    orderBy: "recipient.contact.last_name",
+    orderBy: "last_name",
     order: 1,
   });
   const [pageState, setPageState] = useState({
