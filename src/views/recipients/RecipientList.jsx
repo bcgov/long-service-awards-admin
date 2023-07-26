@@ -130,6 +130,7 @@ export default function RecipientList() {
       )
       .catch(console.error);
 
+    console.log(filter);
     // apply filters to recipient data request
     api
       .getRecipients(filter)

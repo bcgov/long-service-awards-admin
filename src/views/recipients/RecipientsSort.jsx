@@ -11,7 +11,6 @@ import { Button } from "primereact/button";
 import { Dropdown } from "primereact/dropdown";
 
 function RecipientsSort({ data, confirm, cancel }) {
-  console.log(confirm);
   const { orderBy, order } = data || {};
   const [selectedSortField, setSelectedSortField] = useState(orderBy);
   const [selectedSortOrder, setSelectedSortOrder] = useState(order);

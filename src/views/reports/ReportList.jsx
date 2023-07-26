@@ -66,6 +66,14 @@ export default function ReportList() {
       description: "All attendees registered for ceremonies.",
       authorized: isAdmin,
     },
+    {
+      id: "transactions",
+      filename: "transactions-report",
+      format: "csv",
+      label: "Transactions Error Report",
+      description: "All errors that have occurred for email transactions.",
+      authorized: isAdmin,
+    },
   ];
 
   /**

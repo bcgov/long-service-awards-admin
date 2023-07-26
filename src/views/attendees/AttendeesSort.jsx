@@ -1,6 +1,6 @@
 /*!
- * LSA.Admin.Components.RecipientsSort
- * File: RecipientsSort.jsx
+ * LSA.Admin.Components.AttendeesSort
+ * File: AttendeesSort.jsx
  * Copyright(c) 2023 Government of British Columbia
  * Version 2.0
  * MIT Licensed
@@ -25,15 +25,15 @@ function AttendeesSort({ data, confirm, cancel }) {
   // define sortable columns
   const cols = [
     {
-      value: "recipient.contact.first_name",
+      value: "first_name",
       label: "First Name",
     },
     {
-      value: "recipient.contact.last_name",
+      value: "last_name",
       label: "Last Name",
     },
     {
-      value: "ceremony.datetime",
+      value: "datetime",
       label: "Ceremony",
     },
     {
