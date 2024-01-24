@@ -61,7 +61,7 @@ export default function AddressInput({ id, label, pobox }) {
       <div className="container">
         <div className="grid">
           <div className={"col-12 form-field-container"}>
-            <label htmlFor={`${id}.street1`}>Street Address 1</label>
+            <label htmlFor={`${id}.street1`}>Address line 1</label>
             <Controller
               name={`${id}.street1`}
               control={control}
@@ -83,7 +83,7 @@ export default function AddressInput({ id, label, pobox }) {
             />
           </div>
           <div className={"col-12 form-field-container"}>
-            <label htmlFor={`${id}.street2`}>Street Address 2</label>
+            <label htmlFor={`${id}.street2`}>Address line 2</label>
             <Controller
               name={`${id}.street2`}
               control={control}

@@ -89,6 +89,10 @@ button:focus-visible {
   right: 0;
 }
 
+.status-number {
+  color: #151515 !important;
+}
+
 /* Progress spinner: Transparent Overlay */
 .progress-spinner:before {
   content: "";

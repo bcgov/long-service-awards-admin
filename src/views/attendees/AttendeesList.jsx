@@ -23,6 +23,9 @@ import { Toolbar } from "primereact/toolbar";
 import { Fragment, useEffect, useState } from "react";
 import { ceremonyStatuses as statuses } from "@/constants/statuses.constants.js";
 import { formatDate } from "@/services/utils.services";
+import { ro } from "date-fns/locale";
+import { Badge } from "primereact/badge";
+import { Message } from "primereact/message";
 
 export default function AttendeesList() {
   // set default filter values:
@@ -46,6 +49,11 @@ export default function AttendeesList() {
   const [selected, setSelected] = useState([]);
   const [selectAll, setSelectAll] = useState(false);
   const [filters, setFilters] = useState(initFilters);
+  const [statusesNumbers, setStatusesNumbers] = useState({
+    invited: 0,
+    atteding: 0,
+    declined: 0,
+  });
   const [sort, setSort] = useState({
     orderBy: "last_name",
     order: 1,
@@ -82,6 +90,7 @@ export default function AttendeesList() {
         const { total_filtered_records, attendees } = res || {};
         setAttendees(attendees);
         setTotalFilteredRecords(total_filtered_records);
+        generateStatusesNumbers(attendees);
       })
       .finally(() => {
         setLoading(false);
@@ -194,6 +203,18 @@ export default function AttendeesList() {
     );
   };
 
+  const generateStatusesNumbers = (attendees) => {
+    let attending = 0;
+    let declined = 0;
+    let invited = 0;
+    attendees.forEach((attendee) => {
+      if (attendee.status === "attending") attending++;
+      if (attendee.status === "declined") declined++;
+      if (attendee.status === "invited") invited++;
+    });
+    setStatusesNumbers({ attending, declined, invited });
+  };
+
   useEffect(() => {
     loadData(pageState, filters, sort);
   }, [pageState, filters, sort, showRSVPDialog]);
@@ -208,7 +229,23 @@ export default function AttendeesList() {
         <Toolbar
           left={
             <Fragment>
-              <Card className={"m-0 p-0"} title={"Attendees"}></Card>
+              <Card className={"m-0 p-0"} title={"Attendees"}>
+                <Message
+                  className="status-number mr-2"
+                  severity="info"
+                  content={`Invited : ${statusesNumbers.invited}`}
+                />
+                <Message
+                  className="status-number mr-2"
+                  severity="success"
+                  content={`Attending : ${statusesNumbers.attending}`}
+                />
+                <Message
+                  className="status-number mr-2"
+                  severity="error"
+                  content={`Declined : ${statusesNumbers.declined}`}
+                />
+              </Card>
             </Fragment>
           }
           right={
