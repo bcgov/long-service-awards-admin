@@ -45,7 +45,18 @@ export default function AttendeesEdit({ isEditing, selectedRecipients }) {
   };
 
   const _handleSave = async (data) => {
-    const updatedStatusData = { ...data, status: data.status.toLowerCase() };
+    let { accommodations, ...updatedStatusData } = data;
+    //check if accommodations contains a value of false or undefined and remove it
+    accommodations = Object.keys(accommodations).reduce((acc, cur) => {
+      if (accommodations[cur]) acc[cur] = true;
+      return acc;
+    }, {});
+
+    updatedStatusData = {
+      ...updatedStatusData,
+      status: data.status.toLowerCase(),
+      accommodations: [accommodations],
+    };
     console.log("Save:", updatedStatusData);
     try {
       status.setMessage("save");
@@ -78,6 +89,13 @@ export default function AttendeesEdit({ isEditing, selectedRecipients }) {
     Object.assign(result.recipient.contact, {
       full_name: `${result.recipient.contact.first_name} ${result.recipient.contact.last_name}`,
     });
+    result.accommodations = result.accommodations
+      .map((a) => a.accommodation)
+      .reduce((acc, cur) => {
+        acc[cur] = true;
+        return acc;
+      }, {});
+    console.log(result);
     return result;
   };
 
