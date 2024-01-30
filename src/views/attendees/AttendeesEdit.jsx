@@ -55,7 +55,7 @@ export default function AttendeesEdit({ isEditing, selectedRecipients }) {
     updatedStatusData = {
       ...updatedStatusData,
       status: data.status.toLowerCase(),
-      accommodations: [accommodations],
+      accommodation_selections: [accommodations],
     };
     console.log("Save:", updatedStatusData);
     try {
