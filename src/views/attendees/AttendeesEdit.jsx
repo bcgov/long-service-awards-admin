@@ -10,7 +10,7 @@ import PageHeader from "@/components/common/PageHeader.jsx";
 import { useAPI } from "@/providers/api.provider.jsx";
 import { useStatus } from "@/providers/status.provider.jsx";
 import { useNavigate, useParams } from "react-router-dom";
-import { Fragment } from "react";
+import { Fragment, useState } from "react";
 
 //Fieldsets
 import AttendeesEditInput from "@/views/attendees/fieldsets/AttendeesEditInput";
@@ -20,6 +20,7 @@ export default function AttendeesEdit({ isEditing, selectedRecipients }) {
   const api = useAPI();
   const navigate = useNavigate();
   const { id } = useParams() || {};
+  const [selectedRecipient, setSelectedRecipient] = useState({});
 
   const _handleDelete = async (id) => {
     try {
@@ -95,14 +96,18 @@ export default function AttendeesEdit({ isEditing, selectedRecipients }) {
         acc[cur] = true;
         return acc;
       }, {});
-    console.log(result);
+    setSelectedRecipient(result);
     return result;
   };
 
   return (
     <Fragment>
       <PageHeader
-        heading={isEditing ? "Editing Attendee" : "Create Attendees"}
+        heading={
+          isEditing
+            ? `Editing ${selectedRecipient.guest === 1 ? "Guest" : "Attendee"}`
+            : "Create Attendees"
+        }
       />
       <FormContext
         loader={_loader}
