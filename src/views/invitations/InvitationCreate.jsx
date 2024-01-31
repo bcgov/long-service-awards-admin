@@ -61,6 +61,8 @@ export default function InvitationCreate({
         )}`,
       });
 
+      console.log(data);
+
       return recipient;
     });
 
