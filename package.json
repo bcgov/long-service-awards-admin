@@ -28,6 +28,7 @@
     "react-dom": "^18.2.0",
     "react-hook-form": "^7.42.1",
     "react-router-dom": "^6.7.0",
+    "uuid": "^9.0.1",
     "winston": "^3.8.2"
   },
   "devDependencies": {

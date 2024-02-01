@@ -26,6 +26,8 @@ import { formatDate } from "@/services/utils.services";
 import { ro } from "date-fns/locale";
 import { Badge } from "primereact/badge";
 import { Message } from "primereact/message";
+import { useNavigate, useLocation } from "react-router-dom";
+import { v4 as uuid } from "uuid";
 
 export default function AttendeesList() {
   // set default filter values:
@@ -63,6 +65,7 @@ export default function AttendeesList() {
     rows: 50,
     page: 1,
   });
+  const navigate = useNavigate();
 
   /**
    * Load attendees using applied filter
@@ -349,17 +352,30 @@ export default function AttendeesList() {
         paginator
         paginatorPosition={"top"}
         paginatorRight={
-          <Button
-            className={"m-1 p-button-success"}
-            // disabled={
-            //   !selected.length ||
-            //   !selected.every((r) => r.status !== "attending" && r.guest !== 1)
-            // }
-            type="button"
-            icon="pi pi-user-plus"
-            label="Send RSVP Invite"
-            onClick={() => setShowRSVPDialog(true)}
-          />
+          <Fragment>
+            <Button
+              className={"m-1 p-button"}
+              // disabled={
+              //   !selected.length ||
+              //   !selected.every((r) => r.status !== "attending" && r.guest !== 1)
+              // }
+              type="button"
+              icon="pi pi-user-plus"
+              label="Add Guest"
+              onClick={() => navigate("/attendees/create/")}
+            />
+            <Button
+              className={"m-1 p-button-success"}
+              // disabled={
+              //   !selected.length ||
+              //   !selected.every((r) => r.status !== "attending" && r.guest !== 1)
+              // }
+              type="button"
+              icon="pi pi-user-plus"
+              label="Send RSVP Invite"
+              onClick={() => setShowRSVPDialog(true)}
+            />
+          </Fragment>
         }
         rowClassName="m-0 p-0 w-full"
         stripedRows

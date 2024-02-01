@@ -29,6 +29,7 @@ import UserList from "@/views/users/UserList";
 import AwardList from "@/views/awards/AwardList";
 import AttendeesList from "@/views/attendees/AttendeesList";
 import AttendeesEdit from "@/views/attendees/AttendeesEdit";
+import GuestCreate from "./views/attendees/GuestCreate";
 import SettingList from "@/views/settings/SettingList";
 import OrganizationList from "@/views/organizations/OrganizationList";
 import UserPasswordReset from "@/views/users/UserPasswordReset";
@@ -162,6 +163,20 @@ const router = createBrowserRouter(
               ]}
             >
               <AttendeesEdit isEditing />
+            </ProtectedRoute>
+          ),
+        },
+        {
+          path: "attendees/create/",
+          element: (
+            <ProtectedRoute
+              authorizedRoles={[
+                "administrator",
+                "super-administrator",
+                "org-contact",
+              ]}
+            >
+              <GuestCreate />
             </ProtectedRoute>
           ),
         },
