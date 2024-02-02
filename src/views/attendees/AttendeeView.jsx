@@ -15,13 +15,14 @@ import GuestData from "@/views/attendees/data/GuestData";
  */
 
 export default function AttendeeView({ data }) {
-  const { ceremony, recipient } = data || {};
-
+  console.log("AttendeeView data:", data);
+  const { ceremony, recipient, ceremony_noshow } = data || {};
+  const ceremonyData = { ...ceremony, ceremony_noshow };
   return (
     <div>
       <ProfileData data={recipient} />
       <GuestData data={data} />
-      <CeremonyData data={ceremony} />
+      <CeremonyData data={ceremonyData} />
       <AccommodationsData data={data} />
     </div>
   );

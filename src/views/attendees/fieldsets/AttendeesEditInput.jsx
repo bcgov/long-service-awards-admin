@@ -30,6 +30,10 @@ export default function AttendeesEditInput({ isEditing, selectedRecipients }) {
     { name: "Yes", value: true },
     { name: "No", value: false },
   ];
+  const ceremonyNoShowOptions = [
+    { name: "Yes", value: true },
+    { name: "No", value: false },
+  ];
 
   //Cell Templates
   const statusOptionTemplate = (option) => {
@@ -196,21 +200,55 @@ export default function AttendeesEditInput({ isEditing, selectedRecipients }) {
       </Panel>
       {isEditing && (
         <Fragment>
+          <Panel className={"mb-3"} header={<>Ceremony No Show</>}>
+            <div className="container">
+              <div className="grid">
+                <div className={"col-12 form-field-container"}>
+                  <label htmlFor={"ceremony_noshow"} className={"font-bold"}>
+                    The attendee/guest didn't attend the ceremony
+                  </label>
+                  <Controller
+                    name="ceremony_noshow"
+                    control={control}
+                    defaultValue={false}
+                    render={({ field }) => {
+                      return (
+                        <>
+                          <div className="flex align-items-center">
+                            <SelectButton
+                              className={"radio-toggle"}
+                              value={field.value}
+                              onChange={(e) => {
+                                setValue(
+                                  "ceremony_noshow",
+                                  e.value === true ? true : false
+                                );
+                              }}
+                              options={ceremonyNoShowOptions}
+                              optionLabel="name"
+                            />
+                          </div>
+                        </>
+                      );
+                    }}
+                  />
+                </div>
+              </div>
+            </div>
+          </Panel>
           <Panel className={"mb-3"} header={<>Accessibility</>}>
             <div className="container">
               <div className="grid">
                 <div className={"col-12 form-field-container"}>
-                  {/* <label
+                  <label
                     htmlFor={"accommodations.accessibility"}
                     className={"font-bold"}
                   >
-                    Accessibility requirements
-                  </label> */}
-                  <p>
                     Do you have any accessibility requirements to attend the
                     ceremony (e.g. accessible parking and/or seating, a sign
                     language interpreter (ASL), service dog access etc.)?
-                  </p>
+                  </label>
+
                   <Controller
                     name="accommodations.accessibility"
                     control={control}

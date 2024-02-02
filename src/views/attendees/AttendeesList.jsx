@@ -186,6 +186,14 @@ export default function AttendeesList() {
     );
   };
 
+  const formattedCeremonyNoShowTemplate = (rowData) => {
+    return rowData.ceremony_noshow ? (
+      <Badge value="No Show" severity="danger" />
+    ) : (
+      ""
+    );
+  };
+
   const formattedCreatedDateTemplate = (rowData) => {
     return formatDate(new Date(rowData.created_at));
   };
@@ -454,6 +462,14 @@ export default function AttendeesList() {
           field="ceremony.datetime"
           body={formattedCeremonyDateTemplate}
           header="Ceremony"
+          headerStyle={{ minWidth: "7em" }}
+          bodyStyle={{ minWidth: "7em" }}
+        />
+        <Column
+          className={"p-1"}
+          field="ceremony_noshow"
+          body={formattedCeremonyNoShowTemplate}
+          header="No Show"
           headerStyle={{ minWidth: "7em" }}
           bodyStyle={{ minWidth: "7em" }}
         />

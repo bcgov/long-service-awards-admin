@@ -13,7 +13,7 @@ import { Panel } from "primereact/panel";
  */
 
 export default function CeremonyData({ data }) {
-  const { address, datetime, venue } = data || {};
+  const { address, datetime, venue, ceremony_noshow } = data || {};
 
   return (
     <Panel className={"mb-2 mt-2"} header={"Ceremony Info"} toggleable>
@@ -31,6 +31,8 @@ export default function CeremonyData({ data }) {
             {address.province} {address.country} {address.postal_code}{" "}
             {address.pobox}
           </div>
+          <div className={"col-6"}>Ceremony No Show</div>
+          <div className={"col-6"}>{ceremony_noshow ? "Yes" : ""}</div>
         </div>
       </div>
     </Panel>
