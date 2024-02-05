@@ -187,6 +187,16 @@ function APIProvider(props) {
   };
 
   /**
+   * Create guest record
+   *
+   */
+
+  const createGuest = async (data) => {
+    const { id } = data || {};
+    return await api.post(`/addguest/${id}`, data);
+  };
+
+  /**
    * Get single attendee record
    *
    */
@@ -563,6 +573,7 @@ function APIProvider(props) {
           getAttendees,
           getAttendee,
           createAttendee,
+          createGuest,
           saveAttendee,
           removeAttendee,
           sendRSVP,

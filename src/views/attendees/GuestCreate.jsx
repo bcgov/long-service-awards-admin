@@ -16,7 +16,6 @@ export default function GuestCreate() {
   const _save = async (data) => {
     data.attendee.recipient_accommodations = data.accommodations;
     data.attendee.guest_count = 1;
-    // data.attendee.guest = 1;
     data.attendee.guest_accommodations = data.guest_accommodations;
     data.attendee.attendance_confirmed = true;
     data.attendee.confirmed = true;
@@ -26,7 +25,7 @@ export default function GuestCreate() {
 
     try {
       // setMessage("save");
-      const [error, result] = await api.saveRSVP(data, data.id, "12345");
+      const [error, result] = await api.createGuest(data);
       console.log(error);
       if (error) setMessage("saveError");
       else setMessage("saveSuccess");
