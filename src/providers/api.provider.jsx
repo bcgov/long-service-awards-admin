@@ -193,7 +193,7 @@ function APIProvider(props) {
 
   const createGuest = async (data) => {
     const { id } = data || {};
-    return await api.post(`/addguest/${id}`, data);
+    return await api.post(`/attendees/addguest/${id}`, data);
   };
 
   /**
