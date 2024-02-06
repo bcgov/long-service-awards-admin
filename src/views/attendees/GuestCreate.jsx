@@ -7,44 +7,29 @@
 import DataEdit from "@/views/default/DataEdit.jsx";
 import { useAPI } from "@/providers/api.provider.jsx";
 import GuestEditInput from "./fieldsets/GuestEditInput";
-import { useParams } from "react-router-dom";
+import { useStatus } from "@/providers/status.provider.jsx";
 
 export default function GuestCreate() {
   const api = useAPI();
   const _loader = async () => {};
+  const status = useStatus();
 
-  const _save = async (data) => {
-    data.attendee.recipient_accommodations = data.accommodations;
-    data.attendee.guest_count = 1;
-    data.attendee.guest_accommodations = data.guest_accommodations;
-    data.attendee.attendance_confirmed = true;
-    data.attendee.confirmed = true;
-    data.attendee.status = "attending";
-    data = data["attendee"];
-    console.log("Saving Guest data:", data);
-
+  const _save = async (data, callback) => {
     try {
-      // setMessage("save");
-      const [error, result] = await api.createGuest(data);
-      console.log(error);
-      if (error) setMessage("saveError");
-      else setMessage("saveSuccess");
-      if (!error && result) {
-        return result;
-      }
+      data.attendee.recipient_accommodations = data.accommodations;
+      data.attendee.guest_count = 1;
+      data.attendee.guest_accommodations = data.guest_accommodations;
+      data.attendee.attendance_confirmed = true;
+      data.attendee.confirmed = true;
+      data.attendee.status = "attending";
+      data = data["attendee"];
+      status.setMessage("save");
+      return await api.createGuest(data);
     } catch (error) {
-      setMessage("saveError");
+      console.log("Error:", error);
+      status.setMessage("saveError");
     }
   };
-
-  // const _save = async (data) => {
-  //   data.attendee.accommodations = [data.accommodations];
-  //   data["recipients"] = data["attendee"];
-  //   delete data["attendee"];
-  //   delete data["accommodations"];
-  //   console.log(data);
-  //   api.createAttendee([data.attendee]).finally(callback());
-  // };
 
   return (
     <DataEdit

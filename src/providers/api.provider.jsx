@@ -173,7 +173,6 @@ function APIProvider(props) {
       `/attendees/list?${formatQueryParams(params)}`
     );
     const result = res || [];
-    console.log(result);
     return result;
   };
 
