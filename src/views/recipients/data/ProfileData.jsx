@@ -12,8 +12,14 @@ import { Panel } from "primereact/panel";
  */
 
 export default function ProfileData({ data }) {
-  const { contact, employee_number, organization, division, branch } =
-    data || {};
+  const {
+    contact,
+    employee_number,
+    organization,
+    division,
+    branch,
+    attending_organization,
+  } = data || {};
   let {
     first_name,
     last_name,
@@ -41,6 +47,15 @@ export default function ProfileData({ data }) {
           <div className={"col-6"}>Organization</div>
           <div className={"col-6"}>
             {name || "-"} {abbreviation ? `(${abbreviation})` : ""}
+          </div>
+          <div className={"col-6"}>Attending with Organization</div>
+          <div className={"col-6"}>
+            {attending_organization
+              ? attending_organization.name +
+                attending_organization.abbreviation
+                ? `(${attending_organization.abbreviation})`
+                : ""
+              : "-"}
           </div>
           <div className={"col-6"}>Division</div>
           <div className={"col-6"}>{division || "-"}</div>

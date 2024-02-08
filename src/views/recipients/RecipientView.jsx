@@ -18,6 +18,7 @@ import AdminData from "@/views/recipients/data/AdminData";
  */
 
 export default function RecipientView({ data, currentCycle }) {
+  console.log(data);
   const { services, status } = data || {};
   // get current milestone service selection
   const currentService = (services || []).find(

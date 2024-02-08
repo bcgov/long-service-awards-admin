@@ -26,6 +26,8 @@ export default function ProfileInput({ validate }) {
   const { control, getValues, setValue } = useFormContext();
   const api = useAPI();
   const [organizations, setOrganizations] = useState([]);
+  const [attending_with_organization, setAttendingWithOrganization] =
+    useState();
   const [complete, setComplete] = useState(false);
 
   // update local ministry selection state
@@ -284,6 +286,36 @@ export default function ProfileInput({ validate }) {
                   />
                   {invalid && <p className="error">{error.message}</p>}
                   <small>No acronyms, please spell the name in full.</small>
+                </>
+              )}
+            />
+          </div>
+          <div className="col-12 form-field-container">
+            <label htmlFor={`attending_with_organization.id`}>
+              Attending Ceremony With Ministry/Organization
+            </label>
+            <Controller
+              name={`attending_with_organization.id`}
+              control={control}
+              rules={{ required: "Ministry or Organization is required." }}
+              render={({ field, fieldState: { invalid, error } }) => (
+                <>
+                  <Dropdown
+                    id={field.name}
+                    value={field.value || ""}
+                    filter
+                    onChange={(e) => {
+                      console.log(e.target.value);
+                      field.onChange(e.target.value);
+                    }}
+                    aria-describedby={`organization-help`}
+                    options={organizations}
+                    optionLabel="name"
+                    optionValue="id"
+                    className={classNames("w-full", { "p-invalid": error })}
+                    placeholder={`Select Recipient\'s ministry or organization`}
+                  />
+                  {invalid && <p className="error">{error.message}</p>}
                 </>
               )}
             />

@@ -96,6 +96,7 @@ export default function RecipientEdit() {
   const defaults = {
     employee_number: "",
     organization: "",
+    attending_with_organization: "",
     division: "",
     branch: "",
     service: {
@@ -203,6 +204,10 @@ export default function RecipientEdit() {
               validators: [validators.required, validators.employeeNumber],
             },
             { key: "organization", validators: [validators.required] },
+            {
+              key: "attending_with_organization",
+              validators: [validators.required],
+            },
             { key: "division", validators: [validators.required] },
             { key: "branch", validators: [validators.required] },
           ],

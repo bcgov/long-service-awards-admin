@@ -616,6 +616,13 @@ export default function RecipientList() {
         />
         <Column
           className={"p-1"}
+          header="Attending Org."
+          field="attending_organization.abbreviation"
+          headerStyle={{ minWidth: "8em" }}
+          bodyStyle={{ minWidth: "8em" }}
+        />
+        <Column
+          className={"p-1"}
           header={
             <div
               style={{ minWidth: "16em" }}
