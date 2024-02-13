@@ -92,6 +92,7 @@ export default function AttendeesList() {
       .then((res) => {
         const { total_filtered_records, attendees } = res || {};
         setAttendees(attendees);
+        console.log(attendees);
         setTotalFilteredRecords(total_filtered_records);
         generateStatusesNumbers(attendees);
       })
@@ -454,6 +455,13 @@ export default function AttendeesList() {
           className={"p-1"}
           field="recipient.organization.abbreviation"
           header="Organization"
+          headerStyle={{ minWidth: "7em" }}
+          bodyStyle={{ minWidth: "7em" }}
+        />
+        <Column
+          className={"p-1"}
+          field="recipient.attending_organization.abbreviation"
+          header="Attending Organization"
           headerStyle={{ minWidth: "7em" }}
           bodyStyle={{ minWidth: "7em" }}
         />
