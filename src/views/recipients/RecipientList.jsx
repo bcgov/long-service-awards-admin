@@ -23,6 +23,7 @@ import { Tag } from "primereact/tag";
 import { Toolbar } from "primereact/toolbar";
 import { Fragment, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { InputText } from "primereact/inputtext";
 
 export default function RecipientList() {
   // set default filter values:
@@ -198,6 +199,17 @@ export default function RecipientList() {
   };
 
   const applySort = (sortData) => {
+    console.log("sorting");
+    console.log(sortData);
+
+    //sortField comes from clicking datatable column header, dialog and setSort uses orderBy
+    if (sortData.sortField) {
+      var splitObject = sortData.sortField.split(".");
+      if (splitObject.length > 1) sortData.orderBy = splitObject[1];
+      else sortData.orderBy = sortData.sortField;
+      sortData.order = sortData.sortOrder;
+    }
+
     if (sortData) setSort(sortData);
     setShowDialog(null);
   };
@@ -217,11 +229,12 @@ export default function RecipientList() {
       ? ceremonyStatuses.declined
       : ceremonyStatuses.default;
     // check if recipient is an attendee
-    const attendee = attendees.find((a) => a.recipient.id === rowData.id);
-    if (attendee)
-      statusIndicator =
-        ceremonyStatuses[attendee.status.toLowerCase().replace(/\s/g, "")];
-
+    if (attendees) {
+      const attendee = attendees.find((a) => a.recipient.id === rowData.id);
+      if (attendee)
+        statusIndicator =
+          ceremonyStatuses[attendee.status.toLowerCase().replace(/\s/g, "")];
+    }
     return (
       <>
         {statusIndicator && (
@@ -385,6 +398,14 @@ export default function RecipientList() {
           }
           right={
             <Fragment>
+              <span className="p-input-icon-left">
+                <i className="pi pi-search" />
+                <InputText
+                  type="search"
+                  onInput={(e) => setGlobalFilter(e.target.value)}
+                  placeholder="Search..."
+                />
+              </span>
               <Button
                 className={"m-1"}
                 type="button"
@@ -490,6 +511,7 @@ export default function RecipientList() {
           cancel={() => setShowDialog(null)}
         />
       </Dialog>
+      <Toolbar className="mb-4"></Toolbar>
       <DataTable
         value={recipients}
         lazy
@@ -561,6 +583,8 @@ export default function RecipientList() {
         header={header}
         scrollable
         scrollHeight="60vh"
+        filterDisplay="menu"
+        onSort={applySort}
       >
         <Column selectionMode="multiple" />
         <Column
@@ -585,6 +609,7 @@ export default function RecipientList() {
           headerStyle={{ minWidth: "8em" }}
           bodyStyle={{ minWidth: "8em" }}
           body={statusTemplate}
+          sortable
         />
         <Column
           className={"p-1"}
@@ -592,6 +617,7 @@ export default function RecipientList() {
           field="contact.first_name"
           headerStyle={{ minWidth: "10em" }}
           bodyStyle={{ minWidth: "10em" }}
+          sortable
         />
         <Column
           className={"p-1"}
@@ -599,6 +625,7 @@ export default function RecipientList() {
           field="contact.last_name"
           headerStyle={{ minWidth: "10em" }}
           bodyStyle={{ minWidth: "10em" }}
+          sortable
         />
         <Column
           className={"p-1"}
@@ -606,6 +633,7 @@ export default function RecipientList() {
           field="employee_number"
           headerStyle={{ minWidth: "7em" }}
           bodyStyle={{ minWidth: "7em" }}
+          sortable
         />
         <Column
           className={"p-1"}
@@ -613,6 +641,7 @@ export default function RecipientList() {
           field="organization.abbreviation"
           headerStyle={{ minWidth: "8em" }}
           bodyStyle={{ minWidth: "8em" }}
+          sortable
         />
         <Column
           className={"p-1"}
@@ -637,6 +666,7 @@ export default function RecipientList() {
           body={servicesTemplate}
           headerStyle={{ minWidth: "19em" }}
           bodyStyle={{ minWidth: "19em" }}
+          sortable
         />
         <Column
           className={"p-1"}
@@ -644,6 +674,7 @@ export default function RecipientList() {
           headerStyle={{ minWidth: "8em" }}
           bodyStyle={{ minWidth: "8em" }}
           body={ceremonyTemplate}
+          sortable
         />
         <Column
           className={"p-1"}
@@ -652,6 +683,7 @@ export default function RecipientList() {
           body={updatedDateTemplate}
           headerStyle={{ minWidth: "7em" }}
           bodyStyle={{ minWidth: "7em" }}
+          sortable
         />
       </DataTable>
     </>
