@@ -34,6 +34,8 @@ export default function ProfileData({ data }) {
 
   const { name, abbreviation } = organization || {};
 
+  console.log(attending_organization.name);
+
   return (
     <Panel className={"mb-2 mt-2"} header={"Recipient Profile"} toggleable>
       <div className={"container"}>
@@ -52,9 +54,7 @@ export default function ProfileData({ data }) {
           <div className={"col-6"}>
             {attending_organization
               ? attending_organization.name +
-                attending_organization.abbreviation
-                ? `(${attending_organization.abbreviation})`
-                : ""
+                ` (${attending_organization.abbreviation})`
               : "-"}
           </div>
           <div className={"col-6"}>Division</div>
