@@ -85,7 +85,6 @@ export default function AttendeesList() {
     };
     if (filter.status)
       filter.status = filter.status.map((s) => s.toLowerCase());
-
     // apply filters to ceremony data request
     api
       .getAttendees(filter)

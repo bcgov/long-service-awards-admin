@@ -37,6 +37,10 @@ function AttendeesSort({ data, confirm, cancel }) {
       label: "Ceremony",
     },
     {
+      value: "organization.name",
+      label: "Organization",
+    },
+    {
       value: "updated_at",
       label: "Updated Date",
     },
