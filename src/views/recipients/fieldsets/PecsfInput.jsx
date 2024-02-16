@@ -35,10 +35,6 @@ export default function PecsfInput({control, setValue }) {
     // const [selectedRegion2, setSelectedRegion2] = useState(null);
     const [selectedCharity1, setSelectedCharity1] = useState('');
     const [selectedCharity2, setSelectedCharity2] = useState('');
-    const [specificProgram1, setSpecificProgram1] = useState('');
-    const [specificProgram2, setSpecificProgram2] = useState('');
-
-    
 
     /**
      * Initialize PECSF selections from form data
