@@ -30,7 +30,7 @@ export default function AwardData({data, currentCycle}) {
 
     const lookupPecsfCharity = (id) => {
         const charity = (pecsfCharities || []).find(charity => charity.id === id);
-        return typeof charity && !!charity ? `${charity.label} (${charity.region})` : 'Not Found';
+        return typeof charity && !!charity ? `${charity.label}` : 'Not Found';
     }
 
     /**
@@ -63,9 +63,16 @@ export default function AwardData({data, currentCycle}) {
                                                 <div className={'col-6'}>
                                                     {
                                                         pecsf_charity.hasOwnProperty('label') && pecsf_charity.hasOwnProperty('region')
-                                                            ? `${pecsf_charity.label} (${pecsf_charity.region})`
+                                                            ? `${pecsf_charity.label}`
                                                             : lookupPecsfCharity(pecsf_charity)}
                                                 </div>
+                                            </div>
+                                        }
+                                        {
+                                            type === 'pecsf-charity-local' &&
+                                            <div className={'grid'}>
+                                                <div className={'col-6'}>{label}</div>
+                                                <div className={'col-6'}>{custom_value}</div>
                                             </div>
                                         }
                                         {
@@ -76,7 +83,7 @@ export default function AwardData({data, currentCycle}) {
                                             </div>
                                         }
                                         {
-                                            type !== 'pecsf-charity' && !customizable && label && description &&
+                                            type !== 'pecsf-charity' && type !== 'pecsf-charity-local' && !customizable && label && description &&
                                             <div className={'grid'}>
                                                 <div className={'col-6'}>{label || '-'}</div>
                                                 <div className={'col-6'}>{description || '-'}</div>
@@ -84,7 +91,7 @@ export default function AwardData({data, currentCycle}) {
                                             </div>
                                         }
                                         {
-                                            type !== 'pecsf-charity' && customizable && description && custom_value &&
+                                            type !== 'pecsf-charity' && type !== 'pecsf-charity-local' && customizable && description && custom_value &&
                                             <div className={'grid'}>
                                                 <div className={'col-6'}>{description || '-'}</div>
                                                 <div className={'col-6'}>{custom_value || '-'}</div>
