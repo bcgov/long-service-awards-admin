@@ -40,6 +40,12 @@ export default function PecsfInput({ control, setValue }) {
     const { selections, award } = currentAward || {};
     const { id } = award || {};
     // filter selections by current award selection
+    const pooledCharities = charities.filter((charity) => {
+      return charity.pooled === true && charity.active === true;
+    });
+    const isCharityPooled = (array, value) => {
+      return array.some((obj) => obj.id === value);
+    };
     return (selections || [])
       .filter(({ award_option }) => award_option.award === id)
       .forEach(({ award_option, pecsf_charity, custom_value }) => {
