@@ -120,9 +120,20 @@ export default function PecsfInput({ control, setValue }) {
           (charity) => charity.active === true
         );
 
+        const pooledCharities = activeCharities.filter((charity) => {
+          return charity.pooled === true;
+        });
+
+        const generalCharities = activeCharities.filter((charity) => {
+          return charity.pooled === false;
+        });
+
         // Sort the active charities and update state
         setCharities(quickSort(activeCharities));
+        setPooledCharities(quickSort(pooledCharities));
+        setGeneralCharities(quickSort(generalCharities));
       })
+      .then(setLoading(false))
       // .then(setLoading(false))
       .catch((error) => {
         console.error(error);
@@ -133,20 +144,22 @@ export default function PecsfInput({ control, setValue }) {
    * Filter charities by selection of Pool Funds or All Charities
    * */
 
-  useEffect(() => {
-    //Check for status of charity as a pooled charity and updates available charities
-    setPooledCharities(
-      charities.filter((charity) => {
-        return charity.pooled === true;
-      })
-    );
-    setGeneralCharities(
-      charities.filter((charity) => {
-        return charity.pooled === false;
-      })
-    );
-    setLoading(false);
-  }, [charities]);
+  // useEffect(() => {
+  //   //Check for status of charity as a pooled charity and updates available charities
+  //   setPooledCharities(
+  //     charities.filter((charity) => {
+  //       return charity.pooled === true;
+  //     })
+  //   );
+  //   setGeneralCharities(
+  //     charities.filter((charity) => {
+  //       return charity.pooled === false;
+  //     })
+  //   );
+  //   setTimeout(() => {
+  //     setLoading(false);
+  //   }, "10000");
+  // }, [charities]);
 
   /**
    * Reset PECSF options
