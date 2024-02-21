@@ -112,14 +112,15 @@ export default function PecsfInput({ control, setValue }) {
 
   useEffect(() => {
     // load PECSF charities
-    api
-      .getPecsfCharities()
-      .then((data) => {
-        // Filter the data to only include active charities
-        const activeCharities = data.filter(
-          (charity) => charity.active === true
-        );
+    const fetchCharities = async () => {
+      try {
+        setLoading(true);
+        const data = await api.getPecsfCharities();
 
+        // Filter and sort the data to only include active charities
+        const activeCharities = quickSort(
+          data.filter((charity) => charity.active === true)
+        );
         const pooledCharities = activeCharities.filter((charity) => {
           return charity.pooled === true;
         });
@@ -127,39 +128,19 @@ export default function PecsfInput({ control, setValue }) {
         const generalCharities = activeCharities.filter((charity) => {
           return charity.pooled === false;
         });
-
-        // Sort the active charities and update state
-        setCharities(quickSort(activeCharities));
-        setPooledCharities(quickSort(pooledCharities));
-        setGeneralCharities(quickSort(generalCharities));
-      })
-      .then(setLoading(false))
-      // .then(setLoading(false))
-      .catch((error) => {
+        // Update state of different charity lists
+        setCharities(activeCharities);
+        setPooledCharities(pooledCharities);
+        setGeneralCharities(generalCharities);
+      } catch (error) {
         console.error(error);
-      });
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchCharities();
   }, []);
-
-  /**
-   * Filter charities by selection of Pool Funds or All Charities
-   * */
-
-  // useEffect(() => {
-  //   //Check for status of charity as a pooled charity and updates available charities
-  //   setPooledCharities(
-  //     charities.filter((charity) => {
-  //       return charity.pooled === true;
-  //     })
-  //   );
-  //   setGeneralCharities(
-  //     charities.filter((charity) => {
-  //       return charity.pooled === false;
-  //     })
-  //   );
-  //   setTimeout(() => {
-  //     setLoading(false);
-  //   }, "10000");
-  // }, [charities]);
 
   /**
    * Reset PECSF options
