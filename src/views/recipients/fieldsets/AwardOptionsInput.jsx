@@ -93,7 +93,7 @@ export default function AwardOptionsInput({
           (type === "pecsf-charity" &&
             selectedOptions &&
             selectedOptions.hasOwnProperty(name)) ||
-            (type === "pecsf-charity-local" &&
+          (type === "pecsf-charity-local" &&
             selectedOptions &&
             selectedOptions.hasOwnProperty(name)) ||
           (type.includes("certificate") &&
@@ -107,18 +107,30 @@ export default function AwardOptionsInput({
       })
       .map((option) => {
         const { type, name, value, customizable } = option || {};
+        let customValue = null;
+        if (customizable && selectedOptions[name]) {
+          customValue = selectedOptions[name];
+        } else if (
+          type === "engraving" &&
+          selectedOptions &&
+          selectedOptions.hasOwnProperty("engraving") &&
+          selectedOptions.options === name
+        ) {
+          customValue = selectedOptions["engraving"];
+        } else if (
+          (name === "pecsf-charity-local-1" ||
+            name === "pecsf-charity-local-2") &&
+          (selectedOptions[name] === "" || !selectedOptions[name])
+        ) {
+          // set custom_value to null if 'pecsf-charity-local-1' or 'pecsf-charity-local-2' has no value
+          customValue = null;
+        } else {
+          customValue = value;
+        }
         return {
           service: currentServiceID,
           award_option: option,
-          custom_value:
-            customizable && selectedOptions[name]
-              ? selectedOptions[name]
-              : type === "engraving" &&
-                selectedOptions &&
-                selectedOptions.hasOwnProperty("engraving") &&
-                selectedOptions.options === name
-              ? selectedOptions["engraving"]
-              : value,
+          custom_value: customValue,
           pecsf_charity:
             type === "pecsf-charity" ? selectedOptions[name] : null,
         };
@@ -259,7 +271,7 @@ export default function AwardOptionsInput({
           // handle special options
           const pecsf = key === "pecsf-charity";
           const engraving = key === "engraving";
-          const pecsfLocal = key === "pecsf-charity-local"
+          const pecsfLocal = key === "pecsf-charity-local";
           // handle multi-option dropdowns
           const multiselect = awardOptions[key].length > 1;
           // handle multi-option dropdowns
