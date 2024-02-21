@@ -117,7 +117,7 @@ export default function PecsfInput({ control, setValue }) {
       try {
         const active = await api.getActivePECSFCharities();
 
-        // Filter and sort the active to only include active charities
+        // Filter and sort the active to only include non-pooled charities
         const activeCharities = quickSort(active);
 
         const generalCharities = activeCharities.filter((charity) => {
@@ -133,20 +133,28 @@ export default function PecsfInput({ control, setValue }) {
       }
     };
 
-    api
-      .getPooledPecsfCharities()
-      .then((data) => {
+    const fetchPooled = async () => {
+      try {
+        const pooled = await api.getPooledPecsfCharities();
+
+        // Filter and sort the pooled to only include active charities
         const pooledCharities = quickSort(
-          data.filter((charity) => {
+          pooled.filter((charity) => {
             return charity.active === true;
           })
         );
-        setPooledCharities(pooledCharities);
+        // Update state of general charity lists
         setCharities(pooledCharities);
-        // setLoading(false);
-      })
-      .then(setLoading(false))
-      .then(fetchCharities())
+        setPooledCharities(pooledCharities);
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchPooled()
+      .then(() => fetchCharities())
       .catch((error) => {
         console.error(error);
       });
