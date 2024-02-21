@@ -117,6 +117,12 @@ export default function AttendeesList() {
     setShowDialog("sort");
   };
   const applySort = (sortData) => {
+    //sortField comes from clicking datatable column header, dialog and setSort uses orderBy
+    if (sortData.sortField) {
+      sortData.orderBy = sortData.sortField;
+      sortData.order = sortData.sortOrder;
+    }
+
     if (sortData) setSort(sortData);
     setShowDialog(null);
   };
@@ -403,6 +409,7 @@ export default function AttendeesList() {
         header={header}
         scrollable
         scrollHeight="60vh"
+        onSort={applySort}
       >
         <Column selectionMode="multiple" />
         <Column
@@ -427,6 +434,7 @@ export default function AttendeesList() {
           body={statusTemplate}
           headerStyle={{ minWidth: "10em" }}
           bodyStyle={{ minWidth: "10em" }}
+          sortable
         />
         <Column
           className={"p-1"}
@@ -435,6 +443,7 @@ export default function AttendeesList() {
           body={guestTemplate}
           headerStyle={{ minWidth: "7em" }}
           bodyStyle={{ minWidth: "7em" }}
+          sortable
         />
         <Column
           className={"p-1"}
@@ -442,6 +451,7 @@ export default function AttendeesList() {
           header="First Name"
           headerStyle={{ minWidth: "7em" }}
           bodyStyle={{ minWidth: "7em" }}
+          sortable
         />
         <Column
           className={"p-1"}
@@ -449,6 +459,7 @@ export default function AttendeesList() {
           header="Last Name"
           headerStyle={{ minWidth: "7em" }}
           bodyStyle={{ minWidth: "7em" }}
+          sortable
         />
         <Column
           className={"p-1"}
@@ -456,6 +467,7 @@ export default function AttendeesList() {
           header="Organization"
           headerStyle={{ minWidth: "7em" }}
           bodyStyle={{ minWidth: "7em" }}
+          sortable
         />
         <Column
           className={"p-1"}
@@ -471,6 +483,7 @@ export default function AttendeesList() {
           header="Ceremony"
           headerStyle={{ minWidth: "7em" }}
           bodyStyle={{ minWidth: "7em" }}
+          sortable
         />
         <Column
           className={"p-1"}
@@ -479,6 +492,7 @@ export default function AttendeesList() {
           header="No Show"
           headerStyle={{ minWidth: "7em" }}
           bodyStyle={{ minWidth: "7em" }}
+          sortable
         />
 
         <Column
@@ -488,6 +502,7 @@ export default function AttendeesList() {
           body={formattedCreatedDateTemplate}
           headerStyle={{ minWidth: "7em" }}
           bodyStyle={{ minWidth: "7em" }}
+          sortable
         />
         <Column
           className={"p-1"}
@@ -496,6 +511,7 @@ export default function AttendeesList() {
           body={formattedUpdatedDateTemplate}
           headerStyle={{ minWidth: "7em" }}
           bodyStyle={{ minWidth: "7em" }}
+          sortable
         />
       </DataTable>
     </Fragment>

@@ -199,14 +199,9 @@ export default function RecipientList() {
   };
 
   const applySort = (sortData) => {
-    console.log("sorting");
-    console.log(sortData);
-
     //sortField comes from clicking datatable column header, dialog and setSort uses orderBy
     if (sortData.sortField) {
-      var splitObject = sortData.sortField.split(".");
-      if (splitObject.length > 1) sortData.orderBy = splitObject[1];
-      else sortData.orderBy = sortData.sortField;
+      sortData.orderBy = sortData.sortField;
       sortData.order = sortData.sortOrder;
     }
 
@@ -666,7 +661,6 @@ export default function RecipientList() {
           body={servicesTemplate}
           headerStyle={{ minWidth: "19em" }}
           bodyStyle={{ minWidth: "19em" }}
-          sortable
         />
         <Column
           className={"p-1"}
@@ -674,7 +668,6 @@ export default function RecipientList() {
           headerStyle={{ minWidth: "8em" }}
           bodyStyle={{ minWidth: "8em" }}
           body={ceremonyTemplate}
-          sortable
         />
         <Column
           className={"p-1"}

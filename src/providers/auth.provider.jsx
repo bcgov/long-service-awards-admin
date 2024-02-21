@@ -185,6 +185,7 @@ function AuthProvider(props) {
   const getSettings = async () => {
     const [_, res] = await api.get(`settings/global/list`);
     const { result } = res || {};
+    console.log(result);
     return result;
   };
 
