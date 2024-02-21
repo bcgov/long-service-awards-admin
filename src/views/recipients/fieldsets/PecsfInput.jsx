@@ -43,7 +43,7 @@ export default function PecsfInput({ control, setValue }) {
     return (selections || [])
       .filter(({ award_option }) => award_option.award === id)
       .forEach(({ award_option, pecsf_charity, custom_value }) => {
-        const { name } = award_option || {};
+        const { name, value, type } = award_option || {};
         // if charities are selected, update states and PECSF form data
         if (pecsf_charity) {
           // determine PECSF donation type
