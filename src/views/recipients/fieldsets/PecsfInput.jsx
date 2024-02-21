@@ -29,8 +29,8 @@ export default function PecsfInput({ control, setValue }) {
   const [pool, setPool] = useState(true);
   const [loading, setLoading] = useState(true);
   const [charities, setCharities] = useState([]);
-  const [filteredCharities1, setFilteredCharities1] = useState([]);
-  const [filteredCharities2, setFilteredCharities2] = useState([]);
+  const [pooledCharities, setPooledCharities] = useState([]);
+  const [generalCharities, setGeneralCharities] = useState([]);
   const [selectedCharity1, setSelectedCharity1] = useState("");
   const [selectedCharity2, setSelectedCharity2] = useState("");
 
@@ -123,7 +123,7 @@ export default function PecsfInput({ control, setValue }) {
         // Sort the active charities and update state
         setCharities(quickSort(activeCharities));
       })
-      .then(setLoading(false))
+      // .then(setLoading(false))
       .catch((error) => {
         console.error(error);
       });
@@ -135,17 +135,18 @@ export default function PecsfInput({ control, setValue }) {
 
   useEffect(() => {
     //Check for status of charity as a pooled charity and updates available charities
-    setFilteredCharities1(
+    setPooledCharities(
       charities.filter((charity) => {
-        return charity.pooled === pool;
+        return charity.pooled === true;
       })
     );
-    setFilteredCharities2(
+    setGeneralCharities(
       charities.filter((charity) => {
-        return charity.pooled === pool;
+        return charity.pooled === false;
       })
     );
-  }, [charities, pool]);
+    setLoading(false);
+  }, [charities]);
 
   /**
    * Reset PECSF options
@@ -234,7 +235,7 @@ export default function PecsfInput({ control, setValue }) {
                         field.onChange(e.target.value);
                       }}
                       aria-describedby={`pecsf-charity-1-options-help`}
-                      options={filteredCharities1}
+                      options={pool ? pooledCharities : generalCharities}
                       optionValue={"id"}
                       optionLabel={(option) =>
                         pool
@@ -311,7 +312,7 @@ export default function PecsfInput({ control, setValue }) {
                           field.onChange(e.target.value);
                         }}
                         aria-describedby={`pecsf-charity-2-options-help`}
-                        options={filteredCharities2}
+                        options={generalCharities}
                         optionLabel={(option) =>
                           pool
                             ? `${option.label}`
