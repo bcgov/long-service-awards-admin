@@ -211,6 +211,7 @@ export default function PecsfInput({ control, setValue }) {
                     inputId={field.name}
                     value={field.value || ""}
                     filter
+                    virtualScrollerOptions={{ itemSize: 38 }}
                     onChange={(e) => {
                       setSelectedCharity1(e.target.value);
                       setValue("pecsf-charity-local-1", "");
@@ -283,6 +284,7 @@ export default function PecsfInput({ control, setValue }) {
                       inputId={field.name}
                       value={field.value || ""}
                       filter
+                      virtualScrollerOptions={{ itemSize: 38 }}
                       onChange={(e) => {
                         setSelectedCharity2(e.target.value);
                         setValue("pecsf-charity-local-2", "");
