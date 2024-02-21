@@ -41,7 +41,7 @@ export default function PecsfInput({ control, setValue }) {
     const { id } = award || {};
     // filter selections by current award selection
     const pooledCharities = charities.filter((charity) => {
-      return charity.pooled === true && charity.active === true;
+      return charity.pooled === true;
     });
     const isCharityPooled = (array, value) => {
       return array.some((obj) => obj.id === value);
@@ -80,12 +80,49 @@ export default function PecsfInput({ control, setValue }) {
   }, [charities]);
 
   /**
+   * Quick sorting helper function for alphabetizing the charities listings
+   * */
+  function quickSort(charities) {
+    if (charities.length <= 1) {
+      return charities;
+    }
+
+    const pivot = charities[Math.floor(charities.length / 2)];
+    const left = [];
+    const right = [];
+
+    for (let i = 0; i < charities.length; i++) {
+      if (i === Math.floor(charities.length / 2)) continue; // skip the pivot
+      if (charities[i].label < pivot.label) {
+        left.push(charities[i]);
+      } else {
+        right.push(charities[i]);
+      }
+    }
+
+    return quickSort(left).concat([pivot], quickSort(right));
+  }
+
+  /**
    * Load PECSF options (charities)
    * */
 
   useEffect(() => {
     // load PECSF charities
-    api.getPecsfCharities().then(setCharities).catch(console.error);
+    api
+      .getPecsfCharities()
+      .then((data) => {
+        // Filter the data to only include active charities
+        const activeCharities = data.filter(
+          (charity) => charity.active === true
+        );
+
+        // Sort the active charities and update state
+        setCharities(quickSort(activeCharities));
+      })
+      .catch((error) => {
+        console.error(error);
+      });
   }, []);
 
   /**
@@ -93,14 +130,15 @@ export default function PecsfInput({ control, setValue }) {
    * */
 
   useEffect(() => {
+    //Check for status of charity as a pooled charity and updates available charities
     setFilteredCharities1(
       charities.filter((charity) => {
-        return charity.pooled === pool && charity.active === true;
+        return charity.pooled === pool;
       })
     );
     setFilteredCharities2(
       charities.filter((charity) => {
-        return charity.pooled === pool && charity.active === true;
+        return charity.pooled === pool;
       })
     );
   }, [charities, pool]);

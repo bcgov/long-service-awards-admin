@@ -62,8 +62,8 @@ export default function AwardData({data, currentCycle}) {
                                                 <div className={'col-6'}>{label}</div>
                                                 <div className={'col-6'}>
                                                     {
-                                                        pecsf_charity.hasOwnProperty('label') && pecsf_charity.hasOwnProperty('region')
-                                                            ? `${pecsf_charity.label}`
+                                                        pecsf_charity.hasOwnProperty('label') && pecsf_charity.hasOwnProperty('vendor')
+                                                            ? `${pecsf_charity.label} - ${pecsf_charity.vendor}`
                                                             : lookupPecsfCharity(pecsf_charity)}
                                                 </div>
                                             </div>
