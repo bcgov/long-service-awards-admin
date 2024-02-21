@@ -76,13 +76,6 @@ export default function AwardData({data, currentCycle}) {
                                             </div>
                                         }
                                         {
-                                            type === 'pecsf-charity' && (!pecsf_charity || pecsf_charity.id === null) &&
-                                            <div className={'grid'}>
-                                                <div className={'col-6'}>{label}</div>
-                                                <div className={'col-6'}>Donation Pool</div>
-                                            </div>
-                                        }
-                                        {
                                             type !== 'pecsf-charity' && type !== 'pecsf-charity-local' && !customizable && label && description &&
                                             <div className={'grid'}>
                                                 <div className={'col-6'}>{label || '-'}</div>
