@@ -507,6 +507,32 @@ function APIProvider(props) {
   };
 
   /**
+   * Get list of active PECSF charities
+   *
+   * */
+
+  const getActivePECSFCharities = async () => {
+    const [_, res] = await api.get(
+      `settings/pecsf-charities/filter/active/true`
+    );
+    const { result } = res || {};
+    return result;
+  };
+
+  /**
+   * Get list of pooled PECSF charities
+   *
+   * */
+
+  const getPooledPecsfCharities = async () => {
+    const [_, res] = await api.get(
+      `settings/pecsf-charities/filter/pooled/true`
+    );
+    const { result } = res || {};
+    return result;
+  };
+
+  /**
    * Get PECSF charity by ID
    *
    * */
@@ -598,6 +624,8 @@ function APIProvider(props) {
           getAccommodations,
           getRSVPAccommodations,
           getPecsfCharities,
+          getActivePECSFCharities,
+          getPooledPecsfCharities,
           getPecsfCharity,
           getPecsfRegions,
           sendMail,

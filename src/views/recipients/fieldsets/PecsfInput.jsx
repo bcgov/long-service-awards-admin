@@ -28,6 +28,7 @@ export default function PecsfInput({ control, setValue }) {
   // initialize PECSF local states
   const [pool, setPool] = useState(true);
   const [loading, setLoading] = useState(true);
+  const [loadingFullList, setLoadingFullList] = useState(true);
   const [charities, setCharities] = useState([]);
   const [pooledCharities, setPooledCharities] = useState([]);
   const [generalCharities, setGeneralCharities] = useState([]);
@@ -114,32 +115,41 @@ export default function PecsfInput({ control, setValue }) {
     // load PECSF charities
     const fetchCharities = async () => {
       try {
-        setLoading(true);
-        const data = await api.getPecsfCharities();
+        const active = await api.getActivePECSFCharities();
 
-        // Filter and sort the data to only include active charities
-        const activeCharities = quickSort(
-          data.filter((charity) => charity.active === true)
-        );
-        const pooledCharities = activeCharities.filter((charity) => {
-          return charity.pooled === true;
-        });
+        // Filter and sort the active to only include active charities
+        const activeCharities = quickSort(active);
 
         const generalCharities = activeCharities.filter((charity) => {
           return charity.pooled === false;
         });
-        // Update state of different charity lists
+        // Update state of general charity lists
         setCharities(activeCharities);
-        setPooledCharities(pooledCharities);
         setGeneralCharities(generalCharities);
       } catch (error) {
         console.error(error);
       } finally {
-        setLoading(false);
+        setLoadingFullList(false);
       }
     };
 
-    fetchCharities();
+    api
+      .getPooledPecsfCharities()
+      .then((data) => {
+        const pooledCharities = quickSort(
+          data.filter((charity) => {
+            return charity.active === true;
+          })
+        );
+        setPooledCharities(pooledCharities);
+        setCharities(pooledCharities);
+        // setLoading(false);
+      })
+      .then(setLoading(false))
+      .then(fetchCharities())
+      .catch((error) => {
+        console.error(error);
+      });
   }, []);
 
   /**
@@ -168,7 +178,10 @@ export default function PecsfInput({ control, setValue }) {
 
   return (
     <>
-      <BlockUI blocked={loading} template={blockTemplate}>
+      <BlockUI
+        blocked={loading || (loadingFullList && pool === false)}
+        template={blockTemplate}
+      >
         <h4>PECSF Donation Options</h4>
         <div className="m-1 flex align-items-center">
           <RadioButton
