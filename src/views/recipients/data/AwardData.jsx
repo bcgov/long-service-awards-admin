@@ -69,7 +69,8 @@ export default function AwardData({data, currentCycle}) {
                                             </div>
                                         }
                                         {
-                                            type === 'pecsf-charity-local' &&
+                                            (type === 'pecsf-charity-local' &&
+                                            custom_value !== null) &&
                                             <div className={'grid'}>
                                                 <div className={'col-6'}>{label}</div>
                                                 <div className={'col-6'}>{custom_value}</div>
