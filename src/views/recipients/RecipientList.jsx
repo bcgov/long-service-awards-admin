@@ -36,7 +36,7 @@ export default function RecipientList() {
     last_name: null,
     employee_number: null,
     organization: null,
-    cycle: [2023],
+    cycle: [2024],
     milestones: [25, 30, 35, 40, 45, 50, 55],
     qualifying_year: null,
     ceremony: null,
