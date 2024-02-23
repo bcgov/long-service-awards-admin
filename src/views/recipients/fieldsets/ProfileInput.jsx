@@ -297,7 +297,6 @@ export default function ProfileInput({ validate }) {
             <Controller
               name={`attending_with_organization.id`}
               control={control}
-              rules={{ required: "Ministry or Organization is required." }}
               render={({ field, fieldState: { invalid, error } }) => (
                 <>
                   <Dropdown
