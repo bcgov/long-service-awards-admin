@@ -31,6 +31,10 @@ import { v4 as uuid } from "uuid";
 
 export default function AttendeesList() {
   // set default filter values:
+  // - Sets default cycle as current year
+
+  const currentYear = new Date().getFullYear();
+
   const initFilters = {
     global: null,
     first_name: null,
@@ -39,6 +43,7 @@ export default function AttendeesList() {
     status: null,
     organization: null,
     guest: null,
+    cycle: [currentYear],
   };
 
   const api = useAPI();

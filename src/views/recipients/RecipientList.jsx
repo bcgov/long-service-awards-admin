@@ -29,6 +29,10 @@ export default function RecipientList() {
   // set default filter values:
   // - shows confirmed registrations only
   // - 25-Year threshold for milestones (LSAs)
+  // - Sets default cycle as current year
+
+  const currentYear = new Date().getFullYear();
+
   const initFilters = {
     global: null,
     status: null,
@@ -36,7 +40,7 @@ export default function RecipientList() {
     last_name: null,
     employee_number: null,
     organization: null,
-    cycle: [2024],
+    cycle: [currentYear],
     milestones: [25, 30, 35, 40, 45, 50, 55],
     qualifying_year: null,
     ceremony: null,

@@ -20,6 +20,19 @@ function AttendeesFilter({ data, confirm, cancel }) {
   const api = useAPI();
   const [loading, setLoading] = useState(false);
   // init filter settings
+
+  function generateCycleYears() {
+    let currentYear = new Date().getFullYear(),
+      years = [];
+    const startYear = currentYear - 60;
+    while (startYear <= currentYear) {
+      years.push({ name: currentYear-- });
+    }
+    return years;
+  }
+
+  // init filter settings
+  const cycles = generateCycleYears();
   const [organizations, setOrganizations] = useState([]);
   const [ceremonies, setCeremonies] = useState([]);
   const [filters, setFilters] = useState(data || {});
@@ -49,6 +62,13 @@ function AttendeesFilter({ data, confirm, cancel }) {
       valueKey: "id",
       labelKey: "datetime_formatted",
       options: ceremonies,
+    },
+    cycle: {
+      label: "Cycle",
+      input: "multiselect",
+      valueKey: "name",
+      labelKey: "name",
+      options: cycles,
     },
     guest: {
       label: "Type",
