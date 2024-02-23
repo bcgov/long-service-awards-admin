@@ -50,8 +50,8 @@ export default function ReportList() {
       authorized: isAuthorized,
     },
     {
-      id: "pescf-certificates",
-      filename: "pescf-certificates",
+      id: "pecsf-certificates",
+      filename: "pecsf-certificates",
       format: "csv",
       label: "PECSF Certificates",
       description: "PECSF Certificates",
