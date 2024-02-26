@@ -50,6 +50,14 @@ export default function ReportList() {
       authorized: isAuthorized,
     },
     {
+      id: "lsa-count",
+      filename: "awards-count-by-night",
+      format: "csv",
+      label: "Awards Count by Night",
+      description: "Awards Count per night",
+      authorized: isAuthorized,
+    },
+    {
       id: "pecsf-certificates",
       filename: "pecsf-certificates",
       format: "csv",

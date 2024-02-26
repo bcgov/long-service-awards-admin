@@ -304,7 +304,6 @@ export default function ProfileInput({ validate }) {
                     value={field.value || ""}
                     filter
                     onChange={(e) => {
-                      console.log(e.target.value);
                       field.onChange(e.target.value);
                     }}
                     aria-describedby={`organization-help`}
