@@ -569,8 +569,8 @@ function APIProvider(props) {
    *
    * */
 
-  const getReport = async (id, filename) => {
-    const [_, res] = await api.download(`reports/${id}`, filename);
+  const getReport = async (id, filename, year) => {
+    const [_, res] = await api.download(`reports/${id}`, filename, year);
     const { result } = res || {};
     return result;
   };

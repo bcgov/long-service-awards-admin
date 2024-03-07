@@ -10,13 +10,16 @@ import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import { Button } from "primereact/button";
 import { Card } from "primereact/card";
+import { Dropdown } from "primereact/dropdown";
 import { useAPI } from "@/providers/api.provider.jsx";
-import React, { useState } from "react";
+import React, { Fragment, useState } from "react";
 import { useStatus } from "@/providers/status.provider.jsx";
 import { useUser } from "@/providers/user.provider.jsx";
 
 export default function ReportList() {
   const { authenticated, role } = useUser() || {};
+  const currentYear = new Date().getFullYear();
+  const [yearSelected, setYearSelected] = useState(currentYear);
 
   // check if user is authorized to access menu items
   const isAdmin =
@@ -34,6 +37,39 @@ export default function ReportList() {
     recipients: false,
     pins: false,
   });
+
+  const yearSelector = () => {
+    // init year setting
+    function generateCycleYears() {
+      let currentYear = new Date().getFullYear(),
+        years = [];
+      const startYear = currentYear - 60;
+      //Start of program data saved in this database
+      const programStartYear = 2023;
+      while (startYear <= currentYear) {
+        if (currentYear >= programStartYear) years.push(currentYear);
+        currentYear--;
+      }
+      return years;
+    }
+    const cycles = generateCycleYears();
+
+    return (
+      <Fragment>
+        <label>Select Report Year</label>
+        <Dropdown
+          value={yearSelected}
+          defaultValue={currentYear}
+          className={"m-3"}
+          onChange={(e) => {
+            setYearSelected(e.value);
+          }}
+          aria-describedby={`selectYear-help`}
+          options={cycles || []}
+        />
+      </Fragment>
+    );
+  };
 
   /**
    * Define available reports
@@ -101,7 +137,11 @@ export default function ReportList() {
     setDownloading({ ...downloading, [id]: true });
     const ts = Date.now();
     api
-      .getReport(id, `${filename}-${ts}.${format}`)
+      .getReport(
+        id,
+        `${filename}-${yearSelected}-${ts}.${format}`,
+        yearSelected
+      )
       .catch(() => {
         status.setMessage("downloadError");
       })
@@ -118,7 +158,11 @@ export default function ReportList() {
     <>
       <DataTable
         value={reports}
-        header={<Card className={"m-0 p-0"} title={"Reports"}></Card>}
+        header={
+          <Card className={"m-0 p-0"} title={"Reports"}>
+            {yearSelector()}
+          </Card>
+        }
         dataKey={"id"}
         stripedRows
         tableStyle={{ minHeight: "70vh" }}

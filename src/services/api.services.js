@@ -160,13 +160,14 @@ const upload = async (route, data, callback = () => {}) => {
  * @return {Promise} [error, response]
  */
 
-const download = async (route, filename) => {
+const download = async (route, filename, year) => {
   const [error, response] = await asyncWrapper(
     axios
       .get(route, {
         responseType: "blob",
         baseURL: import.meta.env.LSA_APPS_API_URL,
         withCredentials: true,
+        params: { year },
       })
       .then((res) => {
         saveAs(res.data, filename);
