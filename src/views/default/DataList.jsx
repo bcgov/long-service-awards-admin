@@ -29,6 +29,7 @@ export default function DataList({
   options,
   loader,
   isEditing,
+  defaultFilter = null,
 }) {
   const status = useStatus();
   const [loading, setLoading] = useState(false);
@@ -36,10 +37,11 @@ export default function DataList({
   const [totalRecords, setTotalRecords] = useState(0);
   const [selected, setSelected] = useState([]);
   const [selectAll, setSelectAll] = useState(false);
-  const [globalFilterValue, setGlobalFilterValue] = useState("");
+  const loadDefaultFilter = defaultFilter ? defaultFilter : "";
+  const [globalFilterValue, setGlobalFilterValue] = useState(loadDefaultFilter);
   const [showDialog, setShowDialog] = useState(null);
   const [filters, setFilters] = useState({
-    global: { value: null, matchMode: FilterMatchMode.CONTAINS },
+    global: { value: defaultFilter, matchMode: FilterMatchMode.CONTAINS },
   });
 
   /**
@@ -76,6 +78,13 @@ export default function DataList({
     _filters["global"].value = value;
     setFilters(_filters);
     setGlobalFilterValue(value);
+  };
+
+  const resetSearch = () => {
+    setFilters({
+      global: { value: null, matchMode: FilterMatchMode.CONTAINS },
+    });
+    setGlobalFilterValue("");
   };
 
   /**
@@ -196,11 +205,19 @@ export default function DataList({
               <span className="p-input-icon-left">
                 <i className="pi pi-search" />
                 <InputText
+                  type="search"
                   value={globalFilterValue}
                   onChange={onGlobalFilterChange}
                   placeholder="Keyword Search"
                 />
               </span>
+              <Button
+                className={"m-2"}
+                type="button"
+                icon="pi pi-filter-slash"
+                label="Clear"
+                onClick={resetSearch}
+              />
             </Fragment>
           }
         />
