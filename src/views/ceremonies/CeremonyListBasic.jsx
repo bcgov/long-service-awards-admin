@@ -18,6 +18,7 @@ import { format } from "date-fns";
 
 export default function CeremonyListBasic() {
   const api = useAPI();
+  const currentYear = new Date().getFullYear();
 
   // build edit form template
   const editTemplate = (data, callback) => {
@@ -114,6 +115,7 @@ export default function CeremonyListBasic() {
       edit={editTemplate}
       view={viewTemplate}
       remove={api.removeCeremony}
+      defaultFilter={currentYear}
     />
   );
 }
