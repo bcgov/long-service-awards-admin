@@ -227,6 +227,7 @@ export default function AwardOptionsInput({
         );
       },
       dropdown: (options) => {
+        options.length > 0 ? options.sort((a, b) => a.id - b.id) : null;
         return (
           options.length > 0 && (
             <>
