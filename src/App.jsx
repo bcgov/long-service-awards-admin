@@ -23,13 +23,20 @@ export default function App() {
   const { loading } = useStatus();
   const location = useLocation();
   const nodeENV = process.env.NODE_ENV;
+
+  // Check if the URL contains the dev site url
+  const currentUrl = window.location.href;
+  const isDevSite =
+    currentUrl.includes("https://engagement.gww.gov.bc.ca/lsa/admin") ||
+    currentUrl.includes("localhost");
+
   return (
     // Do not display header on RSVP registration
     <>
       {/* {!location.pathname.includes("/rsvp/") && ( */}
       <header>
         <BlockUI blocked={loading}>
-          {nodeENV === "development" ? (
+          {nodeENV === "development" || isDevSite ? (
             <div className="w-screen bg-orange-500 fixed top-0 z-9999 m-0 text-center">
               Test Environment
             </div>
