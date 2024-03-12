@@ -36,11 +36,6 @@ export default function App() {
       {/* {!location.pathname.includes("/rsvp/") && ( */}
       <header>
         <BlockUI blocked={loading}>
-          {nodeENV === "development" || isDevSite ? (
-            <div className="w-screen bg-orange-500 fixed top-0 z-9999 m-0 text-center">
-              Test Environment
-            </div>
-          ) : null}
           <MenuBar />
         </BlockUI>
       </header>
@@ -50,6 +45,11 @@ export default function App() {
           {loading ? <p>Loading...</p> : <Outlet />}
         </div>
       </main>
+      {nodeENV === "development" || isDevSite ? (
+        <div className="w-screen bg-orange-500 fixed top-0 z-9999 m-0 text-center">
+          Test Environment
+        </div>
+      ) : null}
     </>
   );
 }
