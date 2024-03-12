@@ -105,7 +105,7 @@ export default function RecipientList() {
 
     // get attendees records
     api
-      .getAttendees()
+      .getAttendees(filter)
       .then(({ attendees }) => setAttendees(attendees))
       .catch(console.error);
 
@@ -229,6 +229,7 @@ export default function RecipientList() {
       : ceremonyStatuses.default;
     // check if recipient is an attendee
     if (attendees) {
+      attendees.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
       const attendee = attendees.find((a) => a.recipient.id === rowData.id);
       if (attendee)
         statusIndicator =
