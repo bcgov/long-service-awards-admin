@@ -104,7 +104,7 @@ function UserRequestPasswordReset({callback}) {
                                             id={field.name}
                                             value={field.value || ''}
                                             {...field}
-                                            onChange={(e) => field.onChange(e.target.value)}
+                                            onChange={(e) => field.onChange(e.target.value.toLowerCase())}
                                             aria-describedby={`email-login-help`}
                                             className={classNames({"p-invalid": error})}
                                             placeholder={'Enter your account email address'}
