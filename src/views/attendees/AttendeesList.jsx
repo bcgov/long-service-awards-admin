@@ -101,7 +101,7 @@ export default function AttendeesList() {
             let attendee = a;
             if (a.guest === 1) {
               attendee = attendees.find(
-                (at) => at.recipient.id === a.recipient.id
+                (at) => at.recipient.id === a.recipient.id && at.guest === 0
               );
               Object.assign(attendee, {
                 guest_profile: a,
@@ -205,7 +205,7 @@ export default function AttendeesList() {
   };
 
   const guestCount = (rowData) => {
-    return rowData.guest_profile ? 2 : 1;
+    return rowData.guest_profile ? 1 : 0;
   };
 
   const formattedCeremonyDateTemplate = (rowData) => {
