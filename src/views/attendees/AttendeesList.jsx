@@ -51,6 +51,7 @@ export default function AttendeesList() {
   const [loading, setLoading] = useState(false);
   const [showDialog, setShowDialog] = useState(null);
   const [attendees, setAttendees] = useState([]);
+  const [expandedRows, setExpandedRows] = useState(null);
   const [totalFilteredRecords, setTotalFilteredRecords] = useState(0);
   const [showRSVPDialog, setShowRSVPDialog] = useState(false);
   const [selected, setSelected] = useState([]);
@@ -94,9 +95,22 @@ export default function AttendeesList() {
     api
       .getAttendees(filter)
       .then((res) => {
-        const { total_filtered_records, attendees } = res || {};
+        let { total_filtered_records, attendees } = res || {};
+        attendees = attendees
+          .filter((a) => {
+            let attendee = a;
+            if (a.guest === 1) {
+              attendee = attendees.find(
+                (at) => at.recipient.id === a.recipient.id
+              );
+              Object.assign(attendee, {
+                guest_profile: a,
+              });
+            }
+            return attendee;
+          })
+          .filter((a) => a.guest === 0);
         setAttendees(attendees);
-        console.log(attendees);
         setTotalFilteredRecords(total_filtered_records);
         generateStatusesNumbers(attendees);
       })
@@ -190,6 +204,10 @@ export default function AttendeesList() {
     );
   };
 
+  const guestCount = (rowData) => {
+    return rowData.guest_profile ? 2 : 1;
+  };
+
   const formattedCeremonyDateTemplate = (rowData) => {
     return format(
       new Date(rowData.ceremony.datetime),
@@ -235,6 +253,26 @@ export default function AttendeesList() {
       if (attendee.status === "invited") invited++;
     });
     setStatusesNumbers({ attending, declined, invited });
+  };
+
+  const allowExpansion = (rowData) => {
+    return rowData.guest_profile;
+  };
+
+  const rowExpansionTemplate = (data) => {
+    return (
+      <div className="grid col-offset-2 pl-2 gap-3 align-items-center">
+        <div>
+          <EditToolBar
+            item={data.guest_profile}
+            save={`/attendees/edit/${data.guest_profile.id}`}
+            view={() => onView(data.guest_profile)}
+            remove={() => onDelete(data.guest_profile)}
+          />
+        </div>
+        <span className="ml-2 p-column-title">Guest</span>
+      </div>
+    );
   };
 
   useEffect(() => {
@@ -366,6 +404,9 @@ export default function AttendeesList() {
       </Dialog>
       <DataTable
         value={attendees}
+        expandedRows={expandedRows}
+        onRowToggle={(e) => setExpandedRows(e.data)}
+        rowExpansionTemplate={rowExpansionTemplate}
         lazy
         dataKey="id"
         paginator
@@ -417,6 +458,7 @@ export default function AttendeesList() {
         onSort={applySort}
       >
         <Column selectionMode="multiple" />
+        <Column expander={allowExpansion} style={{ width: "5rem" }} />
         <Column
           className={"p-1"}
           bodyStyle={{ overflow: "visible", maxWidth: "12em" }}
@@ -434,24 +476,6 @@ export default function AttendeesList() {
         />
         <Column
           className={"p-1"}
-          header="Status"
-          field="status"
-          body={statusTemplate}
-          headerStyle={{ minWidth: "10em" }}
-          bodyStyle={{ minWidth: "10em" }}
-          sortable
-        />
-        <Column
-          className={"p-1"}
-          field="guest"
-          header="Type"
-          body={guestTemplate}
-          headerStyle={{ minWidth: "7em" }}
-          bodyStyle={{ minWidth: "7em" }}
-          sortable
-        />
-        <Column
-          className={"p-1"}
           field="recipient.contact.first_name"
           header="First Name"
           headerStyle={{ minWidth: "7em" }}
@@ -466,6 +490,25 @@ export default function AttendeesList() {
           bodyStyle={{ minWidth: "7em" }}
           sortable
         />
+        <Column
+          className={"p-1"}
+          header="Status"
+          field="status"
+          body={statusTemplate}
+          headerStyle={{ minWidth: "10em" }}
+          bodyStyle={{ minWidth: "10em" }}
+          sortable
+        />
+        <Column
+          className={"p-1"}
+          field="guest"
+          header="Guests"
+          body={guestCount}
+          headerStyle={{ minWidth: "7em" }}
+          bodyStyle={{ minWidth: "7em" }}
+          sortable
+        />
+
         <Column
           className={"p-1"}
           field="recipient.organization.abbreviation"
