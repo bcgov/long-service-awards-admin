@@ -131,6 +131,11 @@ function MenuBar() {
         icon: "pi pi-fw pi-building\n",
         url: `${import.meta.env.LSA_APPS_ADMIN_URL}/organizations`,
       },
+      {
+        label: "Service Pins PDF Generator",
+        icon: "pi pi-fw pi-building\n",
+        url: "https://engagement.gww.gov.bc.ca/lsa/servicepins/",
+      },
     ]);
   }
 
