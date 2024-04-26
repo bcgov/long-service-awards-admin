@@ -134,7 +134,7 @@ function MenuBar() {
       {
         label: "Service Pins PDF Generator",
         icon: "pi pi-fw pi-building\n",
-        url: "https://engagement.gww.gov.bc.ca/lsa/servicepins/",
+        url: "https://lsaapp.gww.gov.bc.ca/servicepins-pdf/",
       },
     ]);
   }
