@@ -38,7 +38,8 @@ const handleResponse = (error, response) => {
     if (error.response.status === 403 || error.response.status === 401)
       return ["notAuthorized", null];
     else if (error.response.status === 422) return ["invalidData", null];
-    else return ["serverError", null];
+    //else if (error == awardOptionInUse) // Check for awardOptionInUse from API error.js here
+    else return ["serverError", response];
   }
   // post message and return result
   const { data } = response || {};
