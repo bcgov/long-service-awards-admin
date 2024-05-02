@@ -488,7 +488,7 @@ export default function AttendeesList() {
         <Column
           className={"p-1"}
           field="guest"
-          header="Guests"
+          header="Total Attendees"
           body={guestCount}
           headerStyle={{ minWidth: "7em" }}
           bodyStyle={{ minWidth: "7em" }}
