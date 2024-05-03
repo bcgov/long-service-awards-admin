@@ -42,7 +42,7 @@ export default function AwardList() {
     const _handleSave = async (data) => {
       try {
         status.setMessage("save");
-        const result = await api.saveAward(data);
+        const [error, result] = await api.saveAward(data);
         if (error) status.setMessage(result);
         else status.setMessage("saveSuccess");
         if (!error && result) return result;
