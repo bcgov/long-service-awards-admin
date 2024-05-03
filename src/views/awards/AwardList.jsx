@@ -45,9 +45,10 @@ export default function AwardList() {
         const [error, result] = await api.saveAward(data);
         if (error) status.setMessage(result);
         else status.setMessage("saveSuccess");
-        if (!error && result) return result;
+        if (!error && result) return [error, result];
       } catch (error) {
         status.setMessage("saveError");
+        return [error, null];
       }
     };
     //const _save = async (data) => api.saveAward(data).finally(callback);
