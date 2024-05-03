@@ -190,22 +190,8 @@ export default function AttendeesList() {
     setSelectAll(value.length === totalFilteredRecords);
   };
 
-  const onSelectAllChange = (event) => {};
-
-  const guestTemplate = (rowData) => {
-    const { guest } = rowData || {};
-    const isGuest = guest === 1;
-    return (
-      <Tag
-        tooltip={isGuest ? "Guest" : "Recipient"}
-        value={isGuest ? "Guest" : "Recipient"}
-        severity={isGuest ? "danger" : "info"}
-      />
-    );
-  };
-
   const guestCount = (rowData) => {
-    return rowData.guest_profile ? 1 : 0;
+    return rowData.guest_profile ? 2 : 1;
   };
 
   const formattedCeremonyDateTemplate = (rowData) => {
