@@ -11,13 +11,14 @@ import AwardView from "@/views/awards/AwardView.jsx";
 import AwardEdit from "@/views/awards/AwardEdit.jsx";
 import DataEdit from "@/views/default/DataEdit.jsx";
 import AwardOptionsEdit from "@/views/awards/AwardOptionsEdit";
-
+import { useStatus } from "@/providers/status.provider.jsx";
 /**
  * Inherited model component
  */
 
 export default function AwardList() {
   const api = useAPI();
+  const status = useStatus();
 
   const awardTypes = [
     { name: "stationary", label: "Stationary" },
@@ -37,10 +38,30 @@ export default function AwardList() {
   const optionsTemplate = (data, callback) => {
     const { id } = data || {};
     const _loader = async () => api.getAward(id);
-    const _save = async (data) => api.saveAward(data).finally(callback);
+    // save record form data
+    const _handleSave = async (data) => {
+      try {
+        status.setMessage("save");
+        const [error, result] = await api.saveAward(data);
+        if (error) status.setMessage(result);
+        else status.setMessage("saveSuccess");
+        if (!error && result) {
+          callback();
+          return [error, result];
+        }
+      } catch (error) {
+        status.setMessage("saveError");
+        return [error, null];
+      }
+    };
     const _remove = async () => api.removeAward(id);
     return (
-      <DataEdit loader={_loader} save={_save} remove={_remove} defaults={data}>
+      <DataEdit
+        loader={_loader}
+        save={_handleSave}
+        remove={_remove}
+        defaults={data}
+      >
         <AwardOptionsEdit awardTypes={awardTypes} />
       </DataEdit>
     );
