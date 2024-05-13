@@ -65,6 +65,10 @@ export default function RSVPCreate() {
           new Date(sanitizedData.ceremony.datetime),
           `EEEE, MMMM dd, yyyy`
         )}`,
+        ceremony_time: `${format(
+          new Date(sanitizedData.ceremony.datetime),
+          `p`
+        )}`,
       });
 
       updatedStatusData = {

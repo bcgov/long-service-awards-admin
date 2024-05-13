@@ -59,6 +59,7 @@ export default function InvitationCreate({
           new Date(recipient.ceremony.datetime),
           `EEEE, MMMM dd, yyyy`
         )}`,
+        ceremony_time: `${format(new Date(recipient.ceremony.datetime), `p`)}`,
       });
 
       console.log(data);
