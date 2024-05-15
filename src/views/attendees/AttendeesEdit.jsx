@@ -112,7 +112,7 @@ export default function AttendeesEdit({ isEditing, selectedRecipients }) {
       <FormContext
         loader={_loader}
         save={_handleSave}
-        remove={_handleDelete}
+        remove={() => _handleDelete(id)}
         cancel={_handleCancel}
         defaults={defaults}
         blocked={false}
