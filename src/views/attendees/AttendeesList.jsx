@@ -171,6 +171,13 @@ export default function AttendeesList() {
     api
       .removeAttendee(id)
       .then(() => {
+        let _expandedRows = expandedRows;
+        attendees.forEach((a) => {
+          if (a.recipient.id == data.recipient.id)
+            delete _expandedRows[`${a.id}`];
+        });
+        setExpandedRows(_expandedRows);
+
         status.setMessage("delete");
         loadData(pageState, filters, sort);
       })
