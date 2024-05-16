@@ -241,8 +241,10 @@ export default function AttendeesList() {
     let declined = 0;
     let invited = 0;
     attendees.forEach((attendee) => {
-      if (attendee.status === "attending") attending++;
-      if (attendee.status === "attending" && attendee.guest_profile)
+      if (
+        attendee.status === "attending" ||
+        (attendee.status === "attending" && attendee.guest_profile)
+      )
         attending++;
       if (attendee.status === "declined") declined++;
       if (attendee.status === "invited") invited++;
