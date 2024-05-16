@@ -105,9 +105,14 @@ export default function RSVPOptions() {
               />
             </div>
             <div className={"col-12 form-field-container"}>
-              <label className={"m-1 font-bold"} htmlFor={`accommodations`}>
-                Dietary Requirements
+              <label className={"font-bold"} htmlFor={`accommodations`}>
+                Dietary allergies and requirements
               </label>
+              <p>
+                The dinner buffet will have an assortment of labelled dishes.
+                The buffet will accommodate most requirements. Please review the
+                options below and select all requirements that apply.
+              </p>
               {accommodations.map((o, i) => (
                 <Controller
                   name={`recipient_accommodations.` + `${o.name}`}
