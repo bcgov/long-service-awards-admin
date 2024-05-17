@@ -103,6 +103,7 @@ export default function AttendeesList() {
               attendee = attendees.find(
                 (at) => at.recipient.id === a.recipient.id && at.guest === 0
               );
+              if (!attendee) return undefined;
               Object.assign(attendee, {
                 guest_profile: a,
               });
@@ -241,13 +242,12 @@ export default function AttendeesList() {
     let declined = 0;
     let invited = 0;
     attendees.forEach((attendee) => {
-      if (
-        attendee.status === "attending" ||
-        (attendee.status === "attending" && attendee.guest_profile)
-      )
+      if (attendee.status === "attending" && !attendee.guest_profile)
         attending++;
-      if (attendee.status === "declined") declined++;
-      if (attendee.status === "invited") invited++;
+      else if (attendee.status === "attending" && attendee.guest_profile)
+        attending += 2;
+      else if (attendee.status === "declined") declined++;
+      else if (attendee.status === "invited") invited++;
     });
     setStatusesNumbers({ attending, declined, invited });
   };
