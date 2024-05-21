@@ -43,25 +43,27 @@ export default function AwardList() {
       try {
         status.setMessage("save");
         const [error, result] = await api.saveAward(data);
-        if (error) status.setMessage(result);
-        else status.setMessage("saveSuccess");
+        if (error && error !== "awardOptionInUse") status.setMessage(error);
+        else if (error && error === "awardOptionInUse") {
+          throw error;
+        } else status.setMessage("saveSuccess");
         if (!error && result) {
           callback();
           return [error, result];
         }
       } catch (error) {
-        status.setMessage("saveError");
-        return [error, null];
+        if (error === "awardOptionInUse") {
+          status.setMessage("awardOptionInUse");
+          //Do not return anything so that DataEdit.jsx save fails and catches, thus overriding it's error messages and preventing seeing the error we just set above.
+        } else {
+          status.setMessage("saveError");
+          return [error, null];
+        }
       }
     };
     const _remove = async () => api.removeAward(id);
     return (
-      <DataEdit
-        loader={_loader}
-        save={_handleSave}
-        remove={_remove}
-        defaults={data}
-      >
+      <DataEdit loader={_loader} save={_handleSave} defaults={data}>
         <AwardOptionsEdit awardTypes={awardTypes} />
       </DataEdit>
     );

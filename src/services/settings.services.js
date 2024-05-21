@@ -22,7 +22,8 @@ const schemaData = {
       text: {
         severity: "success",
         summary: "Registration Successful!",
-        detail: "Thank you! Your registration have been submitted and you will be notified once it has been approved.",
+        detail:
+          "Thank you! Your registration have been submitted and you will be notified once it has been approved.",
         sticky: true,
         closable: true,
       },
@@ -35,7 +36,7 @@ const schemaData = {
         detail: "Submitting form data. Please Wait.",
         sticky: true,
         closable: true,
-        life: 5000
+        life: 5000,
       },
     },
     {
@@ -46,7 +47,7 @@ const schemaData = {
         detail: "Creating a new record. Please Wait.",
         sticky: true,
         closable: false,
-        life: 5000
+        life: 5000,
       },
     },
     {
@@ -55,7 +56,7 @@ const schemaData = {
         severity: "success",
         summary: "Record Deleted",
         detail: "The requested record was removed.",
-        life: 3000
+        life: 3000,
       },
     },
     {
@@ -65,7 +66,7 @@ const schemaData = {
         summary: "Registration Failed",
         detail: "Your registration details may be invalid.",
         sticky: true,
-        closable: true
+        closable: true,
       },
     },
     {
@@ -94,7 +95,7 @@ const schemaData = {
         severity: "error",
         summary: "Record could not be created.",
         detail:
-            "There was an error in processing your request. If issues persist, please contact support",
+          "There was an error in processing your request. If issues persist, please contact support",
         closable: true,
         sticky: true,
       },
@@ -104,8 +105,7 @@ const schemaData = {
       text: {
         severity: "error",
         summary: "User authentication failed",
-        detail:
-            "Authentication failed. Please check your login credentials.",
+        detail: "Authentication failed. Please check your login credentials.",
         closable: true,
         sticky: true,
       },
@@ -116,7 +116,7 @@ const schemaData = {
         severity: "error",
         summary: "Error! Save Failed",
         detail:
-            "There was an error in processing your request. If issues persist, please contact support",
+          "There was an error in processing your request. If issues persist, please contact support",
         sticky: true,
       },
     },
@@ -127,7 +127,7 @@ const schemaData = {
         summary: "Success!",
         detail: "Record Updated!",
         life: 1000,
-      }
+      },
     },
     {
       value: "confirmAward",
@@ -135,7 +135,7 @@ const schemaData = {
         severity: "success",
         summary: "Award Selected!",
         detail: "Award options confirmed.",
-        life: 3000
+        life: 3000,
       },
     },
     {
@@ -146,7 +146,7 @@ const schemaData = {
         detail: "Sending email messages...",
         sticky: true,
         closable: false,
-        life: 5000
+        life: 5000,
       },
     },
     {
@@ -155,7 +155,7 @@ const schemaData = {
         severity: "success",
         summary: "Mail Sent Successfully!",
         detail: "Email message was sent successfully.",
-        life: 3000
+        life: 3000,
       },
     },
     {
@@ -165,7 +165,7 @@ const schemaData = {
         summary: "Mail Send Failed",
         detail: "Email message could not be sent.",
         sticky: true,
-        closable: true
+        closable: true,
       },
     },
     {
@@ -176,14 +176,24 @@ const schemaData = {
         detail: "Download failed due to an error.",
         sticky: true,
         closable: false,
-        life: 5000
+        life: 5000,
       },
     },
-  ]
+    {
+      value: "awardOptionInUse",
+      text: {
+        severity: "error",
+        summary: "Award Option is in use",
+        detail:
+          "Award option cannot be deleted because it is in use by recipient. Please create a new award with new award options if this option must be deleted.",
+        sticky: true,
+        closable: true,
+      },
+    },
+  ],
 };
 
 export default {
-
   /**
    * get enumerated data by key
    * **/
@@ -196,7 +206,7 @@ export default {
    * get a copy of the schema data
    * **/
 
-  copy: function copy(key, value, idKey='key') {
+  copy: function copy(key, value, idKey = "key") {
     if (typeof schemaData[key] === "undefined") return null;
     const found = schemaData[key].find((item) => item[idKey] === value);
     return found ? Object.assign({}, found) : null;
@@ -217,11 +227,11 @@ export default {
    */
 
   sort: function sort(arr, field) {
-      return arr.sort((a, b) => {
-        if (a.hasOwnProperty(field) && b.hasOwnProperty(field)) {
-          return a[field] < b[field] ? -1 : 1;
-        }
-        return 0;
-      })
-    }
+    return arr.sort((a, b) => {
+      if (a.hasOwnProperty(field) && b.hasOwnProperty(field)) {
+        return a[field] < b[field] ? -1 : 1;
+      }
+      return 0;
+    });
+  },
 };
