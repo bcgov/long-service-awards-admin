@@ -41,11 +41,15 @@ export default function DataEdit({
     try {
       status.setMessage("save");
       const [error, result] = await save(data);
-      if (error) status.setMessage("saveError");
+      if (error && result) status.setMessage(result);
+      else if (error && !result) status.setMessage("saveError");
       else status.setMessage("saveSuccess");
       if (!error && result) return result;
     } catch (error) {
-      status.setMessage("saveError");
+      console.log(
+        "[ERROR] DataEdit.jsx->_handleSave save parameter threw error and may need error message within it!"
+      );
+      //status.setMessage("saveError");
     }
   };
 
