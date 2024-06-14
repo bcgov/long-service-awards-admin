@@ -21,6 +21,7 @@ import { DataTable } from "primereact/datatable";
 import { Dialog } from "primereact/dialog";
 import { Tag } from "primereact/tag";
 import { Toolbar } from "primereact/toolbar";
+import { Tooltip } from "primereact/tooltip";
 import { Fragment, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { InputText } from "primereact/inputtext";
@@ -381,8 +382,6 @@ export default function RecipientList() {
     setSelectAll(value.length === stats);
   };
 
-  const onSelectAllChange = () => {};
-
   /**
    * Render data table header component
    * */
@@ -578,7 +577,6 @@ export default function RecipientList() {
         selection={selected}
         onSelectionChange={onSelectionChange}
         selectAll={selectAll}
-        onSelectAllChange={onSelectAllChange}
         tableStyle={{ minHeight: "70vh" }}
         header={header}
         scrollable
@@ -586,7 +584,22 @@ export default function RecipientList() {
         filterDisplay="menu"
         onSort={applySort}
       >
-        <Column selectionMode="multiple" />
+        <Column
+          selectionMode="multiple"
+          // <i> Styling overrides the [HeaderText][checkbox] default ordering
+          header={
+            <i
+              class="pi pi-info-circle"
+              style={{
+                float: "right",
+                position: "Absolute",
+                left: "50px",
+                top: "19px",
+              }}
+            />
+          }
+          headerTooltip="Selects all items on this page only"
+        />
         <Column
           className={"p-1"}
           bodyStyle={{ overflow: "visible", maxWidth: "12em" }}
