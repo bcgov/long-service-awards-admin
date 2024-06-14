@@ -121,8 +121,9 @@ export default function AttendeesEditInput({ isEditing, selectedRecipients }) {
           <div className="grid">
             <div className={"col-12 form-field-container"}>
               <label htmlFor={"recipients"}>
-                Selected Recipients Will be Assigned to Ceremony :
+                Selected Recipients Will be Assigned to Ceremony:
               </label>
+
               <Controller
                 name={isEditing ? `recipient.contact.full_name` : `recipients`}
                 control={control}
@@ -135,7 +136,7 @@ export default function AttendeesEditInput({ isEditing, selectedRecipients }) {
                 render={({ field, fieldState: { invalid, error } }) => {
                   return !isEditing ? (
                     <Fragment>
-                      <div className="flex">
+                      <div className="flex flex-wrap">
                         {selectedRecipients.map((r) => (
                           <Chip
                             label={r.contact.full_name}
