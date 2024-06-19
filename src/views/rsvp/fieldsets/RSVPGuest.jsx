@@ -24,7 +24,7 @@ export default function RSVPGuest() {
 
   useEffect(() => {
     api
-      .getAccommodations()
+      .getRSVPAccommodations()
       .then((results) => {
         const accommodations = results || {};
         //remove accesibility requirement from the list
