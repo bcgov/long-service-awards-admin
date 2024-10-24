@@ -55,7 +55,11 @@ export default function RSVPInviteeDetails() {
                       label={
                         field.value
                           ? format(
-                              new Date(field.value),
+                              new Date(
+                                field.value.toLocaleString("en-US", {
+                                  timeZone: "America/Vancouver",
+                                })
+                              ),
                               `p 'on' EEEE, MMMM dd, yyyy`
                             )
                           : ""

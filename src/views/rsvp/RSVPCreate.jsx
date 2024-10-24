@@ -58,15 +58,24 @@ export default function RSVPCreate() {
             : {}
         );
       }
+
       //format ceremony date for email
       Object.assign(sanitizedData.ceremony, {
         ...sanitizedData.ceremony,
         datetime_formatted: `${format(
-          new Date(sanitizedData.ceremony.datetime),
+          new Date(
+            sanitizedData.ceremony.datetime.toLocaleString("en-US", {
+              timeZone: "America/Vancouver",
+            })
+          ),
           `EEEE, MMMM dd, yyyy`
         )}`,
         ceremony_time: `${format(
-          new Date(sanitizedData.ceremony.datetime),
+          new Date(
+            sanitizedData.ceremony.datetime.toLocaleString("en-US", {
+              timeZone: "America/Vancouver",
+            })
+          ),
           `p`
         )}`,
       });
