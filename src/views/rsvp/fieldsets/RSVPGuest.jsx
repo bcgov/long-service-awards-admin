@@ -22,6 +22,11 @@ export default function RSVPGuest() {
     { name: "No", value: false },
   ];
 
+  const guestOptions = [
+    { name: "Yes", value: true, description: "Yes, I am bringing a guest" },
+    { name: "No", value: false, description: "No, I am not bringing a guest" },
+  ];
+
   useEffect(() => {
     api
       .getRSVPAccommodations()
@@ -54,8 +59,9 @@ export default function RSVPGuest() {
             <Controller
               name="guest_count"
               control={control}
-              render={({ field, fieldState: { invalid, error } }) => (
-                <div className="flex align-items-center">
+              defaultValue={false}
+              render={({ field, fieldState: { invalid, error } }) => (<>
+                {/**<div className="flex align-items-center">
                   <Checkbox
                     id={field.name}
                     inputId={field.name}
@@ -71,10 +77,42 @@ export default function RSVPGuest() {
                   />
                   {invalid && <p className="error">{error.message}</p>}
                   <label className={"ml-2"} htmlFor={`guest`}>
-                    I would like to bring a guest
+                    Yes, I would like to bring a guest
+                  </label>
+                </div>**/}
+
+                <div className="flex align-items-center">
+                  <SelectButton
+                    className={"radio-toggle"}
+                    value={field.value}
+                    onChange={(e) => {
+                      setValue(
+                        "guest_count",
+                        e.value === true
+                      );
+
+                      setGuestAccommodations(!guestAccommodations);  
+
+                    }}
+                    options={guestOptions.map(a => { return { "value": a.value, "name": a.name }; })}
+                    optionLabel="name"
+                  />
+                  <label
+                    className={"ml-2"}
+                    htmlFor={`guest_count`}
+                  >
+                    (Selected:{" "}
+                    {
+                      (guestOptions.find(
+                        (a) => a.value === field.value
+                      ) || {}).description
+                      
+                    }
+                    )
                   </label>
                 </div>
-              )}
+
+              </>)}
             />
           </div>
           {guestAccommodations && (
@@ -125,7 +163,7 @@ export default function RSVPGuest() {
                           </label>
                         </div>
                         <small>
-                          If yes. someone from the Long Service Awards team will
+                          If yes, someone from the Long Service Awards team will
                           contact you closer to the event for further
                           information
                         </small>
