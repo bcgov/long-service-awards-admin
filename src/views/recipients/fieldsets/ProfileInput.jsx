@@ -11,7 +11,8 @@ import { InputText } from "primereact/inputtext";
 import { matchers } from "@/services/validation.services.js";
 import { Dropdown } from "primereact/dropdown";
 import { Panel } from "primereact/panel";
-import { SelectButton } from "primereact/selectbutton";
+import { RadioButton } from 'primereact/radiobutton';
+
 import { useAPI } from "@/providers/api.provider.jsx";
 import classNames from "classnames";
 import FieldsetHeader from "@/components/common/FieldsetHeader.jsx";
@@ -155,34 +156,66 @@ export default function ProfileInput({ validate }) {
           </div>
 
           <div className={"col-12 form-field-container"}>
-            <label htmlFor={"contact.alternate_is_preferred"}>
+            <p>
               Alternate Email Address is preferred
-            </label>
-            <Controller
-              name={"contact.alternate_is_preferred"}
-              control={control}
-              render={({ field, fieldState: { invalid, error } }) => (
-                <>
-                  <SelectButton
-                    className={"radio-toggle"}
-                    value={field.value ? "Yes" : "No"}
-                    onChange={(e) => {
-                      setValue(
-                        "contact.alternate_is_preferred",
-                        e.value === "Yes"
-                      );
-                    }}
-                    options={["Yes", "No"]}
-                  />
-                  <label className={"ml-3"}>
-                    Recipient has previously registered for this milestone (in
-                    the last 2 years) and was unable to attend the ceremony.
-                  </label>
-                </>
-              )}
-            />
-          </div>
+            </p>
+            <div className="grid">
+                
+              <Controller
+                name={"contact.alternate_is_preferred"}
+                control={control}
+                render={({ field, fieldState: { invalid, error } }) => (
+                  <>
+                    <div className="col-12 form-field-container">
+                      <div className="flex align-items-center">
+                        <RadioButton
+                          inputId="alternateEmailPreferredNo"
+                          name="alternateEmailPreferred"
+                          checked={field.value != true}
+                          value="No"
+                          onChange={(e) => {
+                            setValue(
+                              "contact.alternate_is_preferred",
+                              e.value === "Yes"
+                            );
+                          }}
+                        />
+                        <label className={"ml-3"} htmlFor="alternateEmailPreferredNo">No, recipient prefers BC Government email address</label>
+                      </div>
+                      <div className="flex align-items-center">
+                        <RadioButton
+                          inputId="alternateEmailPreferredYes"
+                          checked={field.value}
+                          name="alternateEmailPreferred"
+                          value="Yes"
+                          onChange={(e) => {
+                            setValue(
+                              "contact.alternate_is_preferred",
+                              e.value === "Yes"
+                            );
+                            console.log(field.value)
+                          }}
+                          />
+                        <label className={"ml-3"} htmlFor="alternateEmailPreferredYes">Yes, recipient prefers alternate email address</label>
+                      </div>
+                     
+                      {/* Not sure why this is here, because it is repeated in Registration Options in next fieldset */}
+                      <div className="flex align-items-center">
+                        <p>
+                          Recipient has previously registered for this milestone (in
+                          the last 2 years) and was unable to attend the ceremony.
+                        </p>
+                      </div>
+                    </div>
 
+                  </>
+              
+                )}
+              />
+            </div>
+            
+            
+          </div>
           <div className="col-12 form-field-container">
             <label htmlFor={`employee_number`}>
               Employee Number (six digits)
