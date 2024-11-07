@@ -140,6 +140,11 @@ button:focus-visible {
   z-index: 999 !important;
 }
 
+.disabled-setting-row {
+  background-color: rgba(138, 0, 0, 0.184) !important;
+
+}
+
 @media (prefers-color-scheme: light) {
   :root {
     color: #213547;
