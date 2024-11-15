@@ -8,7 +8,7 @@
 import { useEffect, useState } from "react";
 import { Controller, useFormContext, useWatch } from "react-hook-form";
 import { InputText } from "primereact/inputtext";
-import { matchers } from "@/services/validation.services.js";
+import { matchers, validators } from "@/services/validation.services.js";
 import { Dropdown } from "primereact/dropdown";
 import { Panel } from "primereact/panel";
 import { RadioButton } from 'primereact/radiobutton';
@@ -37,6 +37,19 @@ export default function ProfileInput({ validate }) {
     api.getOrganizationsUser().then(setOrganizations).catch(console.error);
   }, []);
 
+  const [currentCycle, setCurrentCycle ] = useState(null);
+  useEffect( () => {
+    api
+    .getQualifyingYears()
+    .then((years) => {
+      const { name } = (years || []).find((y) => y.current) || {};
+      //console.log(`currentCycle is ${name}`);
+      setCurrentCycle(name);
+    })
+    .catch(console.error);
+
+  }, []);
+  
   // auto-validate fieldset
   useEffect(() => {
     setComplete(validate(getValues()) || false);
@@ -228,6 +241,27 @@ export default function ProfileInput({ validate }) {
                 pattern: {
                   value: matchers.employeeNumber,
                   message: "Invalid employee number. (e.g., 123456)",
+                },
+                
+                validate: {
+                  duplicate: async (...values) => {
+                    // Check if recipient employee number is unique in cycle (LSA-478)
+                    const [ input, rowData ] = values;
+                    //console.log(`currentCycle is ${currentCycle}`);
+                    const { services, status } = rowData || {};
+                    const hasServices = (services || []).some(
+                      (service) => service.cycle === currentCycle
+                    );
+                   
+                    if ( hasServices ) {
+                      
+                      console.log(`We have services so assuming it's an existing entry, so we're not validating`);
+                      return true;
+                    }
+
+                    const exists = await validators.recipientExistsInCycle(input);
+                    return !exists || "Employee number has already been registered for this cycle."
+                  }
                 },
               }}
               render={({ field, fieldState: { invalid, error } }) => (

@@ -9,6 +9,8 @@
  * Regular expression patterns for validation checks
  * **/
 
+import api from "../services/api.services.js";
+
 export const matchers = {
   employeeNumber: /^\d{6}$/i,
   govEmail: /^[A-Z0-9._%+-]+@(?:[A-Z0-9-]+\.)+[A-Z]{2,4}$/i,
@@ -39,6 +41,34 @@ export const validators = {
 
   employeeNumber: (data) => {
     return !data || !!String(data).match(matchers.employeeNumber);
+  },
+
+  /**
+   * Check if recipient employee number is unique in cycle (LSA-478)
+   * Validation in validate() is happening in sync, so we need to find a way of accommodating the async api call
+   * */
+
+  recipientExistsInCycle: async (data) => {
+
+    const getRecipientExistsInCycle = async (employeeNumber) => {
+
+      const [_, res] = await api.get(
+        `/recipients/admin/exists/${employeeNumber}`
+      );
+      
+      if ( res == null ) {
+
+        // In case an error occurs, we return false to allow registration to continue
+        return false;
+      }
+
+      const { result } = res || {};
+      return result;
+    };
+
+    const exists = await getRecipientExistsInCycle(data);
+    //console.log('unq ' +unique);
+    return exists;
   },
 
   /**
