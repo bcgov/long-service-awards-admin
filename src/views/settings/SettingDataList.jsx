@@ -250,6 +250,22 @@ export default function SettingDataList({
     );
   };
 
+  const valueTemplate = (rowData) => {
+    console.log(rowData);
+    if (
+      rowData.name == "ceremony-rsvp-open-date" ||
+      rowData.name == "ceremony-rsvp-close-date"
+    )
+      return new Date(rowData.value).toLocaleString([], {
+        year: "numeric",
+        month: "numeric",
+        day: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+      });
+    else return rowData.value;
+  };
+
   /**
    * Render data table
    * */
@@ -320,17 +336,30 @@ export default function SettingDataList({
           }}
         />
         {schema.map((col, i) => {
-          return (
-            <Column
-              className={"p-1"}
-              sortField={col.name}
-              sortable={col.sortable}
-              key={`${col.name}-${i}`}
-              field={col.name}
-              header={col.label}
-              body={col.body}
-            />
-          );
+          if (col.name == "value")
+            return (
+              <Column
+                className={"p-1"}
+                sortField={col.name}
+                sortable={col.sortable}
+                key={`${col.name}-${i}`}
+                field={col.name}
+                header={col.label}
+                body={valueTemplate}
+              />
+            );
+          else
+            return (
+              <Column
+                className={"p-1"}
+                sortField={col.name}
+                sortable={col.sortable}
+                key={`${col.name}-${i}`}
+                field={col.name}
+                header={col.label}
+                body={col.body}
+              />
+            );
         })}
       </DataTable>
     </>

@@ -79,12 +79,15 @@ export default function SettingEdit() {
               control={control}
               render={({ field, fieldState: { invalid, error } }) => (
                 <>
+                  {}
                   {showCalendar && (
                     <Calendar
-                      value={field.value || ""}
+                      value={new Date(field.value) || ""}
                       onChange={(e) => field.onChange(e.target.value)}
                       inline
                       showTime
+                      hourFormat="12"
+                      showSeconds={false}
                     />
                   )}
                   {!showCalendar && (
