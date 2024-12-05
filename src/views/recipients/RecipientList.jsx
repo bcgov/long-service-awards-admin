@@ -360,11 +360,16 @@ export default function RecipientList() {
 
   const onDelete = (data) => {
     const { id } = data || {};
+
     api
       .removeRecipient(id)
-      .then(() => {
-        status.setMessage("delete");
-        loadData(pageState, filters, sort);
+      .then(([error, result]) => {
+        if (error) {
+          status.setMessage("deleteError");
+        } else {
+          status.setMessage("delete");
+          loadData(pageState, filters, sort);
+        }
       })
       .catch((e) => {
         console.error(e);
