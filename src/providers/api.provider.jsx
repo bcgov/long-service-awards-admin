@@ -159,8 +159,7 @@ function APIProvider(props) {
    * */
 
   const removeRecipient = async (id) => {
-    const [_, result] = await api.get(`/recipients/admin/delete/${id}`);
-    return result;
+    return await api.get(`/recipients/admin/delete/${id}`);
   };
 
   /**

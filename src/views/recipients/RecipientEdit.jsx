@@ -49,23 +49,18 @@ export default function RecipientEdit() {
   const _handleDelete = async (id) => {
     try {
       const [error, result] = await api.removeRecipient(id);
-      if (error)
-        status.setMessage({
-          message: "Error: Could Not Delete Recipient Record",
-          severity: "danger",
-        });
-      else
+      if (error) {
+        status.setMessage("deleteError");
+      } else {
         status.setMessage({
           message: "Recipient Record Deleted!",
           severity: "success",
         });
+      }
       if (!error && result) return result;
     } catch (error) {
       status.clear();
-      status.setMessage({
-        message: "Error: Could Not Delete Recipient Record",
-        severity: "danger",
-      });
+      status.setMessage("deleteError");
     }
   };
 

@@ -72,7 +72,7 @@ const schemaData = {
     {
       value: "deleteError",
       text: {
-        severity: "danger",
+        severity: "error",
         summary: "Record Deletion Error",
         detail: "The requested record could not be removed.",
         closable: true,
