@@ -126,6 +126,14 @@ export default function ReportList() {
       description: "All errors that have occurred for email transactions.",
       authorized: isAdmin,
     },
+    {
+      id: "duplicates",
+      filename: "duplicates-report",
+      format: "csv",
+      label: "Duplicate Recipient Report",
+      description: "List of duplicate recipients for selected cycle.",
+      authorized: isAdmin,
+    },
   ];
 
   /**
