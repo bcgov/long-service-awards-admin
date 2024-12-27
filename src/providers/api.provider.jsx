@@ -574,6 +574,23 @@ function APIProvider(props) {
     return result;
   };
 
+  /**
+   *  Checks if editing is active for non-admin user roles
+   *
+   * */
+
+  const getEditingActive = async () => {
+    const [error, result] = await api.get(
+      `/settings/global/nonadmin-editing-active`
+    );
+    if (error) {
+      console.log("Editing setting error. May not exist.");
+      return false;
+    }
+    const { value } = result.result || {};
+    return value === "true";
+  };
+
   return (
     <APIContext.Provider
       value={useMemo(
@@ -629,6 +646,7 @@ function APIProvider(props) {
           getPecsfRegions,
           sendMail,
           getReport,
+          getEditingActive,
         }),
         []
       )}

@@ -25,6 +25,7 @@ import { Tooltip } from "primereact/tooltip";
 import { Fragment, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { InputText } from "primereact/inputtext";
+import { useUser } from "@/providers/user.provider.jsx";
 
 export default function RecipientList() {
   // set default filter values:
@@ -51,11 +52,15 @@ export default function RecipientList() {
     created_at: null,
   };
   const api = useAPI();
+  const user = useUser();
+  const { authenticated, role } = user || {};
+
   const status = useStatus();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [showDialog, setShowDialog] = useState(null);
   const [recipients, setRecipients] = useState([]);
+  const [editingSetting, setEditingSetting] = useState(false);
   const [stats, setStats] = useState({
     total_count: 0,
     lsa_current_count: 0,
@@ -83,12 +88,18 @@ export default function RecipientList() {
   const [showCeremonyAssignDialog, setShowCeremonyAssignDialog] =
     useState(false);
 
+  // check if user is authorized to access menu items
+  const isAdmin =
+    authenticated &&
+    ["administrator", "super-administrator"].includes(role.name);
+
   /**
    * Load recipients using applied filter
    * */
 
   useEffect(() => {
     loadData(pageState, filters, sort);
+    getEditingActiveSetting();
   }, [pageState, filters, sort]);
 
   const loadData = (pageState, filters, sort) => {
@@ -387,6 +398,11 @@ export default function RecipientList() {
     setSelectAll(value.length === stats);
   };
 
+  const getEditingActiveSetting = async () => {
+    var editing = await api.getEditingActive();
+    setEditingSetting(editing);
+  };
+
   /**
    * Render data table header component
    * */
@@ -616,6 +632,7 @@ export default function RecipientList() {
                 save={`/recipients/edit/${rowData.id}`}
                 view={() => onView(rowData)}
                 remove={() => onDelete(rowData)}
+                isEditingActive={editingSetting || isAdmin}
               />
             );
           }}

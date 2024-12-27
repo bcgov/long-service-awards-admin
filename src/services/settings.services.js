@@ -76,7 +76,7 @@ const schemaData = {
         summary: "Record Deletion Error",
         detail: "The requested record could not be removed.",
         closable: true,
-        sticky: true,
+        life: 1000,
       },
     },
     {
