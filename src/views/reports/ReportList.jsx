@@ -126,6 +126,7 @@ export default function ReportList() {
       description: "All errors that have occurred for email transactions.",
       authorized: isAdmin,
     },
+    // LSA-516 Create report that lists duplicate entries for selected cycle based on employee numbers
     {
       id: "duplicates",
       filename: "duplicates-report",
