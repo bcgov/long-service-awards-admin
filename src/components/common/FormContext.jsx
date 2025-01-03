@@ -164,7 +164,7 @@ export default function FormContext({
                       "p-button-secondary w-full flex justify-content-center"
                     }
                     icon={"pi pi-fw pi-times"}
-                    onClick={_cancelForm}
+                    onClick={handleSubmit(_cancelForm)}
                   >
                     Cancel
                   </Button>

@@ -230,6 +230,14 @@ function APIProvider(props) {
   const sendRSVP = async (recipient) => {
     const [_, result] = await api.post("/attendees/send", recipient);
     return result;
+  };  
+  
+  /**
+   * Send Reminder
+   */
+  const sendReminder = async (recipient) => {
+    const [_, result] = await api.post("/attendees/reminder", recipient);
+    return result;
   };
 
   /**
@@ -618,6 +626,7 @@ function APIProvider(props) {
           saveAttendee,
           removeAttendee,
           sendRSVP,
+          sendReminder,
           getRSVP,
           saveRSVP,
           getMilestones,

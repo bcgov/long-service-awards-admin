@@ -5,10 +5,8 @@
  * MIT Licensed
  */
 
-import { useAPI } from "@/providers/api.provider.jsx";
 import { Chip } from "primereact/chip";
 import { Panel } from "primereact/panel";
-import { useState } from "react";
 import { Controller, useFormContext } from "react-hook-form";
 
 /**
@@ -16,7 +14,7 @@ import { Controller, useFormContext } from "react-hook-form";
  * @returns {JSX.Element}
  */
 
-export default function InvitationInput({ selected }) {
+export default function InvitationInput({ selected, header }) {
   selected.map((a) =>
     Object.assign(a.recipient.contact, {
       full_name: `${a.recipient.contact.first_name} ${a.recipient.contact.last_name}`,
@@ -24,8 +22,11 @@ export default function InvitationInput({ selected }) {
   );
   const { control } = useFormContext();
 
+  /* LSA-510 Popup is used by both RSVP and Reminders. Default header is for RSVP */ 
+  const heading = header || "Send RSVP to selected Attendees :";
+
   return (
-    <Panel className={"mb-3"} header={<> Send RSVP to selected Attendees :</>}>
+    <Panel className={"mb-3"} header={<> {heading} </>}>
       <div className="container">
         <div className="grid">
           <div className={"col-12 form-field-container"}>

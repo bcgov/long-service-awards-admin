@@ -1,58 +1,36 @@
 /*!
- * Create Invitation Record
- * File: InvitationCreate.js
+ * Create Reminder Emails
+ * File: InvitationReminder.js
  * Copyright(c) 2023 BC Gov
  * MIT Licensed
  */
+
+/*
+    LSA-510. New popup which allows for the sending of reminder emails
+*/
 
 import FormContext from "@/components/common/FormContext";
 import PageHeader from "@/components/common/PageHeader.jsx";
 import { useAPI } from "@/providers/api.provider.jsx";
 import { useStatus } from "@/providers/status.provider.jsx";
-import { useNavigate } from "react-router-dom";
 import { format } from "date-fns";
 
 //Fieldsets
 import InvitationInput from "@/views/invitations/fieldsets/InvitationInput";
 
-export default function InvitationCreate({
+export default function InvitationReminder({
   selected,
-  setShowRSVPDialog,
+  setShowRemindersDialog,
   callback,
 }) {
   const status = useStatus();
   const api = useAPI();
-  const navigate = useNavigate();
-
-  const _handleDelete = async (id) => {
-    try {
-      const [error, result] = await api.removeAttendee(id);
-      if (error)
-        status.setMessage({
-          message: "Error: Could Not Delete Attendees Record",
-          severity: "danger",
-        });
-      else
-        status.setMessage({
-          message: "Attendees Record Deleted!",
-          severity: "success",
-        });
-      if (!error && result) {
-        return result;
-      }
-    } catch (error) {
-      status.clear();
-      status.setMessage({
-        message: "Error: Could Not Create New Attendees Record",
-        severity: "danger",
-      });
-    }
-  };
 
   // save registration data
   const _handleSave = async (data) => {
     const updatedStatusData = data.recipients.map((rec) => {
-      const recipient = { ...rec, status: "invited" };
+      const recipient = { ...rec };
+      
       Object.assign(recipient.ceremony, {
         ...recipient.ceremony,
         datetime_formatted: `${format(
@@ -61,27 +39,22 @@ export default function InvitationCreate({
         )}`,
         ceremony_time: `${format(new Date(recipient.ceremony.datetime), `p`)}`,
       });
-
-      console.log(data);
-
       return recipient;
     });
 
     try {
       updatedStatusData.forEach(async (a) => {
-        status.setMessage("save");
-        const [error, result] = await api.saveAttendee(a);
-        const sendResult = await api.sendRSVP(a);
-        if (error) {
-          status.setMessage("saveError");
-        } else if (!sendResult || sendResult.message !== "success")
+        
+        const sendResult = await api.sendReminder(a);
+        if (!sendResult || sendResult.message !== "success")
           status.setMessage("mailError");
-        if (!error && result && sendResult) {
-          setShowRSVPDialog(false);
+        if ( sendResult) {
+          setShowRemindersDialog(false);
           status.setMessage("mailSuccess");
           callback([]);
-          return result;
+          return sendResult;
         }
+        
       });
     } catch (error) {
       status.setMessage("saveError");
@@ -90,11 +63,8 @@ export default function InvitationCreate({
 
   // cancel edits
   const _handleCancel = async () => {
-    
-    // This was not working. Hiding popup instead.
-    //navigate("/attendees");
-    
-    setShowRSVPDialog(false);
+   
+    setShowRemindersDialog(false);
   };
 
   // set default attendee form values
@@ -107,18 +77,18 @@ export default function InvitationCreate({
 
   return (
     <>
-      <PageHeader heading={"Send RSVP"} />
+      <PageHeader heading={"Send Reminder Emails"} />
       <FormContext
         loader={_loader}
         save={_handleSave}
-        remove={_handleDelete}
+        remove={false}
         cancel={_handleCancel}
         defaults={defaults}
         blocked={false}
         buttonText={"Send"}
-        header={"Send Invitation"}
+        header={"Send Reminder Emails"}
       >
-        <InvitationInput selected={selected} />
+        <InvitationInput selected={selected} header={"Send Reminders to selected Attendees :"} />
       </FormContext>
     </>
   );

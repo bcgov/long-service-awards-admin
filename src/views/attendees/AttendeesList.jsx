@@ -12,6 +12,7 @@ import AttendeesFilter from "@/views/attendees/AttendeesFilter.jsx";
 import AttendeesSort from "@/views/attendees/AttendeesSort";
 import EditToolBar from "@/views/default/EditToolBar.jsx";
 import InvitationCreate from "@/views/invitations/InvitationCreate";
+import InvitationReminder from "@/views/invitations/InvitationReminder";
 import { format } from "date-fns";
 import { Button } from "primereact/button";
 import { Card } from "primereact/card";
@@ -54,6 +55,7 @@ export default function AttendeesList() {
   const [expandedRows, setExpandedRows] = useState(null);
   const [totalFilteredRecords, setTotalFilteredRecords] = useState(0);
   const [showRSVPDialog, setShowRSVPDialog] = useState(false);
+  const [showRemindersDialog, setShowRemindersDialog] = useState(false);
   const [selected, setSelected] = useState([]);
   const [selectAll, setSelectAll] = useState(false);
   const [filters, setFilters] = useState(initFilters);
@@ -365,6 +367,25 @@ export default function AttendeesList() {
           callback={setSelected}
         />
       </Dialog>
+      { /* LSA-510 Send ceremony reminder emails dialog */ }
+      <Dialog
+        visible={showRemindersDialog}
+        onHide={() => setShowRemindersDialog(false)}
+        header={"Send Reminder emails"}
+        position="center"
+        closable
+        maximizable
+        modal
+        breakpoints={{ "960px": "80vw" }}
+        style={{ width: "50vw" }}
+      >
+        <InvitationReminder
+          selected={selected}
+          setShowRemindersDialog={setShowRemindersDialog}
+          callback={setSelected}
+        />
+       
+      </Dialog>
       <Dialog
         visible={showDialog === "sort"}
         onHide={() => setShowDialog(null)}
@@ -431,6 +452,18 @@ export default function AttendeesList() {
               icon="pi pi-user-plus"
               label="Send RSVP Invite"
               onClick={() => setShowRSVPDialog(true)}
+            />
+            {/* LSA-510 Send ceremony reminder emails button */}  
+            <Button
+              className={"m-1 p-button-success"}
+               disabled={
+                 !selected.length ||
+                 !selected.every((r) => r.status === "attending" )
+               }
+              type="button"
+              icon="pi pi-user-plus"
+              label="Send Ceremony Reminders"
+              onClick={() => setShowRemindersDialog(true)}
             />
           </Fragment>
         }
