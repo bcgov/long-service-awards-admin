@@ -599,6 +599,26 @@ function APIProvider(props) {
     return value === "true";
   };
 
+  /**
+   * 
+   * LSA-517 Easier way of retrieving the current cycle year
+   * 
+   */
+
+  const getCurrentCycle = async () => {
+
+    const [error, result] = await api.get(
+      `/settings/global/cycle`
+    );
+    if (error) {
+      console.log("Cycle setting error. May not exist.");
+      return new Date().getFullYear();
+    }
+    const { value } = result.result || {};
+
+    return value;
+  }
+
   return (
     <APIContext.Provider
       value={useMemo(
@@ -656,6 +676,7 @@ function APIProvider(props) {
           sendMail,
           getReport,
           getEditingActive,
+          getCurrentCycle,
         }),
         []
       )}

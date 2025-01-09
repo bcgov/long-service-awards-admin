@@ -11,6 +11,7 @@ import CeremonyView from "@/views/ceremonies/CeremonyView";
 import DataEdit from "@/views/default/DataEdit.jsx";
 import DataList from "@/views/default/DataList";
 import { format } from "date-fns";
+import { useEffect, useState } from "react";
 
 /**
  * Inherited model component
@@ -19,6 +20,14 @@ import { format } from "date-fns";
 export default function CeremonyListBasic() {
   const api = useAPI();
   const currentYear = new Date().getFullYear();
+  const [currentCycle, setCurrentCycle] = useState(currentYear);
+
+  // LSA-517 Set default report year to cycle year
+  api.getCurrentCycle().then(cycle => {
+
+    console.log("Cycle is " +cycle);
+    setCurrentCycle(cycle);
+  });
 
   // build edit form template
   const editTemplate = (data, callback) => {
@@ -115,7 +124,7 @@ export default function CeremonyListBasic() {
       edit={editTemplate}
       view={viewTemplate}
       remove={api.removeCeremony}
-      defaultFilter={currentYear}
+      defaultFilter={currentCycle}
     />
   );
 }

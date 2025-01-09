@@ -63,6 +63,14 @@ export default function DataList({
   };
   useEffect(loadData, []);
 
+  // LSA-517 Set default report year to cycle year. The prop 'defaultFilter' could be changed in parent component, for instance currentCycle
+
+  useEffect( () => {
+
+    onGlobalFilterChange( { target: { value: defaultFilter } } );
+
+  }, [defaultFilter]);
+
   /**
    * Filters and hooks
    * */

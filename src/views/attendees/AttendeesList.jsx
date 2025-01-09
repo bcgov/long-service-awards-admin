@@ -75,6 +75,16 @@ export default function AttendeesList() {
   });
   const navigate = useNavigate();
 
+  // LSA-517 Set default report year to cycle year
+  useEffect( () => {
+  
+    api.getCurrentCycle().then(cycle => {
+  
+      const cycles = [/*...filters.cycle, */+cycle];
+      setFilters( Object.assign({}, filters, { cycle: [...new Set(cycles)] }))    
+    });
+  }, []); // Empty conditions so that it only runs once
+
   /**
    * Load attendees using applied filter
    * */
@@ -98,7 +108,7 @@ export default function AttendeesList() {
       .getAttendees(filter)
       .then((res) => {
         let { total_filtered_records, attendees } = res || {};
-        attendees = attendees
+        attendees = (attendees || [])
           .filter((a) => {
             let attendee = a;
             if (a.guest === 1) {
@@ -117,6 +127,7 @@ export default function AttendeesList() {
         setTotalFilteredRecords(total_filtered_records);
         generateStatusesNumbers(attendees);
       })
+      .catch(console.error)
       .finally(() => {
         setLoading(false);
       });

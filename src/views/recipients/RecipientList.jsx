@@ -33,6 +33,7 @@ export default function RecipientList() {
   // - 25-Year threshold for milestones (LSAs)
   // - Sets default cycle as current year
 
+  const [currentCycle, setCurrentCycle] = useState(null);
   const currentYear = new Date().getFullYear();
 
   const initFilters = {
@@ -79,7 +80,7 @@ export default function RecipientList() {
     orderBy: "last_name",
     order: 1,
   });
-  const [currentCycle, setCurrentCycle] = useState(null);
+ 
   const [pageState, setPageState] = useState({
     first: 0,
     rows: 50,
@@ -101,6 +102,16 @@ export default function RecipientList() {
     loadData(pageState, filters, sort);
     getEditingActiveSetting();
   }, [pageState, filters, sort]);
+
+  useEffect( () => {
+
+    if ( currentCycle != null ) {
+
+      const cycles = [/*...filters.cycle, */currentCycle];
+      setFilters( Object.assign({}, filters, { cycle: [...new Set(cycles)] }))
+    }
+    
+  }, [currentCycle]);
 
   const loadData = (pageState, filters, sort) => {
     setLoading(true);

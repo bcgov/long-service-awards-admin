@@ -12,13 +12,13 @@ import { Button } from "primereact/button";
 import { Card } from "primereact/card";
 import { Dropdown } from "primereact/dropdown";
 import { useAPI } from "@/providers/api.provider.jsx";
-import React, { Fragment, useState } from "react";
+import React, { Fragment, useState, useEffect } from "react";
 import { useStatus } from "@/providers/status.provider.jsx";
 import { useUser } from "@/providers/user.provider.jsx";
 
 export default function ReportList() {
   const { authenticated, role } = useUser() || {};
-  const currentYear = new Date().getFullYear();
+  const [currentYear, setCurrentYear] = useState(new Date().getFullYear());
   const [yearSelected, setYearSelected] = useState(currentYear);
 
   // check if user is authorized to access menu items
@@ -36,6 +36,14 @@ export default function ReportList() {
   const [downloading, setDownloading] = useState({
     recipients: false,
     pins: false,
+  });
+
+  // LSA-517 Set default report year to cycle year  
+  api.getCurrentCycle().then(cycle => {
+
+    setCurrentYear(+cycle);
+    setYearSelected(+cycle);
+    
   });
 
   const yearSelector = () => {
