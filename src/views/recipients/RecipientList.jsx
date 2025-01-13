@@ -80,7 +80,7 @@ export default function RecipientList() {
     orderBy: "last_name",
     order: 1,
   });
- 
+
   const [pageState, setPageState] = useState({
     first: 0,
     rows: 50,
@@ -103,14 +103,11 @@ export default function RecipientList() {
     getEditingActiveSetting();
   }, [pageState, filters, sort]);
 
-  useEffect( () => {
-
-    if ( currentCycle != null ) {
-
-      const cycles = [/*...filters.cycle, */currentCycle];
-      setFilters( Object.assign({}, filters, { cycle: [...new Set(cycles)] }))
+  useEffect(() => {
+    if (currentCycle != null) {
+      const cycles = [/*...filters.cycle, */ currentCycle];
+      setFilters(Object.assign({}, filters, { cycle: [...new Set(cycles)] }));
     }
-    
   }, [currentCycle]);
 
   const loadData = (pageState, filters, sort) => {
@@ -435,6 +432,7 @@ export default function RecipientList() {
                   type="search"
                   onInput={(e) => setGlobalFilter(e.target.value)}
                   placeholder="Search..."
+                  hidden
                 />
               </span>
               <Button
