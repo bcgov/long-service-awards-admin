@@ -37,11 +37,13 @@ export default function CeremonyListBasic() {
     const _remove = id
       ? async () => api.removeCeremony(id).finally(callback)
       : null;
+    const _cancel = async () => { callback(); } // PSA-525 callback actually closes the popup
     return (
       <DataEdit
         loader={_loader}
         save={_save}
         remove={_remove}
+        cancel={_cancel}
         defaults={data}
         isEditing
         header={"Save Ceremony"}
@@ -57,11 +59,13 @@ export default function CeremonyListBasic() {
     const _save = async (data) => {
       return api.createCeremony(data).finally(callback);
     };
+    const _cancel = async () => { callback(); } // PSA-525 callback actually closes the popup
     return (
       <DataEdit
         loader={_loader}
         save={_save}
         remove={null}
+        cancel={_cancel}
         defaults={{}}
         header={"Create Ceremony"}
       >

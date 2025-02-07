@@ -53,10 +53,12 @@ export default function UserList() {
         const _save = async (submission) => api.saveUser(submission).finally(callback);
         // You cannot delete yourself.
         const _remove = id === user.id ? null : async () => api.removeUser(id);
+        const _cancel = async () => { callback(); } // PSA-525 callback actually closes the popup
         return <DataEdit
             loader={_loader}
             save={_save}
             remove={_remove}
+            cancel={_cancel}
             defaults={{...defaults, ...data}}><UserEdit /></DataEdit>
     }
 

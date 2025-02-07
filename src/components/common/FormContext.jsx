@@ -31,7 +31,7 @@ export default function FormContext({
   loader,
   save,
   remove,
-  cancel = () => {},
+  cancel = () => { },
   defaults = {},
   blocked,
   validate,
@@ -164,7 +164,7 @@ export default function FormContext({
                       "p-button-secondary w-full flex justify-content-center"
                     }
                     icon={"pi pi-fw pi-times"}
-                    onClick={handleSubmit(_cancelForm)}
+                    onClick={_cancelForm}
                   >
                     Cancel
                   </Button>

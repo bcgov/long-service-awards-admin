@@ -16,6 +16,7 @@ export default function DataEdit({
   loader,
   save,
   remove,
+  cancel = () => { },
   defaults,
   children,
   buttonText,
@@ -59,11 +60,18 @@ export default function DataEdit({
     return result;
   };
 
+  const _handleCancel = async () => {
+
+    // LSA-525 Passing _cancel function in order to close the edit popup
+    cancel();
+  };
+
   return (
     <FormContext
       defaults={defaults}
       loader={_loader}
       save={_handleSave}
+      cancel={_handleCancel}
       remove={remove ? _handleDelete : null}
       buttonText={buttonText}
       header={header}

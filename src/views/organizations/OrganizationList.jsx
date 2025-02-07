@@ -31,9 +31,10 @@ export default function OrganizationList() {
     const { id } = data || {};
     const _loader = async () => api.getOrganization(id);
     const _save = async (data) => api.saveOrganization(data).finally(callback);
-    const _remove = async () => api.removeOrganization(id);
+    const _remove = async () => api.removeOrganization(id).finally(callback);  // Added .finally(callback) so that popup closes
+    const _cancel = async () => { callback(); } // PSA-525 callback actually closes the popup
     return (
-      <DataEdit loader={_loader} save={_save} remove={_remove} defaults={data}>
+      <DataEdit loader={_loader} save={_save} remove={_remove} cancel={_cancel} defaults={data}>
         <OrganizationEdit />
       </DataEdit>
     );
@@ -44,8 +45,9 @@ export default function OrganizationList() {
     const _loader = async () => {};
     const _save = async (data) =>
       api.createOrganization(data).finally(callback);
+    const _cancel = async () => { callback(); } // PSA-525 callback actually closes the popup
     return (
-      <DataEdit loader={_loader} save={_save} remove={null} defaults={defaults}>
+      <DataEdit loader={_loader} save={_save} remove={null} cancel={_cancel} defaults={defaults}>
         <OrganizationEdit />
       </DataEdit>
     );

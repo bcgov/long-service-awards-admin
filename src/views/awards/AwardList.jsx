@@ -74,9 +74,10 @@ export default function AwardList() {
     const { id } = data || {};
     const _loader = async () => api.getAward(id);
     const _save = async (data) => api.saveAward(data).finally(callback);
-    const _remove = id ? async () => api.removeAward(id) : null;
+    const _remove = id ? async () => api.removeAward(id).finally(callback) : null; // Added .finally(callback) so that popup closes
+    const _cancel = async () => { callback(); } // PSA-525 callback actually closes the popup
     return (
-      <DataEdit loader={_loader} save={_save} remove={_remove} defaults={data}>
+      <DataEdit loader={_loader} save={_save} remove={_remove} cancel={_cancel} defaults={data}>
         <AwardEdit awardTypes={awardTypes} />
       </DataEdit>
     );
@@ -86,8 +87,9 @@ export default function AwardList() {
   const createTemplate = (callback) => {
     const _loader = async () => {};
     const _save = async (data) => api.createAward(data).finally(callback);
+    const _cancel = async () => { callback(); } // PSA-525 callback actually closes the popup
     return (
-      <DataEdit loader={_loader} save={_save} remove={null} defaults={{}}>
+      <DataEdit loader={_loader} save={_save} remove={null} cancel={_cancel} defaults={{}}>
         <AwardEdit awardTypes={awardTypes} />
       </DataEdit>
     );
