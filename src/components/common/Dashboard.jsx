@@ -10,10 +10,14 @@ import PageHeader from "@/components/common/PageHeader.jsx";
 import {DataView} from "primereact/dataview";
 import {Button} from "primereact/button";
 import {useNavigate} from "react-router-dom";
+import {useUser} from "@/providers/user.provider.jsx";
 
 function Dashboard() {
 
     const navigate = useNavigate();
+    const user = useUser();
+    const { authenticated, role } = user || {};
+
     const items = [
         {
             route: '/recipients',
@@ -28,7 +32,11 @@ function Dashboard() {
         {
             route: '/ceremonies',
             label: 'Manage Ceremonies',
-            description: 'View and download reports.'
+            description: 'Add and edit ceremonies.',
+            authorizedRoles: [
+                "administrator",
+                "super-administrator"
+            ]
         },
     ]
 
@@ -37,6 +45,18 @@ function Dashboard() {
      * */
 
     const itemTemplate = (item) => {
+
+        // LSA-526 Limit display of items based on authorizedRoles. If there are no roles defined, default to allowed.
+
+        if ( item.authorizedRoles && Array.isArray(item.authorizedRoles) ) {
+
+            const isAuthorized = authenticated
+                && ((role && role.name === 'super-administrator')
+                    || (role && (item.authorizedRoles || []).includes(role.name)));
+
+            if ( !isAuthorized ) return null;
+        }
+
         return <div className="col-4 sm:col-6 md:col-4 lg:col-4 xl:col-4 p-2">
             <div className="p-4 border-1 surface-border surface-card border-round">
                 <div className="flex flex-column align-items-center gap-3 py-5">
