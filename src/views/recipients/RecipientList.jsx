@@ -538,6 +538,7 @@ export default function RecipientList() {
           data={filters || {}}
           confirm={applyFilter}
           cancel={() => setShowDialog(null)}
+          isAdmin={isAdmin}
         />
       </Dialog>
       <Toolbar className="mb-4"></Toolbar>
