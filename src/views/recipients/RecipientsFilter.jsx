@@ -14,18 +14,22 @@ import { MultiSelect } from "primereact/multiselect";
 import { useAPI } from "@/providers/api.provider.jsx";
 import { InputSwitch } from "primereact/inputswitch";
 
-function RecipientsFilter({ data, confirm, cancel, isAdmin }) {
+function RecipientsFilter({ data, confirm, cancel, isAdmin, currentCycle }) {
   const api = useAPI();
   const [loading, setLoading] = useState(false);
 
   function generateCycleYears() {
-    let currentYear = new Date().getFullYear(),
-      years = [];
-    const startYear = currentYear - 60;
-    while (startYear <= currentYear) {
-      years.push({ name: currentYear-- });
+    if (isAdmin) {
+      let currentYear = new Date().getFullYear(),
+        years = [];
+      const startYear = currentYear - 60;
+      while (startYear <= currentYear) {
+        years.push({ name: currentYear-- });
+      }
+      return years;
+    } else {
+      return [{ name: currentCycle }];
     }
-    return years;
   }
 
   // init filter settings

@@ -539,6 +539,7 @@ export default function RecipientList() {
           confirm={applyFilter}
           cancel={() => setShowDialog(null)}
           isAdmin={isAdmin}
+          currentCycle={currentCycle}
         />
       </Dialog>
       <Toolbar className="mb-4"></Toolbar>
