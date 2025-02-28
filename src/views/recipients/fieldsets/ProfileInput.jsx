@@ -184,13 +184,14 @@ export default function ProfileInput({ validate }) {
                         <RadioButton
                           inputId="alternateEmailPreferredNo"
                           name="alternateEmailPreferred"
-                          checked={field.value != true}
+                          checked={field && field.value != true}
                           value="No"
                           onChange={(e) => {
                             setValue(
                               "contact.alternate_is_preferred",
                               e.value === "Yes"
                             );
+                            console.log(field.value)
                           }}
                         />
                         <label className={"ml-3"} htmlFor="alternateEmailPreferredNo">No, recipient prefers BC Government email address</label>
@@ -198,7 +199,7 @@ export default function ProfileInput({ validate }) {
                       <div className="flex align-items-center">
                         <RadioButton
                           inputId="alternateEmailPreferredYes"
-                          checked={field.value}
+                          checked={field && field.value === true}
                           name="alternateEmailPreferred"
                           value="Yes"
                           onChange={(e) => {
