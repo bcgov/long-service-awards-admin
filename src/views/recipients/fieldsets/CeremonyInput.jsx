@@ -54,7 +54,7 @@ export default function CeremonyInput() {
                     <div className="flex align-items-center">
                         <RadioButton
                             inputId="ceremonyOptOutYes"
-                            checked={ceremonyOptOut}
+                            checked={ceremonyOptOut === true}
                             name="ceremonyOptOut"
                             value="Yes"
                             onChange={(e) => {

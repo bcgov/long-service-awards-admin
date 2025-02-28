@@ -41,7 +41,7 @@ export default function RegistrationOptionsInput() {
                     <div className="flex align-items-center"> 
                         <RadioButton
                             name="previousRegistration"
-                            checked={previousRegistration}
+                            checked={previousRegistration === true}
                             inputId="previousRegistrationYes"
                             value='Yes'
                             onChange={(e) => {
@@ -82,7 +82,7 @@ export default function RegistrationOptionsInput() {
                         <div className="flex align-items-center">
                             <RadioButton
                                 name="previousAward"
-                                checked={previousAward}
+                                checked={previousAward === true}
                                 inputId="previousAwardYes"
                                 value='Yes'
                                 onChange={(e) => {
