@@ -617,7 +617,19 @@ function APIProvider(props) {
     const { value } = result.result || {};
 
     return value;
-  }
+  };
+
+  const migrateRecipients = async( from, to ) => {
+
+    const [error, result] = await api.get(
+      `/recipients/admin/migrate/${from}/${to}`
+    );
+    if ( error) {
+      console.log("Migrate error: ", error);
+    }
+
+    return [error, result];
+  };
 
   return (
     <APIContext.Provider
@@ -677,6 +689,7 @@ function APIProvider(props) {
           getReport,
           getEditingActive,
           getCurrentCycle,
+          migrateRecipients
         }),
         []
       )}
