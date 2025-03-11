@@ -5,6 +5,7 @@
  * MIT Licensed
  */
 
+import { useState } from "react";
 import {useAPI} from "@/providers/api.provider.jsx";
 import DataList from "@/views/default/DataList";
 import UserView from "@/views/users/UserView.jsx";
@@ -12,6 +13,9 @@ import UserEdit from "@/views/users/UserEdit.jsx";
 import DataEdit from "@/views/default/DataEdit.jsx";
 import {useUser} from "@/providers/user.provider.jsx";
 import {formatDate} from "@/services/utils.services.js";
+
+import { Dialog } from "primereact/dialog";
+import UserMigration from "@/views/users/UserMigration.jsx";
 
 /**
  * Inherited model component
@@ -21,6 +25,10 @@ export default function UserList() {
 
     const api = useAPI();
     const user = useUser();
+
+    const [selectedUser, setSelectedUser] = useState(null);
+    const [showDialog, setShowDialog] = useState(null);
+    const [migrationTitle, setMigrationTitle] = useState(null);
 
     const roleTemplate = (rowData) => {
         const {role} = rowData || {};
@@ -74,6 +82,27 @@ export default function UserList() {
         return formatDate(rowData.created_at);
     };
 
+    /*
+        LSA-540 Try to remove a User. If it fails due to keyConstraint the new Migrate popup is displayed.
+    */
+
+    const removeUser = async (dataRow) => {
+
+        setSelectedUser(dataRow);
+
+        const [error, result] = await api.removeUser(dataRow);
+
+        if ( error != null ) {
+
+            setMigrationTitle("The user has existing recipients. Before deleting the user, first select a user to whom the exiting recipients must be migrated.");
+            setShowDialog("migrate");
+            return Promise.reject(['keyConstraint', result]);
+        } else {
+            
+            return Promise.resolve([]);
+        }
+    }
+
     /**
      * View record data template
      * */
@@ -121,13 +150,32 @@ export default function UserList() {
         },
     ];
 
-    return <DataList
-        idKey={'id'}
-        title={'Users'}
-        schema={schema}
-        loader={api.getUsers}
-        remove={api.removeUser}
-        edit={editTemplate}
-        view={viewTemplate}
-    />
+    return <>
+                <Dialog
+                    visible={showDialog === "migrate"}
+                    onHide={() => setShowDialog(null)}
+                    onClick={(e) => {
+                       e.stopPropagation();
+                    }}
+                    header={"Migrate user's recipients"}
+                    position="center"
+                    closable
+                    modal
+                    breakpoints={{ "960px": "80vw" }}
+                    style={{ width: "50vw" }}
+                >
+
+                    <UserMigration userId={selectedUser} setShowDialog={setShowDialog} title={migrationTitle} />
+                </Dialog>
+               
+                <DataList
+                    idKey={'id'}
+                    title={'Users'}
+                    schema={schema}
+                    loader={api.getUsers}
+                    remove={removeUser}
+                    edit={editTemplate}
+                    view={viewTemplate}
+                />
+            </>
 }
