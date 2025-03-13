@@ -203,7 +203,9 @@ export default function AwardEdit({ awardTypes }) {
             />
           </div>
           <div className="col-12 form-field-container">
-            <label htmlFor={"quantity"}>Quantity</label>
+            <label htmlFor={"quantity"}>
+              Quantity (-1 indicates unlimited)
+            </label>
             <Controller
               name={"quantity"}
               control={control}
@@ -211,13 +213,13 @@ export default function AwardEdit({ awardTypes }) {
                 <>
                   <InputNumber
                     id={field.name}
-                    value={field.value || -1}
+                    value={field.value || field.onChange(-1)}
                     min={-1}
                     max={9999}
                     className={classNames("w-full", { "p-invalid": error })}
                     aria-describedby={`award-quantity-help`}
                     onChange={(e) => field.onChange(e.value)}
-                    placeholder={`Enter a quantity for this award (-1 indicated unlimited)`}
+                    placeholder={`Enter a quantity for this award (-1 indicates unlimited)`}
                   />
                   {invalid && <p className="error">{error.message}</p>}
                 </>
