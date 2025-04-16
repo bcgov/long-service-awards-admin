@@ -66,34 +66,19 @@ export default function InvitationCreate({
 
       return recipient;
     });
-
     try {
-      updatedStatusData.forEach(async (a) => {
-        status.setMessage("save");
-        const [error, result] = await api.saveAttendee(a);
-        const sendResult = await api.sendRSVP(a);
-        if (error) {
-          status.setMessage("saveError");
-        } else if (!sendResult || sendResult.message !== "success")
-          status.setMessage("mailError");
-        if (!error && result && sendResult) {
-          setShowRSVPDialog(false);
-          status.setMessage("mailSuccess");
-          callback([]);
-          return result;
-        }
-      });
+      await api.sendRSVP(updatedStatusData);
     } catch (error) {
       status.setMessage("saveError");
+      console.log(error);
     }
   };
 
   // cancel edits
   const _handleCancel = async () => {
-    
     // This was not working. Hiding popup instead.
     //navigate("/attendees");
-    
+
     setShowRSVPDialog(false);
   };
 

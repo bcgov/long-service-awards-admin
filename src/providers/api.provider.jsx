@@ -227,11 +227,11 @@ function APIProvider(props) {
   /**
    * Send RSVP
    */
-  const sendRSVP = async (recipient) => {
-    const [_, result] = await api.post("/attendees/send", recipient);
+  const sendRSVP = async (recipients) => {
+    const [_, result] = await api.post("/attendees/send", recipients);
     return result;
-  };  
-  
+  };
+
   /**
    * Send Reminder
    */
@@ -600,16 +600,13 @@ function APIProvider(props) {
   };
 
   /**
-   * 
+   *
    * LSA-517 Easier way of retrieving the current cycle year
-   * 
+   *
    */
 
   const getCurrentCycle = async () => {
-
-    const [error, result] = await api.get(
-      `/settings/global/cycle`
-    );
+    const [error, result] = await api.get(`/settings/global/cycle`);
     if (error) {
       console.log("Cycle setting error. May not exist.");
       return new Date().getFullYear();
@@ -619,12 +616,11 @@ function APIProvider(props) {
     return value;
   };
 
-  const migrateRecipients = async( from, to ) => {
-
+  const migrateRecipients = async (from, to) => {
     const [error, result] = await api.get(
       `/recipients/admin/migrate/${from}/${to}`
     );
-    if ( error) {
+    if (error) {
       console.log("Migrate error: ", error);
     }
 
@@ -689,7 +685,7 @@ function APIProvider(props) {
           getReport,
           getEditingActive,
           getCurrentCycle,
-          migrateRecipients
+          migrateRecipients,
         }),
         []
       )}
