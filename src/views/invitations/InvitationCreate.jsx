@@ -67,7 +67,15 @@ export default function InvitationCreate({
       return recipient;
     });
     try {
-      await api.sendRSVP(updatedStatusData);
+      var [error, result] = await api.sendRSVP(updatedStatusData);
+      if (error) {
+        status.setMessage("saveError");
+        console.log("sendRSVP Error: ", error, "Result: ", result);
+      } else {
+        setShowRSVPDialog(false);
+        status.setMessage("mailSuccess");
+        return result;
+      }
     } catch (error) {
       status.setMessage("saveError");
       console.log(error);

@@ -42,7 +42,16 @@ export default function InvitationReminder({
       return recipient;
     });
     try {
-      await api.sendReminder(updatedStatusData);
+      var [error, sendResult] = await api.sendReminder(updatedStatusData);
+      if (error || !sendResult || sendResult.message !== "success") {
+        status.setMessage("mailError");
+        console.log("sendReminder Error: ", error, "Result: ", sendResult);
+      } else if (sendResult) {
+        setShowRemindersDialog(false);
+        status.setMessage("mailSuccess");
+        callback([]);
+        return sendResult;
+      }
     } catch (error) {
       status.setMessage("saveError");
       console.log(error);

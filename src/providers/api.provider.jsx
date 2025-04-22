@@ -228,16 +228,14 @@ function APIProvider(props) {
    * Send RSVP
    */
   const sendRSVP = async (recipients) => {
-    const [_, result] = await api.post("/attendees/send", recipients);
-    return result;
+    return await api.post("/attendees/send", recipients);
   };
 
   /**
    * Send Reminder
    */
   const sendReminder = async (recipient) => {
-    const [_, result] = await api.post("/attendees/reminder", recipient);
-    return result;
+    return await api.post("/attendees/reminder", recipient);
   };
 
   /**
