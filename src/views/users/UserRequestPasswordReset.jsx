@@ -31,8 +31,13 @@ function UserRequestPasswordReset({callback}) {
     const onSubmit = async (data) => {
         setLoading(true);
         const [error, response] = await auth.requestPasswordReset(data);
-        if (error) setMailError(true);
-        setShowDialog('confirmation');
+        // LSA-546 Check for error and fail gracefully
+        if (error) {
+            setMailError(true);
+        } else {
+
+            setShowDialog('confirmation');
+        }
         setLoading(false);
     };
 
