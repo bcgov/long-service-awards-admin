@@ -30,7 +30,7 @@ export default function InvitationReminder({
   const _handleSave = async (data) => {
     const updatedStatusData = data.recipients.map((rec) => {
       const recipient = { ...rec };
-      
+
       Object.assign(recipient.ceremony, {
         ...recipient.ceremony,
         datetime_formatted: `${format(
@@ -41,29 +41,25 @@ export default function InvitationReminder({
       });
       return recipient;
     });
-
     try {
-      updatedStatusData.forEach(async (a) => {
-        
-        const sendResult = await api.sendReminder(a);
-        if (!sendResult || sendResult.message !== "success")
-          status.setMessage("mailError");
-        if ( sendResult) {
-          setShowRemindersDialog(false);
-          status.setMessage("mailSuccess");
-          callback([]);
-          return sendResult;
-        }
-        
-      });
+      var [error, sendResult] = await api.sendReminder(updatedStatusData);
+      if (error || !sendResult || sendResult.message !== "success") {
+        status.setMessage("mailError");
+        console.log("sendReminder Error: ", error, "Result: ", sendResult);
+      } else if (sendResult) {
+        setShowRemindersDialog(false);
+        status.setMessage("mailSuccess");
+        callback([]);
+        return sendResult;
+      }
     } catch (error) {
       status.setMessage("saveError");
+      console.log(error);
     }
   };
 
   // cancel edits
   const _handleCancel = async () => {
-   
     setShowRemindersDialog(false);
   };
 
@@ -88,7 +84,10 @@ export default function InvitationReminder({
         buttonText={"Send"}
         header={"Send Reminder Emails"}
       >
-        <InvitationInput selected={selected} header={"Send Reminders to selected Attendees :"} />
+        <InvitationInput
+          selected={selected}
+          header={"Send Reminders to selected Attendees :"}
+        />
       </FormContext>
     </>
   );
