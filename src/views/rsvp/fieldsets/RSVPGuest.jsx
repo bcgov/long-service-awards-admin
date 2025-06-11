@@ -62,7 +62,7 @@ export default function RSVPGuest() {
               defaultValue={true}
               render={({ field, fieldState: { invalid, error } }) => (
                 <>
-                  {/**<div className="flex align-items-center">
+                  {/** <div className="flex align-items-center">
                   <Checkbox
                     id={field.name}
                     inputId={field.name}
@@ -80,7 +80,7 @@ export default function RSVPGuest() {
                   <label className={"ml-2"} htmlFor={`guest`}>
                     Yes, I would like to bring a guest
                   </label>
-                </div>**/}
+                </div> **/}
 
                   <div className="flex align-items-center">
                     <SelectButton
@@ -107,6 +107,7 @@ export default function RSVPGuest() {
                       )
                     </label>
                   </div>
+                </>
               )}
             />
           </div>
