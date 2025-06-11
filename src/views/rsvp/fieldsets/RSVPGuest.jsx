@@ -15,7 +15,7 @@ import { useAPI } from "@/providers/api.provider.jsx";
 export default function RSVPGuest() {
   const api = useAPI();
   const { control, setValue } = useFormContext();
-  const [guestAccommodations, setGuestAccommodations] = useState(false);
+  const [guestAccommodations, setGuestAccommodations] = useState(true);
   const [accommodations, setAccommodations] = useState([]);
   const accessibilityRequirements = [
     { name: "Yes", value: true },
@@ -59,9 +59,10 @@ export default function RSVPGuest() {
             <Controller
               name="guest_count"
               control={control}
-              defaultValue={false}
-              render={({ field, fieldState: { invalid, error } }) => (<>
-                {/**<div className="flex align-items-center">
+              defaultValue={true}
+              render={({ field, fieldState: { invalid, error } }) => (
+                <>
+                  {/**<div className="flex align-items-center">
                   <Checkbox
                     id={field.name}
                     inputId={field.name}
@@ -81,38 +82,32 @@ export default function RSVPGuest() {
                   </label>
                 </div>**/}
 
-                <div className="flex align-items-center">
-                  <SelectButton
-                    className={"radio-toggle"}
-                    value={field.value}
-                    onChange={(e) => {
-                      setValue(
-                        "guest_count",
-                        e.value === true
-                      );
+                  <div className="flex align-items-center">
+                    <SelectButton
+                      className={"radio-toggle"}
+                      value={field.value}
+                      onChange={(e) => {
+                        setValue("guest_count", e.value === true);
 
-                      setGuestAccommodations(!guestAccommodations);  
-
-                    }}
-                    options={guestOptions.map(a => { return { "value": a.value, "name": a.name }; })}
-                    optionLabel="name"
-                  />
-                  <label
-                    className={"ml-2"}
-                    htmlFor={`guest_count`}
-                  >
-                    (Selected:{" "}
-                    {
-                      (guestOptions.find(
-                        (a) => a.value === field.value
-                      ) || {}).description
-                      
-                    }
-                    )
-                  </label>
-                </div>
-
-              </>)}
+                        setGuestAccommodations(!guestAccommodations);
+                      }}
+                      options={guestOptions.map((a) => {
+                        return { value: a.value, name: a.name };
+                      })}
+                      optionLabel="name"
+                    />
+                    <label className={"ml-2"} htmlFor={`guest_count`}>
+                      (Selected:{" "}
+                      {
+                        (
+                          guestOptions.find((a) => a.value === field.value) ||
+                          {}
+                        ).description
+                      }
+                      )
+                    </label>
+                  </div>
+              )}
             />
           </div>
           {guestAccommodations && (
