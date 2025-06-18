@@ -8,7 +8,6 @@
 import { useAPI } from "@/providers/api.provider.jsx";
 import { Checkbox } from "primereact/checkbox";
 import { Fieldset } from "primereact/fieldset";
-import { SelectButton } from "primereact/selectbutton";
 import { Fragment, useEffect, useState } from "react";
 import { Controller, useFormContext, useWatch } from "react-hook-form";
 
@@ -66,42 +65,45 @@ export default function RSVPOptions() {
                 name="recipient_accommodations.accessibility"
                 control={control}
                 defaultValue={false}
-                render={({ field }) => {
-                  return (
-                    <>
-                      <div className="flex align-items-center">
-                        <SelectButton
-                          className={"radio-toggle"}
-                          value={field.value}
-                          onChange={(e) => {
-                            setValue(
-                              "recipient_accommodations.accessibility",
-                              e.value === true
-                            );
-                          }}
-                          options={accessibilityRequirements}
-                          optionLabel="name"
-                        />
-                        <label
-                          className={"ml-2"}
-                          htmlFor={`recipient_accommodations.accessibility`}
-                        >
-                          (Selected:{" "}
-                          {
-                            accessibilityRequirements.find(
-                              (a) => a.value === field.value
-                            ).name
-                          }
-                          )
-                        </label>
-                      </div>
-                      <small>
-                        If yes. someone from the Long Service Awards team will
-                        contact you closer to the event for further information
-                      </small>
-                    </>
-                  );
-                }}
+                render={({ field, fieldState: { invalid, error } }) => (
+                  <>
+                    <div className="flex align-items-center">
+                      <Checkbox
+                        id={field.name + "_yes"}
+                        inputId={field.name + "_yes"}
+                        checked={field.value === true}
+                        aria-describedby={`accessibility-help`}
+                        value={true}
+                        onChange={() => {
+                          setValue("recipient_accommodations.accessibility", true);
+                        }}
+                      />
+                      <label className={"ml-2"} htmlFor={`recipient_accommodations.accessibility_yes`}>
+                        Yes
+                      </label>
+                    </div>
+                    <div className="flex align-items-center">
+                      <Checkbox
+                        id={field.name + "_no"}
+                        inputId={field.name + "_no"}
+                        checked={field.value === false}
+                        aria-describedby={`accessibility-help`}
+                        value={false}
+                        onChange={() => {
+                          setValue("recipient_accommodations.accessibility", false);
+                        }}
+                      />
+                      <label className={"ml-2"} htmlFor={`recipient_accommodations.accessibility_no`}>
+                        No
+                      </label>
+                    </div>
+                    {invalid && <p className="error">{error.message}</p>}
+                    <small>
+                      If yes. someone from the Long Service Awards team will
+                      contact you closer to the event for further information
+                    </small>
+                  </>
+                )}
               />
             </div>
             <div className={"col-12 form-field-container"}>

@@ -13,11 +13,82 @@ import RSVPGuest from "@/views/rsvp/fieldsets/RSVPGuest";
 import RSVPInviteeDetails from "@/views/rsvp/fieldsets/RSVPInviteeDetails";
 import RSVPOptions from "@/views/rsvp/fieldsets/RSVPOptions";
 import { format } from "date-fns";
-import { Fragment, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import { useParams, useSearchParams } from "react-router-dom";
 import RSVPAttendanceInput from "./fieldsets/RSVPAttendanceInput";
 import RSVPForm from "./form/RSVPForm";
 import { Dialog } from "primereact/dialog";
+import { Button } from "primereact/button";
+import { Divider } from "primereact/divider";
+
+function GuestDietaryList({ guestAccommodations }) {
+  const api = useAPI();
+  const [labels, setLabels] = useState({});
+  // Fetch dietary labels on mount
+  useEffect(() => {
+    api.getRSVPAccommodations().then((accommodations) => {
+      const labelMap = {};
+      (accommodations || []).forEach((a) => {
+        labelMap[a.name] = a.label;
+      });
+      setLabels(labelMap);
+    });
+  }, [api]);
+  if (!guestAccommodations)
+    return (
+      <ul>
+        <li>None</li>
+      </ul>
+    );
+  const items = Object.entries(guestAccommodations)
+    .filter(([k, v]) => k !== "accessibility" && v)
+    .map(([k]) => labels[k] || k);
+  return (
+    <ul>
+      {items.length > 0 ? (
+        items.map((label) => <li key={label}>{label}</li>)
+      ) : (
+        <li>None</li>
+      )}
+    </ul>
+  );
+}
+
+function RecipientDietaryList({ recipientAccommodations }) {
+  const api = useAPI();
+  const [labels, setLabels] = useState({});
+  useEffect(() => {
+    api.getRSVPAccommodations().then((accommodations) => {
+      const labelMap = {};
+      (accommodations || []).forEach((a) => {
+        labelMap[a.name] = a.label;
+      });
+      setLabels(labelMap);
+    });
+  }, [api]);
+  if (!recipientAccommodations)
+    return (
+      <ul>
+        <li>None</li>
+      </ul>
+    );
+  const items = Object.entries(recipientAccommodations)
+    .filter(([k, v]) => k !== "accessibility" && v)
+    .map(([k, v]) => {
+      // If value is an object with a label, use it, else use fetched label or key
+      if (v && typeof v === "object" && v.label) return v.label;
+      return labels[k] || k;
+    });
+  return (
+    <ul>
+      {items.length > 0 ? (
+        items.map((label) => <li key={label}>{label}</li>)
+      ) : (
+        <li>None</li>
+      )}
+    </ul>
+  );
+}
 
 export default function RSVPCreate() {
   const status = useStatus();
@@ -30,6 +101,8 @@ export default function RSVPCreate() {
   const [isAttending, setIsAttending] = useState(
     JSON.parse(searchParams.get("accept"))
   );
+  const [showPreview, setShowPreview] = useState(false);
+  const [previewData, setPreviewData] = useState(null);
 
   // define fieldset validation checks
   const fieldsetValidators = {
@@ -39,7 +112,18 @@ export default function RSVPCreate() {
     },
   };
 
-  const _handleSave = async (data) => {
+  // Preview dialog handler
+  const handlePreview = (data) => {
+    setPreviewData(data);
+    setShowPreview(true);
+  };
+
+  // Modified save handler to optionally bypass preview
+  const _handleSave = async (data, skipPreview = false) => {
+    if (!skipPreview) {
+      handlePreview(data);
+      return;
+    }
     let sanitizedData = { ...data };
     let updatedStatusData = {};
     //if user confirmed attendance
@@ -115,6 +199,18 @@ export default function RSVPCreate() {
     }
   };
 
+  // Handler for confirming RSVP from preview
+  const handleConfirmRSVP = async () => {
+    setShowPreview(false);
+    await _handleSave(previewData, true);
+  };
+
+  // Handler for canceling preview
+  const handleCancelPreview = () => {
+    setShowPreview(false);
+    setPreviewData(null);
+  };
+
   // set default attendee form values
   const defaults = {
     recipients: [],
@@ -139,6 +235,138 @@ export default function RSVPCreate() {
   return (
     <>
       <PageHeader heading={"RSVP"} />
+      {/* Preview Dialog */}
+      <Dialog
+        visible={showPreview}
+        onHide={handleCancelPreview}
+        showHeader={true}
+        header="Review Your RSVP"
+        position="center"
+        modal
+        breakpoints={{ "960px": "80vw" }}
+        style={{ width: "50vw" }}
+        footer={
+          <div>
+            <Button
+              label="Cancel"
+              className="p-button-text"
+              onClick={handleCancelPreview}
+            />
+            <Button
+              label="RSVP"
+              className={
+                previewData && !previewData.attendance_confirmed
+                  ? "p-button-info"
+                  : "p-button-success"
+              }
+              onClick={handleConfirmRSVP}
+            />
+          </div>
+        }
+      >
+        <div style={{ maxHeight: "60vh", overflowY: "auto" }}>
+          {/* Use app's background and readable formatting */}
+          <div className="p-3" style={{ background: "var(--surface-ground)" }}>
+            {previewData ? (
+              <div>
+                <h2>Attendance</h2>
+                <p>
+                  <strong>Status:</strong>{" "}
+                  {previewData.attendance_confirmed
+                    ? "Attending"
+                    : "Not Attending"}
+                </p>
+                {/* Only show the rest if attending */}
+                {previewData.attendance_confirmed && (
+                  <>
+                    <Divider />
+                    <h2>Ceremony</h2>
+                    <p>
+                      <strong>Date:</strong>{" "}
+                      {previewData.ceremony?.datetime_formatted
+                        ? previewData.ceremony.datetime_formatted
+                        : previewData.ceremony?.datetime
+                        ? (() => {
+                            try {
+                              return format(
+                                new Date(previewData.ceremony.datetime),
+                                "EEEE, MMMM dd, yyyy"
+                              );
+                            } catch {
+                              return previewData.ceremony.datetime;
+                            }
+                          })()
+                        : ""}
+                      <br />
+                      <strong>Time:</strong>{" "}
+                      {previewData.ceremony?.ceremony_time
+                        ? previewData.ceremony.ceremony_time
+                        : previewData.ceremony?.datetime
+                        ? (() => {
+                            try {
+                              return format(
+                                new Date(previewData.ceremony.datetime),
+                                "p"
+                              );
+                            } catch {
+                              return "";
+                            }
+                          })()
+                        : ""}
+                      <br />
+                      <strong>Location:</strong>{" "}
+                      {previewData.ceremony?.venue || ""}
+                    </p>
+                    <Divider />
+                    <h2>Recipient</h2>
+                    <p>
+                      <strong>Accessibility Requirements:</strong>{" "}
+                      {previewData.recipient_accommodations?.accessibility ===
+                      true
+                        ? "Yes"
+                        : "No"}
+                    </p>
+                    <strong>Recipient Dietary Requirements</strong>
+                    <RecipientDietaryList
+                      recipientAccommodations={
+                        previewData.recipient_accommodations
+                      }
+                    />
+                    <Divider />
+                    <h2>Guest</h2>
+                    <p>
+                      <strong>Bringing a guest:</strong>{" "}
+                      {previewData.guest_count ? "Yes" : "No"}
+                    </p>
+                    {previewData.guest_count && (
+                      <>
+                        <p>
+                          <strong>Guest Accessibility Requirements:</strong>{" "}
+                          {previewData.guest_accommodations?.accessibility === true
+                            ? "Yes"
+                            : "No"}
+                        </p>
+                        <strong>Guest Dietary Requirements:</strong>
+                        <GuestDietaryList
+                          guestAccommodations={previewData.guest_accommodations}
+                        />
+                      </>
+                    )}
+                    <Divider />
+                    <h2>Notice of Collection, Consent, and Authorization</h2>
+                    <p>
+                      <strong>Consent:</strong>{" "}
+                      {previewData.confirmed ? "Yes" : "No"}
+                    </p>
+                  </>
+                )}
+              </div>
+            ) : (
+              <span>No data to preview.</span>
+            )}
+          </div>
+        </div>
+      </Dialog>
       <Dialog
         visible={isBlocked}
         onHide={() => {}}
@@ -208,7 +436,6 @@ export default function RSVPCreate() {
         save={_handleSave}
         validate={fieldsetValidators.confirmation}
         defaults={defaults}
-        // blocked={}
       >
         <RSVPAttendanceInput setIsAttending={setIsAttending} />
         {isAttending && <RSVPInviteeDetails />}

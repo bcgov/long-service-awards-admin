@@ -62,27 +62,41 @@ export default function RSVPGuest() {
               defaultValue={true}
               render={({ field, fieldState: { invalid, error } }) => (
                 <>
-                  {/** <div className="flex align-items-center">
-                  <Checkbox
-                    id={field.name}
-                    inputId={field.name}
-                    checked={!!field.value}
-                    aria-describedby={`active-help`}
-                    value={field.value}
-                    onChange={(e) => {
-                      field.onChange(
-                        e.target.checked ? (field.value = 1) : (field.value = 0)
-                      );
-                      setGuestAccommodations(!guestAccommodations);
-                    }}
-                  />
-                  {invalid && <p className="error">{error.message}</p>}
-                  <label className={"ml-2"} htmlFor={`guest`}>
-                    Yes, I would like to bring a guest
-                  </label>
-                </div> **/}
-
                   <div className="flex align-items-center">
+                    <Checkbox
+                      id={field.name + "_yes"}
+                      inputId={field.name + "_yes"}
+                      checked={field.value === true}
+                      aria-describedby={`active-help`}
+                      value={true}
+                      onChange={() => {
+                        setValue("guest_count", true);
+                        setGuestAccommodations(true);
+                      }}
+                    />
+                    {invalid && <p className="error">{error.message}</p>}
+                    <label className={"ml-2"} htmlFor={`guest_count_yes`}>
+                      Yes, I am bringing a guest
+                    </label>
+                  </div>
+                  <div className="flex align-items-center">
+                    <Checkbox
+                      id={field.name + "_no"}
+                      inputId={field.name + "_no"}
+                      checked={field.value === false}
+                      aria-describedby={`active-help`}
+                      value={false}
+                      onChange={() => {
+                        setValue("guest_count", false);
+                        setGuestAccommodations(false);
+                      }}
+                    />
+                    {invalid && <p className="error">{error.message}</p>}
+                    <label className={"ml-2"} htmlFor={`guest_count_no`}>
+                      No, I am not bringing a guest
+                    </label>
+                  </div>
+                  {/* <div className="flex align-items-center">
                     <SelectButton
                       className={"radio-toggle"}
                       value={field.value}
@@ -106,7 +120,7 @@ export default function RSVPGuest() {
                       }
                       )
                     </label>
-                  </div>
+                  </div> */}
                 </>
               )}
             />
@@ -129,43 +143,57 @@ export default function RSVPGuest() {
                   name="guest_accommodations.accessibility"
                   control={control}
                   defaultValue={false}
-                  render={({ field }) => {
-                    return (
-                      <>
-                        <div className="flex align-items-center">
-                          <SelectButton
-                            className={"radio-toggle"}
-                            value={field.value}
-                            onChange={(e) => {
-                              setValue(
-                                "guest_accommodations.accessibility",
-                                e.value === true
-                              );
-                            }}
-                            options={accessibilityRequirements}
-                            optionLabel="name"
-                          />
-                          <label
-                            className={"ml-2"}
-                            htmlFor={`guest_accommodations.accessibility`}
-                          >
-                            (Selected:{" "}
-                            {
-                              accessibilityRequirements.find(
-                                (a) => a.value === field.value
-                              ).name
-                            }
-                            )
-                          </label>
-                        </div>
-                        <small>
-                          If yes, someone from the Long Service Awards team will
-                          contact you closer to the event for further
-                          information
-                        </small>
-                      </>
-                    );
-                  }}
+                  render={({ field, fieldState: { invalid, error } }) => (
+                    <>
+                      <div className="flex align-items-center">
+                        <Checkbox
+                          id={field.name + "_yes"}
+                          inputId={field.name + "_yes"}
+                          checked={field.value === true}
+                          aria-describedby={`accessibility-help`}
+                          value={true}
+                          onChange={() => {
+                            setValue(
+                              "guest_accommodations.accessibility",
+                              true
+                            );
+                          }}
+                        />
+                        <label
+                          className={"ml-2"}
+                          htmlFor={`guest_accommodations.accessibility_yes`}
+                        >
+                          Yes
+                        </label>
+                      </div>
+                      <div className="flex align-items-center">
+                        <Checkbox
+                          id={field.name + "_no"}
+                          inputId={field.name + "_no"}
+                          checked={field.value === false}
+                          aria-describedby={`accessibility-help`}
+                          value={false}
+                          onChange={() => {
+                            setValue(
+                              "guest_accommodations.accessibility",
+                              false
+                            );
+                          }}
+                        />
+                        <label
+                          className={"ml-2"}
+                          htmlFor={`guest_accommodations.accessibility_no`}
+                        >
+                          No
+                        </label>
+                      </div>
+                      {invalid && <p className="error">{error.message}</p>}
+                      <small>
+                        If yes, someone from the Long Service Awards team will
+                        contact you closer to the event for further information
+                      </small>
+                    </>
+                  )}
                 />
               </div>
               <div className={"col-12 form-field-container"}>
