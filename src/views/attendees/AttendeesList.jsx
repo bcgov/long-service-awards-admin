@@ -481,7 +481,7 @@ export default function AttendeesList() {
         rowClassName="m-0 p-0 w-full"
         stripedRows
         rows={pageState.rows}
-        rowsPerPageOptions={[10, 25, 50]}
+        rowsPerPageOptions={[10, 25, 50, 1000]} // LSA-579 Add 1000 option to rows per page
         totalRecords={totalFilteredRecords}
         onPage={onPage}
         first={pageState.first}
