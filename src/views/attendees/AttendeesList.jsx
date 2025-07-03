@@ -76,12 +76,10 @@ export default function AttendeesList() {
   const navigate = useNavigate();
 
   // LSA-517 Set default report year to cycle year
-  useEffect( () => {
-  
-    api.getCurrentCycle().then(cycle => {
-  
-      const cycles = [/*...filters.cycle, */+cycle];
-      setFilters( Object.assign({}, filters, { cycle: [...new Set(cycles)] }))    
+  useEffect(() => {
+    api.getCurrentCycle().then((cycle) => {
+      const cycles = [/*...filters.cycle, */ +cycle];
+      setFilters(Object.assign({}, filters, { cycle: [...new Set(cycles)] }));
     });
   }, []); // Empty conditions so that it only runs once
 
@@ -378,7 +376,7 @@ export default function AttendeesList() {
           callback={setSelected}
         />
       </Dialog>
-      { /* LSA-510 Send ceremony reminder emails dialog */ }
+      {/* LSA-510 Send ceremony reminder emails dialog */}
       <Dialog
         visible={showRemindersDialog}
         onHide={() => setShowRemindersDialog(false)}
@@ -395,7 +393,6 @@ export default function AttendeesList() {
           setShowRemindersDialog={setShowRemindersDialog}
           callback={setSelected}
         />
-       
       </Dialog>
       <Dialog
         visible={showDialog === "sort"}
@@ -464,13 +461,13 @@ export default function AttendeesList() {
               label="Send RSVP Invite"
               onClick={() => setShowRSVPDialog(true)}
             />
-            {/* LSA-510 Send ceremony reminder emails button */}  
+            {/* LSA-510 Send ceremony reminder emails button */}
             <Button
               className={"m-1 p-button-success"}
-               disabled={
-                 !selected.length ||
-                 !selected.every((r) => r.status === "attending" )
-               }
+              disabled={
+                !selected.length ||
+                !selected.every((r) => r.status === "attending")
+              }
               type="button"
               icon="pi pi-user-plus"
               label="Send Ceremony Reminders"
@@ -481,7 +478,7 @@ export default function AttendeesList() {
         rowClassName="m-0 p-0 w-full"
         stripedRows
         rows={pageState.rows}
-        rowsPerPageOptions={[10, 25, 50, 1000]} // LSA-579 Add 1000 option to rows per page
+        rowsPerPageOptions={[10, 25, 50, 1500]} // LSA-579 Add 1500 option to rows per page
         totalRecords={totalFilteredRecords}
         onPage={onPage}
         first={pageState.first}
