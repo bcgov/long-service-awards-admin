@@ -99,7 +99,7 @@ export default function ReportList() {
       format: "csv",
       label: "Awards Count by Night",
       description: "Awards Count per night",
-      authorized: isAuthorized,
+      authorized: isAdmin, // LSA-583 Limit report to Admin only
     },
     {
       id: "pecsf-certificates",
