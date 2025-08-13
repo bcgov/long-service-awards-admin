@@ -124,7 +124,7 @@ export default function ReportList() {
       format: "csv",
       label: "Attendees Report",
       description: "All attendees registered for ceremonies.",
-      authorized: isAdmin,
+      authorized: isAuthorized || isAdmin, // LSA-584 Provide access to Attendees Report for org contacts
     },
     {
       id: "transactions",
