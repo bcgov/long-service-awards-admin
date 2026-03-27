@@ -138,7 +138,7 @@ function RecipientsFilter({ data, confirm, cancel, isAdmin, currentCycle }) {
         if (isAdmin) setQualifyingYears(qualifyingYears);
         else {
           const currentYear = qualifyingYears.filter(
-            (year) => year.current == true
+            (year) => year.current == true,
           );
           setQualifyingYears(currentYear);
         }
@@ -170,7 +170,7 @@ function RecipientsFilter({ data, confirm, cancel, isAdmin, currentCycle }) {
         return (
           <div
             key={`recipient-filter-${key}`}
-            className="w-85 flex justify-content-between px-3"
+            className="w-85 flex justify-content-between px-3 min-w-0"
           >
             {input === "text" && (
               <>
@@ -197,7 +197,7 @@ function RecipientsFilter({ data, confirm, cancel, isAdmin, currentCycle }) {
                 <Dropdown
                   disabled={options.length === 0 || loading}
                   value={filterValue}
-                  className={"m-3 w-full"}
+                  className={"m-3 w-full min-w-0"}
                   filter
                   onChange={(e) => {
                     setFilters({ ...filters, ...{ [key]: e.target.value } });
@@ -233,7 +233,7 @@ function RecipientsFilter({ data, confirm, cancel, isAdmin, currentCycle }) {
                       ? "Loading..."
                       : "Select filter value(s)"
                   }
-                  className="m-3 w-full"
+                  className="m-3 w-full min-w-0"
                 />
               </>
             )}
