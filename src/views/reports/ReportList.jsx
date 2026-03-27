@@ -38,13 +38,25 @@ export default function ReportList() {
     pins: false,
   });
 
-  // LSA-517 Set default report year to cycle year  
-  api.getCurrentCycle().then(cycle => {
+  // LSA-517 Set default report year to cycle year
+  useEffect(() => {
+    let mounted = true;
 
-    setCurrentYear(+cycle);
-    setYearSelected(+cycle);
-    
-  });
+    api
+      .getCurrentCycle()
+      .then((cycle) => {
+        if (!mounted) return;
+        setCurrentYear(+cycle);
+        setYearSelected(+cycle);
+      })
+      .catch(() => {
+        // ignore or handle error if needed
+      });
+
+    return () => {
+      mounted = false;
+    };
+  }, [api]);
 
   const yearSelector = () => {
     // init year setting
@@ -127,6 +139,15 @@ export default function ReportList() {
       authorized: isAuthorized || isAdmin, // LSA-584 Provide access to Attendees Report for org contacts
     },
     {
+      id: "attendees-stats",
+      filename: "attendees-stats-report",
+      format: "csv",
+      label: "Attendees Statistics Report",
+      description:
+        "Lists counts of attending, declined, and invited attendees (including guests).",
+      authorized: isAdmin, // LSA-584 Provide access to Attendees Report for org contacts
+    },
+    {
       id: "transactions",
       filename: "transactions-report",
       format: "csv",
@@ -157,7 +178,7 @@ export default function ReportList() {
       .getReport(
         id,
         `${filename}-${yearSelected}-${ts}.${format}`,
-        yearSelected
+        yearSelected,
       )
       .catch(() => {
         status.setMessage("downloadError");
