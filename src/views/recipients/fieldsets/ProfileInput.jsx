@@ -11,7 +11,7 @@ import { InputText } from "primereact/inputtext";
 import { matchers, validators } from "@/services/validation.services.js";
 import { Dropdown } from "primereact/dropdown";
 import { Panel } from "primereact/panel";
-import { RadioButton } from 'primereact/radiobutton';
+import { RadioButton } from "primereact/radiobutton";
 
 import { useAPI } from "@/providers/api.provider.jsx";
 import classNames from "classnames";
@@ -37,19 +37,18 @@ export default function ProfileInput({ validate }) {
     api.getOrganizationsUser().then(setOrganizations).catch(console.error);
   }, []);
 
-  const [currentCycle, setCurrentCycle ] = useState(null);
-  useEffect( () => {
+  const [currentCycle, setCurrentCycle] = useState(null);
+  useEffect(() => {
     api
-    .getQualifyingYears()
-    .then((years) => {
-      const { name } = (years || []).find((y) => y.current) || {};
-      //console.log(`currentCycle is ${name}`);
-      setCurrentCycle(name);
-    })
-    .catch(console.error);
-
+      .getQualifyingYears()
+      .then((years) => {
+        const { name } = (years || []).find((y) => y.current) || {};
+        //console.log(`currentCycle is ${name}`);
+        setCurrentCycle(name);
+      })
+      .catch(console.error);
   }, []);
-  
+
   // auto-validate fieldset
   useEffect(() => {
     setComplete(validate(getValues()) || false);
@@ -169,11 +168,8 @@ export default function ProfileInput({ validate }) {
           </div>
 
           <div className={"col-12 form-field-container"}>
-            <p>
-              Alternate Email Address is preferred
-            </p>
+            <p>Alternate Email Address is preferred</p>
             <div className="grid">
-                
               <Controller
                 name={"contact.alternate_is_preferred"}
                 control={control}
@@ -189,12 +185,17 @@ export default function ProfileInput({ validate }) {
                           onChange={(e) => {
                             setValue(
                               "contact.alternate_is_preferred",
-                              e.value === "Yes"
+                              e.value === "Yes",
                             );
-                            console.log(field.value)
+                            console.log(field.value);
                           }}
                         />
-                        <label className={"ml-3"} htmlFor="alternateEmailPreferredNo">No, recipient prefers BC Government email address</label>
+                        <label
+                          className={"ml-3"}
+                          htmlFor="alternateEmailPreferredNo"
+                        >
+                          No, recipient prefers BC Government email address
+                        </label>
                       </div>
                       <div className="flex align-items-center">
                         <RadioButton
@@ -205,30 +206,23 @@ export default function ProfileInput({ validate }) {
                           onChange={(e) => {
                             setValue(
                               "contact.alternate_is_preferred",
-                              e.value === "Yes"
+                              e.value === "Yes",
                             );
-                            console.log(field.value)
+                            console.log(field.value);
                           }}
-                          />
-                        <label className={"ml-3"} htmlFor="alternateEmailPreferredYes">Yes, recipient prefers alternate email address</label>
-                      </div>
-                     
-                      {/* Not sure why this is here, because it is repeated in Registration Options in next fieldset */}
-                      <div className="flex align-items-center">
-                        <p>
-                          Recipient has previously registered for this milestone (in
-                          the last 2 years) and was unable to attend the ceremony.
-                        </p>
+                        />
+                        <label
+                          className={"ml-3"}
+                          htmlFor="alternateEmailPreferredYes"
+                        >
+                          Yes, recipient prefers alternate email address
+                        </label>
                       </div>
                     </div>
-
                   </>
-              
                 )}
               />
             </div>
-            
-            
           </div>
           <div className="col-12 form-field-container">
             <label htmlFor={`employee_number`}>
@@ -243,26 +237,31 @@ export default function ProfileInput({ validate }) {
                   value: matchers.employeeNumber,
                   message: "Invalid employee number. (e.g., 123456)",
                 },
-                
+
                 validate: {
                   duplicate: async (...values) => {
                     // Check if recipient employee number is unique in cycle (LSA-478)
-                    const [ input, rowData ] = values;
+                    const [input, rowData] = values;
                     //console.log(`currentCycle is ${currentCycle}`);
                     const { services, status } = rowData || {};
                     const hasServices = (services || []).some(
-                      (service) => service.cycle === currentCycle
+                      (service) => service.cycle === currentCycle,
                     );
-                   
-                    if ( hasServices ) {
-                      
-                      console.log(`We have services so assuming it's an existing entry, so we're not validating`);
+
+                    if (hasServices) {
+                      console.log(
+                        `We have services so assuming it's an existing entry, so we're not validating`,
+                      );
                       return true;
                     }
 
-                    const exists = await validators.recipientExistsInCycle(input);
-                    return !exists || "Employee number has already been registered for this cycle."
-                  }
+                    const exists =
+                      await validators.recipientExistsInCycle(input);
+                    return (
+                      !exists ||
+                      "Employee number has already been registered for this cycle."
+                    );
+                  },
                 },
               }}
               render={({ field, fieldState: { invalid, error } }) => (
@@ -277,7 +276,7 @@ export default function ProfileInput({ validate }) {
                       // require integers for employee number
                       const filteredValue = e.target.value.replace(
                         /[^0-9]/g,
-                        ""
+                        "",
                       );
                       field.onChange(filteredValue);
                     }}
