@@ -157,3 +157,10 @@ button:focus-visible {
     background-color: #f9f9f9;
   }
 }
+
+/* Fix for PrimeReact 9.x Dropdown Clear Icon */
+.p-dropdown-clear-icon {
+  z-index: 10 !important;
+  pointer-events: auto !important;
+  cursor: pointer !important;
+}

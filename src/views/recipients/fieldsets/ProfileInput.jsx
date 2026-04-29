@@ -372,6 +372,13 @@ export default function ProfileInput({ validate }) {
                     filter
                     onChange={(e) => {
                       field.onChange(e.target.value);
+                      if (e.value == undefined) {
+                        field.onChange({
+                          id: null,
+                          name: null,
+                          value: undefined,
+                        });
+                      }
                     }}
                     aria-describedby={`organization-help`}
                     options={organizations}
@@ -379,6 +386,7 @@ export default function ProfileInput({ validate }) {
                     optionValue="id"
                     className={classNames("w-full", { "p-invalid": error })}
                     placeholder={`Select Recipient\'s ministry or organization`}
+                    showClear
                   />
                   {invalid && <p className="error">{error.message}</p>}
                 </>
