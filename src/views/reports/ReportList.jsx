@@ -106,11 +106,19 @@ export default function ReportList() {
       authorized: isAuthorized,
     },
     {
+      id: "awards-count",
+      filename: "awards-count-report",
+      format: "csv",
+      label: "Awards Count Report",
+      description: "Award count by award name and milestone",
+      authorized: isAdmin,
+    },
+    {
       id: "lsa-count",
       filename: "awards-count-by-night",
       format: "csv",
       label: "Awards Count by Night",
-      description: "Awards Count per night",
+      description: "Award count per ceremony night",
       authorized: isAdmin, // LSA-583 Limit report to Admin only
     },
     {
