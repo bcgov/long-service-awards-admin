@@ -28,7 +28,7 @@ export default function RSVPOptions() {
         //remove accesibility requirement from the list
         accommodations.splice(
           accommodations.findIndex(({ name }) => name == "accessibility"),
-          1
+          1,
         );
         //sort alphabetically
         accommodations.sort((a, b) => a.name.localeCompare(b.name));
@@ -36,8 +36,8 @@ export default function RSVPOptions() {
         accommodations.push(
           ...accommodations.splice(
             accommodations.findIndex((v) => v.name === "other"),
-            1
-          )
+            1,
+          ),
         );
         setAccommodations(accommodations);
       })
@@ -75,10 +75,16 @@ export default function RSVPOptions() {
                         aria-describedby={`accessibility-help`}
                         value={true}
                         onChange={() => {
-                          setValue("recipient_accommodations.accessibility", true);
+                          setValue(
+                            "recipient_accommodations.accessibility",
+                            true,
+                          );
                         }}
                       />
-                      <label className={"ml-2"} htmlFor={`recipient_accommodations.accessibility_yes`}>
+                      <label
+                        className={"ml-2"}
+                        htmlFor={`recipient_accommodations.accessibility_yes`}
+                      >
                         Yes
                       </label>
                     </div>
@@ -90,10 +96,16 @@ export default function RSVPOptions() {
                         aria-describedby={`accessibility-help`}
                         value={false}
                         onChange={() => {
-                          setValue("recipient_accommodations.accessibility", false);
+                          setValue(
+                            "recipient_accommodations.accessibility",
+                            false,
+                          );
                         }}
                       />
-                      <label className={"ml-2"} htmlFor={`recipient_accommodations.accessibility_no`}>
+                      <label
+                        className={"ml-2"}
+                        htmlFor={`recipient_accommodations.accessibility_no`}
+                      >
                         No
                       </label>
                     </div>
@@ -115,34 +127,78 @@ export default function RSVPOptions() {
                 The buffet will accommodate most requirements. Please review the
                 options below and select all requirements that apply.
               </p>
-              {accommodations.map((o, i) => (
-                <Controller
-                  name={`recipient_accommodations.` + `${o.name}`}
-                  control={control}
-                  key={i}
-                  render={({ field }) => {
-                    return (
-                      <div className="field-checkbox">
-                        <Checkbox
-                          inputId={i}
-                          name="option"
-                          value={o.name || ""}
-                          onChange={(e) => field.onChange(e.checked)}
-                          checked={field.value}
-                        />
-                        <label
-                          htmlFor={`recipient_accommodations.` + `${o.name}`}
-                          style={{
-                            color: o.name === "other" ? "red" : "inherited",
-                          }}
-                        >
-                          {o.label}
-                        </label>
-                      </div>
-                    );
-                  }}
-                />
-              ))}
+              {/* START */}
+              {/* Main options (everything except celiac + other) */}
+              {accommodations
+                .filter((o) => o.name !== "celiac" && o.name !== "other")
+                .map((o, i) => (
+                  <Controller
+                    name={`recipient_accommodations.` + `${o.name}`}
+                    control={control}
+                    key={i}
+                    render={({ field }) => {
+                      return (
+                        <div className="field-checkbox">
+                          <Checkbox
+                            inputId={i}
+                            name="option"
+                            value={o.name || ""}
+                            onChange={(e) => field.onChange(e.checked)}
+                            checked={field.value}
+                          />
+                          <label
+                            htmlFor={`recipient_accommodations.` + `${o.name}`}
+                            style={{
+                              color: o.name === "other" ? "red" : "inherited",
+                            }}
+                          >
+                            {o.label}
+                          </label>
+                        </div>
+                      );
+                    }}
+                  />
+                ))}
+
+              {/* Severe cross-contamination section */}
+              <div style={{ marginTop: "1rem", fontWeight: 600 }}>
+                Select the following dietary requirement if cross contamination
+                is an issue due to severe or life-threatening dietary allergies:
+              </div>
+
+              {accommodations
+                .filter((o) => o.name === "celiac" || o.name === "other")
+                .map((o, i) => (
+                  <Controller
+                    // IMPORTANT: SAME name path as the main list so it saves to the same object
+                    name={`recipient_accommodations.` + `${o.name}`}
+                    control={control}
+                    key={`severe-${i}`}
+                    render={({ field }) => {
+                      return (
+                        <div className="field-checkbox">
+                          <Checkbox
+                            inputId={`severe-${i}`}
+                            name="option"
+                            value={o.name || ""}
+                            onChange={(e) => field.onChange(e.checked)}
+                            checked={field.value}
+                          />
+                          <label
+                            htmlFor={`recipient_accommodations.` + `${o.name}`}
+                            style={{
+                              color: o.name === "other" ? "red" : "inherited",
+                            }}
+                          >
+                            {o.label}
+                          </label>
+                        </div>
+                      );
+                    }}
+                  />
+                ))}
+
+              {/* END */}
             </div>
           </div>
         </div>
