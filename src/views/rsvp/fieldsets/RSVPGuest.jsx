@@ -35,7 +35,7 @@ export default function RSVPGuest() {
         //remove accesibility requirement from the list
         accommodations.splice(
           accommodations.findIndex(({ name }) => name == "accessibility"),
-          1
+          1,
         );
         //sort alphabetically
         accommodations.sort((a, b) => a.name.localeCompare(b.name));
@@ -43,8 +43,8 @@ export default function RSVPGuest() {
         accommodations.push(
           ...accommodations.splice(
             accommodations.findIndex((v) => v.name === "other"),
-            1
-          )
+            1,
+          ),
         );
         setAccommodations(accommodations);
       })
@@ -155,7 +155,7 @@ export default function RSVPGuest() {
                           onChange={() => {
                             setValue(
                               "guest_accommodations.accessibility",
-                              true
+                              true,
                             );
                           }}
                         />
@@ -176,7 +176,7 @@ export default function RSVPGuest() {
                           onChange={() => {
                             setValue(
                               "guest_accommodations.accessibility",
-                              false
+                              false,
                             );
                           }}
                         />
@@ -203,34 +203,84 @@ export default function RSVPGuest() {
                 >
                   Dietary Requirements
                 </label>
-                {accommodations.map((o, i) => (
-                  <Controller
-                    name={`guest_accommodations.` + `${o.name}`}
-                    control={control}
-                    key={i}
-                    render={({ field }) => {
-                      return (
-                        <div className="field-checkbox">
-                          <Checkbox
-                            inputId={i}
-                            name="option"
-                            value={o.name || ""}
-                            onChange={(e) => field.onChange(e.checked)}
-                            checked={field.value}
-                          />
-                          <label
-                            htmlFor={`guest_accommodations.` + `${o.name}`}
-                            style={{
-                              color: o.name === "other" ? "red" : "inherited",
-                            }}
-                          >
-                            {o.label}
-                          </label>
-                        </div>
-                      );
-                    }}
-                  />
-                ))}
+                <p>
+                  The dinner buffet has an assortment of labelled dishes and
+                  will accommodate most dietary needs. Please review the options
+                  below and select all requirements that apply.
+                </p>
+                {/* START */}
+
+                {/* Main options (everything except celiac + other) */}
+                {accommodations
+                  .filter((o) => o.name !== "celiac" && o.name !== "other")
+                  .map((o, i) => (
+                    <Controller
+                      name={`guest_accommodations.` + `${o.name}`}
+                      control={control}
+                      key={i}
+                      render={({ field }) => {
+                        return (
+                          <div className="field-checkbox">
+                            <Checkbox
+                              inputId={i}
+                              name="option"
+                              value={o.name || ""}
+                              onChange={(e) => field.onChange(e.checked)}
+                              checked={field.value}
+                            />
+                            <label
+                              htmlFor={`guest_accommodations.` + `${o.name}`}
+                              style={{
+                                color: o.name === "other" ? "red" : "inherited",
+                              }}
+                            >
+                              {o.label}
+                            </label>
+                          </div>
+                        );
+                      }}
+                    />
+                  ))}
+
+                {/* Severe cross-contamination section */}
+                <div style={{ marginTop: "1rem", fontWeight: 600 }}>
+                  Select the following if cross contamination is an issue due to
+                  a severe or life-threatening dietary allergies:
+                </div>
+
+                {accommodations
+                  .filter((o) => o.name === "celiac" || o.name === "other")
+                  .map((o, i) => (
+                    <Controller
+                      // IMPORTANT: SAME name path as the main list so it saves to the same object
+                      name={`guest_accommodations.` + `${o.name}`}
+                      control={control}
+                      key={`severe-${i}`}
+                      render={({ field }) => {
+                        return (
+                          <div className="field-checkbox">
+                            <Checkbox
+                              inputId={`severe-${i}`}
+                              name="option"
+                              value={o.name || ""}
+                              onChange={(e) => field.onChange(e.checked)}
+                              checked={field.value}
+                            />
+                            <label
+                              htmlFor={`guest_accommodations.` + `${o.name}`}
+                              style={{
+                                color: o.name === "other" ? "red" : "inherited",
+                              }}
+                            >
+                              {o.label}
+                            </label>
+                          </div>
+                        );
+                      }}
+                    />
+                  ))}
+
+                {/* END */}
               </div>
             </>
           )}
