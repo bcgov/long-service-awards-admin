@@ -123,9 +123,8 @@ export default function RSVPOptions() {
                 Dietary allergies and requirements
               </label>
               <p>
-                The dinner buffet will have an assortment of labelled dishes.
-                The buffet will accommodate most requirements. Please review the
-                options below and select all requirements that apply.
+                The dinner buffet has an assortment of labelled dishes and will
+                accommodate most dietary needs. Select all that apply.
               </p>
               {/* START */}
               {/* Main options (everything except celiac + other) */}
@@ -162,8 +161,8 @@ export default function RSVPOptions() {
 
               {/* Severe cross-contamination section */}
               <div style={{ marginTop: "1rem", fontWeight: 600 }}>
-                Select the following dietary requirement if cross contamination
-                is an issue due to severe or life-threatening dietary allergies:
+                Select the following if cross contamination is an issue due to
+                severe or life-threatening dietary allergies:
               </div>
 
               {accommodations

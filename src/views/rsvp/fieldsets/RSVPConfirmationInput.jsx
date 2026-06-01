@@ -79,9 +79,9 @@ export default function RSVPConfirmationInput({ validate }) {
                     By registering for a Long Service Award, you consent to your
                     personal information (name, years of service, ministry,
                     city, etc.) being disclosed to BC Public Service employees
-                    (e.g. @Work Corporate Intranet, @Work Newsletter, reports,
-                    Long Service Awards website, etc.). By attending the Long
-                    Service Award ceremony, you may appear on camera. Personal
+                    (e.g. Compass, Compass Points Newsletter, reports, Long
+                    Service Awards website, etc.). By attending the Long Service
+                    Awards ceremony, you may appear on camera. Personal
                     information including photos, videos and/or voice, and any
                     other information may be collected and used by the BC Public
                     Service Agency to support communications and engagement
