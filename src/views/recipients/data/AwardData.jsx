@@ -18,11 +18,21 @@ export default function AwardData({data, currentCycle}) {
 
     // get current milestone service selection
     const {services, service} = data || {};
+    // LSA-613 - Show all awards, don't limit to current cycle
+    const allServices = [service, ...services].filter(s => s !== undefined);
+    
     // - service is the current selected service milestone
     // - services contains all previous and current service milestones
     const currentService = service || (services || []).find(srv => srv.cycle === currentCycle);
     const { awards } = currentService || {};
     const { award, selections } = awards || {};
+    //console.log("AS", allServices)
+    //console.log("Services", services)
+    //console.log("Service", service)
+    //console.log("CS", currentService)
+    //console.log("Awards", awards)
+    //console.log("Award", award)
+    //console.log("Selections", selections)
 
     const api = useAPI();
 
@@ -42,62 +52,72 @@ export default function AwardData({data, currentCycle}) {
     }, []);
 
     return <Panel className={'mb-2 mt-2'} header={'Recipient Awards'} toggleable>
-        <div className={'container'}>
-            <div className={'grid'}>
-                <div className={'col-6'}>Name</div>
-                <div className={'col-6'}>{award && award.label || '-'}</div>
-                <div className={'col-6'}>Description</div>
-                <div className={'col-6'}>{award && parse(award.description || '-') || '-'}</div>
-                {
-                    (selections || []).length > 0 && <div className={'col-12'}>
-                        <div className={'font-bold mb-3'}>Options</div>
-                        <div className={'container'}>
-                            {
-                                (selections || []).map(({pecsf_charity, custom_value, award_option}, index) => {
-                                    const { type, label, description, customizable} = award_option || {};
-                                    return <div key={`award-option-${index}`}>
-                                        {
-                                            !!pecsf_charity && pecsf_charity.id !== null && pecsfCharities && type === 'pecsf-charity' && label &&
-                                            <div className={'grid'}>
-                                                <div className={'col-6'}>{label}</div>
-                                                <div className={'col-6'}>
-                                                    {
-                                                        pecsf_charity.hasOwnProperty('label') && pecsf_charity.hasOwnProperty('vendor')
-                                                            ? `${pecsf_charity.label} - ${pecsf_charity.vendor}`
-                                                            : lookupPecsfCharity(pecsf_charity)}
-                                                </div>
-                                            </div>
-                                        }
-                                        {
-                                            (type === 'pecsf-charity-local' &&
-                                            custom_value !== null) &&
-                                            <div className={'grid'}>
-                                                <div className={'col-6'}>{label}</div>
-                                                <div className={'col-6'}>{custom_value}</div>
-                                            </div>
-                                        }
-                                        {
-                                            type !== 'pecsf-charity' && type !== 'pecsf-charity-local' && !customizable && label && description &&
-                                            <div className={'grid'}>
-                                                <div className={'col-6'}>{label || '-'}</div>
-                                                <div className={'col-6'}>{description || '-'}</div>
+        {   
+            // LSA-613 - Show all awards, don't limit to current cycle
+            allServices.map(service => { 
+                const { awards } = service;
+                const { award } = awards;
+                return <div className={'container'} key={service.cycle}>
+                    <div className={'grid'}>
+                        <div className={'col-6'}>Year</div>
+                        <div className={'col-6'}>{service && service.cycle || '-'}</div>
+                        <div className={'col-6'}>Name</div>
+                        <div className={'col-6'}>{award && award.label || '-'}</div>
+                        <div className={'col-6'}>Description</div>
+                        <div className={'col-6'}>{award && parse(award.description || '-') || '-'}</div>
+                        {
+                            (selections || []).length > 0 && <div className={'col-12'}>
+                                <div className={'font-bold mb-3'}>Options</div>
+                                <div className={'container'}>
+                                    {
+                                        (selections || []).map(({pecsf_charity, custom_value, award_option}, index) => {
+                                            const { type, label, description, customizable} = award_option || {};
+                                            return <div key={`award-option-${index}`}>
+                                                {
+                                                    !!pecsf_charity && pecsf_charity.id !== null && pecsfCharities && type === 'pecsf-charity' && label &&
+                                                    <div className={'grid'}>
+                                                        <div className={'col-6'}>{label}</div>
+                                                        <div className={'col-6'}>
+                                                            {
+                                                                pecsf_charity.hasOwnProperty('label') && pecsf_charity.hasOwnProperty('vendor')
+                                                                    ? `${pecsf_charity.label} - ${pecsf_charity.vendor}`
+                                                                    : lookupPecsfCharity(pecsf_charity)}
+                                                        </div>
+                                                    </div>
+                                                }
+                                                {
+                                                    (type === 'pecsf-charity-local' &&
+                                                    custom_value !== null) &&
+                                                    <div className={'grid'}>
+                                                        <div className={'col-6'}>{label}</div>
+                                                        <div className={'col-6'}>{custom_value}</div>
+                                                    </div>
+                                                }
+                                                {
+                                                    type !== 'pecsf-charity' && type !== 'pecsf-charity-local' && !customizable && label && description &&
+                                                    <div className={'grid'}>
+                                                        <div className={'col-6'}>{label || '-'}</div>
+                                                        <div className={'col-6'}>{description || '-'}</div>
 
+                                                    </div>
+                                                }
+                                                {
+                                                    type !== 'pecsf-charity' && type !== 'pecsf-charity-local' && customizable && description && custom_value &&
+                                                    <div className={'grid'}>
+                                                        <div className={'col-6'}>{description || '-'}</div>
+                                                        <div className={'col-6'}>{custom_value || '-'}</div>
+                                                    </div>
+                                                }
                                             </div>
-                                        }
-                                        {
-                                            type !== 'pecsf-charity' && type !== 'pecsf-charity-local' && customizable && description && custom_value &&
-                                            <div className={'grid'}>
-                                                <div className={'col-6'}>{description || '-'}</div>
-                                                <div className={'col-6'}>{custom_value || '-'}</div>
-                                            </div>
-                                        }
-                                    </div>
-                                })
-                            }
-                        </div>
+                                        })
+                                    }
+                                </div>
+                            </div>
+                        }
+                    <hr className="border-1 border-100 my-4 w-6" />
                     </div>
-                }
-            </div>
-        </div>
+                </div>
+            })
+        }
     </Panel>
 }
