@@ -123,8 +123,7 @@ export default function RSVPOptions() {
                 Dietary allergies and requirements
               </label>
               <p>
-                The dinner buffet has an assortment of labelled dishes and will
-                accommodate most dietary needs. Select all that apply.
+                The dinner buffet has an assortment of labelled dishes and will accommodate most dietary needs. 
               </p>
               {/* START */}
               {/* Main options (everything except celiac + other) */}
