@@ -124,6 +124,7 @@ export default function RSVPOptions() {
               </label>
               <p>
                 The dinner buffet has an assortment of labelled dishes and will accommodate most dietary needs. 
+                Please review the options below and select all requirements that apply.
               </p>
               {/* START */}
               {/* Main options (everything except celiac + other) */}
