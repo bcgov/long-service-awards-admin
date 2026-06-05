@@ -333,14 +333,19 @@ export default function RecipientList() {
 
   const servicesTemplate = (rowData) => {
     const { services } = rowData || {};
+    services.forEach(service => {
+      service.awards.hasSelected = service.awards.award && service.awards.award.id !== null ? 'Yes' : 'No';
+    })
+    //console.log(services)
     return (
       <DataTable
         dataKey={"milestone"}
         sortField={"milestone"}
         sortOrder={-1}
         header={""}
-        className={"w-full text-xs"}
+        className={"w-full text-xs flex justify-content-between"}
         value={services}
+       
       >
         <Column className={"pt-0 pb-0"} field="cycle"></Column>
         <Column
@@ -349,6 +354,7 @@ export default function RecipientList() {
           field="milestone"
         ></Column>
         <Column className={"pt-0 pb-0"} field="qualifying_year"></Column>
+        <Column className={"pt-0 pb-0"} field="awards.hasSelected"></Column>
       </DataTable>
     );
   };
@@ -701,11 +707,12 @@ export default function RecipientList() {
           header={
             <div
               style={{ minWidth: "16em" }}
-              className="flex justify-content-between p-0"
+              className="w-full flex justify-content-between p-0"
             >
               <div>Cycle</div>
               <div>Milestone</div>
               <div>Qualifying</div>
+              <div>Award</div>
             </div>
           }
           field="services"
