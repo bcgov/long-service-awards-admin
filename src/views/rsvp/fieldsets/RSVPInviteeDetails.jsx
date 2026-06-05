@@ -27,7 +27,7 @@ export default function RSVPInviteeDetails() {
               htmlFor={`recipient.contact.full_name`}
               className="font-bold"
             >
-              Invitee
+              Recipient
             </label>
             <Controller
               name={`recipient.contact.full_name`}
