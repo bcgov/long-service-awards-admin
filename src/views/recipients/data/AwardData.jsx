@@ -19,7 +19,9 @@ export default function AwardData({data, currentCycle}) {
     // get current milestone service selection
     const {services, service} = data || {};
     // LSA-613 - Show all awards, don't limit to current cycle
-    const allServices = [service, ...services].filter(s => s !== undefined);
+    // Added additional validity checks
+    
+    const allServices = [/*service ?? [], */...(services ?? [])].filter(s => s !== undefined && s !== null);
     
     // - service is the current selected service milestone
     // - services contains all previous and current service milestones
@@ -54,9 +56,11 @@ export default function AwardData({data, currentCycle}) {
     return <Panel className={'mb-2 mt-2'} header={'Recipient Awards'} toggleable>
         {   
             // LSA-613 - Show all awards, don't limit to current cycle
+            // Added additional validity checks
             allServices.map(service => { 
-                const { awards } = service;
-                const { award } = awards;
+                if ( !service ) return;
+                const { awards = {} } = service;
+                const { award = {} } = awards;
                 return <div className={'container'} key={service.cycle}>
                     <div className={'grid'}>
                         <div className={'col-6'}>Year</div>
