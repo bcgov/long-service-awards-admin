@@ -49,6 +49,7 @@ export default function RecipientList() {
     ceremony: null,
     ceremony_opt_out: null,
     confirmed: null,
+    service_pin: null,
     updated_at: null,
     created_at: null,
   };
@@ -150,8 +151,8 @@ export default function RecipientList() {
             service_pins_count: 0,
             retroactive_service_pins_count: 0,
             other_count: 0,
-          }
-        )
+          },
+        ),
       )
       .catch(console.error);
     // apply filters to recipient data request
@@ -240,7 +241,7 @@ export default function RecipientList() {
   const ceremonyTemplate = (rowData) => {
     const { services } = rowData || {};
     const ceremonyOptOut = (services || []).some(
-      (service) => service.cycle === currentCycle && service.ceremony_opt_out
+      (service) => service.cycle === currentCycle && service.ceremony_opt_out,
     );
 
     // select the recipient status
@@ -276,7 +277,7 @@ export default function RecipientList() {
   const statusTemplate = (rowData) => {
     const { services, status } = rowData || {};
     const confirmed = (services || []).some(
-      (service) => service.cycle === currentCycle && service.confirmed
+      (service) => service.cycle === currentCycle && service.confirmed,
     );
     // const inCurrentCycle = (services || [])
     //     .some(service => service.cycle === currentCycle);
@@ -320,8 +321,8 @@ export default function RecipientList() {
       confirmed && status === "validated"
         ? statuses.validated
         : confirmed
-        ? statuses.registered
-        : statuses.default;
+          ? statuses.registered
+          : statuses.default;
     return (
       <Tag
         tooltip={statusIndicator.description}
@@ -333,9 +334,10 @@ export default function RecipientList() {
 
   const servicesTemplate = (rowData) => {
     const { services } = rowData || {};
-    services.forEach(service => {
-      service.awards.hasSelected = service.awards.award && service.awards.award.id !== null ? 'Yes' : 'No';
-    })
+    services.forEach((service) => {
+      service.awards.hasSelected =
+        service.awards.award && service.awards.award.id !== null ? "Yes" : "No";
+    });
     //console.log(services)
     return (
       <DataTable
@@ -345,7 +347,6 @@ export default function RecipientList() {
         header={""}
         className={"w-full text-xs flex justify-content-between"}
         value={services}
-       
       >
         <Column className={"pt-0 pb-0"} field="cycle"></Column>
         <Column

@@ -120,6 +120,17 @@ function RecipientsFilter({ data, confirm, cancel, isAdmin, currentCycle }) {
         { name: "Archived", value: "archived" },
       ],
     },
+    service_pin: {
+      label: "Service Pin Registration",
+      input: "select",
+      valueKey: "value",
+      labelKey: "name",
+      options: [
+        { name: "Yes", value: true },
+        { name: "No", value: false },
+        { name: "Ignore", value: null },
+      ],
+    },
     updated_at: {
       label: "Last Updated Date",
     },
