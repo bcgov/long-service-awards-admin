@@ -22,7 +22,7 @@ import { Dialog } from "primereact/dialog";
 import { Tag } from "primereact/tag";
 import { Toolbar } from "primereact/toolbar";
 import { Tooltip } from "primereact/tooltip";
-import { Fragment, useEffect, useState } from "react";
+import { Fragment, useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { InputText } from "primereact/inputtext";
 import { useUser } from "@/providers/user.provider.jsx";
@@ -90,6 +90,9 @@ export default function RecipientList() {
   const [showCeremonyAssignDialog, setShowCeremonyAssignDialog] =
     useState(false);
 
+  // request tracker to avoid applying stale API responses
+  const requestRef = useRef(0);
+
   // check if user is authorized to access menu items
   const isAdmin =
     authenticated &&
@@ -113,6 +116,11 @@ export default function RecipientList() {
 
   const loadData = (pageState, filters, sort) => {
     setLoading(true);
+    setRecipients([]);
+    setTotalFilteredRecords(0);
+    setSelectAll(false);
+    requestRef.current += 1;
+    const requestId = requestRef.current;
     const { orderBy, order } = sort || {};
     const { first, rows } = pageState || {};
     // compose list filters
@@ -127,13 +135,17 @@ export default function RecipientList() {
     // get attendees records
     api
       .getAttendees(filter)
-      .then(({ attendees }) => setAttendees(attendees))
+      .then(({ attendees }) => {
+        if (requestId !== requestRef.current) return;
+        setAttendees(attendees);
+      })
       .catch(console.error);
 
     // get current cycle›
     api
       .getQualifyingYears()
       .then((years) => {
+        if (requestId !== requestRef.current) return;
         const { name } = (years || []).find((y) => y.current) || {};
         setCurrentCycle(name);
       })
@@ -142,9 +154,10 @@ export default function RecipientList() {
     // get records stats
     api
       .getRecipientStats()
-      .then((stats) =>
+      .then((s) => {
+        if (requestId !== requestRef.current) return;
         setStats(
-          stats || {
+          s || {
             total_count: 0,
             lsa_current_count: 0,
             lsa_previous_count: 0,
@@ -152,19 +165,20 @@ export default function RecipientList() {
             retroactive_service_pins_count: 0,
             other_count: 0,
           },
-        ),
-      )
+        );
+      })
       .catch(console.error);
     // apply filters to recipient data request
     api
       .getRecipients(filter)
       .then((results) => {
+        if (requestId !== requestRef.current) return;
         const { total_filtered_records, recipients } = results || {};
         setRecipients(recipients);
         setTotalFilteredRecords(total_filtered_records);
       })
       .finally(() => {
-        setLoading(false);
+        if (requestId === requestRef.current) setLoading(false);
       });
   };
 
@@ -208,11 +222,13 @@ export default function RecipientList() {
 
   const applyFilter = (filterData) => {
     if (filterData) setFilters(filterData);
+    setPageState((prev) => ({ ...prev, first: 0, page: 1 }));
     setShowDialog(null);
   };
 
   const clearFilter = () => {
     setFilters(initFilters);
+    setPageState((prev) => ({ ...prev, first: 0, page: 1 }));
   };
 
   /**
@@ -224,13 +240,22 @@ export default function RecipientList() {
   };
 
   const applySort = (sortData) => {
-    //sortField comes from clicking datatable column header, dialog and setSort uses orderBy
-    if (sortData.sortField) {
-      sortData.orderBy = sortData.sortField;
-      sortData.order = sortData.sortOrder;
+    if (!sortData) {
+      setShowDialog(null);
+      return;
     }
 
-    if (sortData) setSort(sortData);
+    const nextSort = {
+      ...sortData,
+    };
+
+    if (nextSort.sortField) {
+      nextSort.orderBy = nextSort.sortField;
+      nextSort.order = nextSort.sortOrder;
+    }
+
+    setSort(nextSort);
+    setPageState((prev) => ({ ...prev, first: 0, page: 1 }));
     setShowDialog(null);
   };
 
@@ -248,10 +273,12 @@ export default function RecipientList() {
     let statusIndicator = ceremonyOptOut
       ? ceremonyStatuses.declined
       : ceremonyStatuses.default;
-    // check if recipient is an attendee
-    if (attendees) {
-      attendees.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
-      const attendee = attendees.find((a) => a.recipient.id === rowData.id);
+    // check if recipient is an attendee (don't mutate attendees array)
+    if (attendees && attendees.length) {
+      const sorted = [...attendees].sort(
+        (a, b) => new Date(b.created_at) - new Date(a.created_at),
+      );
+      const attendee = sorted.find((a) => a.recipient.id === rowData.id);
       if (attendee)
         statusIndicator =
           ceremonyStatuses[attendee.status.toLowerCase().replace(/\s/g, "")];
@@ -334,11 +361,16 @@ export default function RecipientList() {
 
   const servicesTemplate = (rowData) => {
     const { services } = rowData || {};
-    services.forEach((service) => {
-      service.awards.hasSelected =
-        service.awards.award && service.awards.award.id !== null ? "Yes" : "No";
+    const servicesCopy = (services || []).map((service) => {
+      const awards = service.awards || {};
+      return {
+        ...service,
+        awards: {
+          ...awards,
+          hasSelected: awards.award && awards.award.id !== null ? "Yes" : "No",
+        },
+      };
     });
-    //console.log(services)
     return (
       <DataTable
         dataKey={"milestone"}
@@ -346,7 +378,7 @@ export default function RecipientList() {
         sortOrder={-1}
         header={""}
         className={"w-full text-xs flex justify-content-between"}
-        value={services}
+        value={servicesCopy}
       >
         <Column className={"pt-0 pb-0"} field="cycle"></Column>
         <Column
@@ -369,6 +401,7 @@ export default function RecipientList() {
    * */
 
   const onPage = (event) => {
+    setSelected([]);
     setPageState(event);
   };
 
@@ -410,7 +443,7 @@ export default function RecipientList() {
   const onSelectionChange = (event) => {
     const value = event.value;
     setSelected(value);
-    setSelectAll(value.length === stats);
+    setSelectAll(value.length === pageState.rows);
   };
 
   const getEditingActiveSetting = async () => {
