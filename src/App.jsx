@@ -46,7 +46,7 @@ export default function App() {
         </div>
       </main>
       {nodeENV === "development" || isDevSite ? (
-        <div className="w-screen bg-orange-500 fixed top-0 z-9999 m-0 text-center">
+        <div className="w-screen bg-test-environment fixed top-0 z-9999 m-0 text-center">
           Test Environment
         </div>
       ) : null}

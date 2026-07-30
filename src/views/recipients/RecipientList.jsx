@@ -467,7 +467,7 @@ export default function RecipientList() {
           right={
             <Fragment>
               <span className="p-input-icon-left">
-                <i className="pi pi-search" />
+                <i className="pi pi-search hidden" />
                 <InputText
                   type="search"
                   onInput={(e) => setGlobalFilter(e.target.value)}
