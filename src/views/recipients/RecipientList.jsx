@@ -639,7 +639,7 @@ export default function RecipientList() {
         rowClassName="m-0 p-0 w-full"
         stripedRows
         rows={pageState.rows}
-        rowsPerPageOptions={[10, 25, 50]}
+        rowsPerPageOptions={[10, 25, 50, 100, 250]}
         totalRecords={totalFilteredRecords}
         onPage={onPage}
         first={pageState.first}
